@@ -5752,6 +5752,7 @@ exports.default = {
   actions: actions,
   getters: getters,
   mutations: mutations,
+  namespaced: true,
   state: {
     activeRequestsToEndpoint: {},
     lastUpdatedComponent: null,
