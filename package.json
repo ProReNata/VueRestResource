@@ -1,0 +1,20 @@
+{
+  "name": "vuerestresource",
+  "version": "0.0.1",
+  "description": "Rest resource management for Vue.js and Vuex projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Vue",
+    "Rest",
+    "Vuex"
+  ],
+  "author": "ProReNata AB",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "uuid": "^3.2.1"
+  }
+}
