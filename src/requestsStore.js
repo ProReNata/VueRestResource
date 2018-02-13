@@ -91,6 +91,7 @@ export default {
   actions,
   getters,
   mutations,
+  namespaced: true,
   state: {
     activeRequestsToEndpoint: {},
     lastUpdatedComponent: null,
