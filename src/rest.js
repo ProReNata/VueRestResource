@@ -6,29 +6,30 @@ import MODULE_NAME from './moduleName';
 const REGISTER = `${MODULE_NAME}/registerRequest`;
 const UPDATE = `${MODULE_NAME}/updateRequest`;
 const UNREGISTER = `${MODULE_NAME}/unregisterRequest`;
-const capitalizeFirst = str => str[0].toUpperCase() + str.slice(1);
+const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 /*
-Global Queue has the purpose of preventing N requests being sent in a row to same endpoint.
-
-If 1 request is pending to a specific endpoint a success result will be applied to all queued requests,
-without them having to be fired to server.
-
-All requests gets registered in store as pending, so we can track they existed.
-We add a prop .debouncedResponce with value: null - if the request got its own response; Object - the request object of the request that got the response data
-
-Not implemented yet:
-
-    If a "update" request gets in between 2 get requests, the earlier "get" will be postponed, we send the "update" to server and
-    apply its response to both "get"s.
-
-*/
+ * Global Queue has the purpose of preventing N requests being sent in a row to same endpoint.
+ *
+ * If 1 request is pending to a specific endpoint a success result will be applied to all
+ * queued requests, without them having to be fired to server.
+ *
+ * All requests gets registered in store as pending, so we can track they existed.
+ * We add a prop .debouncedResponce with value: null - if the request got its own
+ * response; Object - the request object of the request that got the response data
+ *
+ * Not implemented yet:
+ *
+ *     If a "update" request gets in between 2 get requests, the earlier "get" will be
+ *     postponed, we send the "update" to server and apply its response to both "get"s.
+ *
+ */
 const globalQueue = {
   activeRequests: {}, // endpoints as key values
   queuedRequests: {}, // endpoints as key values
 };
 
-export default class Rest extends http {
+export default class Rest extends http{
   constructor(uuid, resources, config){
     super(resources, config);
     this.uuid = uuid;
@@ -41,16 +42,20 @@ export default class Rest extends http {
     endpoint, handler, callback, resourceName, apiModule,
   }, ...args){
     const mutation = `${apiModule}/${action}${capitalizeFirst(resourceName)}`;
-    if (action === 'list') action = 'get'; // axios has no 'list'
+    if (action === 'list') {
+      // axios has no 'list'
+      action = 'get';
+    }
+
     /*
-      Status types:
-        - registered (before axios is called)
-        - success
-        - failed
-        - slow
-        - timeout
-        - pending
-    */
+     * Status types:
+     *   - registered (before axios is called)
+     *   - success
+     *   - failed
+     *   - slow
+     *   - timeout
+     *   - pending
+     */
 
     const request = this.register(action, {apiModule, endpoint, resourceName}, ...args);
     this.store.dispatch(REGISTER, request);
@@ -69,7 +74,7 @@ export default class Rest extends http {
       timeout = true;
       this.store.dispatch(UPDATE, {
         ...request,
-        completed: new Date().getTime(),
+        completed: Date.now(),
         status: 'timeout',
       });
     }, 5000);
@@ -87,26 +92,36 @@ export default class Rest extends http {
       .then((res) => {
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
-        if (timeout) return;
-        if (request.discard) return; // in case the request should be considered canceled
+        if (timeout) {
+          return undefined;
+        }
+
+        // in case the request should be considered canceled
+        if (request.discard) {
+          return undefined;
+        }
 
         const responseCopy = JSON.parse(JSON.stringify(res)); //
         const data = handler(responseCopy, this.store);
 
         /*
-        * About using callbacks here:
-        * Sometimes the data Axios gets needs to be processed. We can do this in
-        * in the Store on in the Controller of the component. Use callback & Controller
-        * pattern if you want to keep the store "logic free".
-        */
+         * About using callbacks here:
+         * Sometimes the data Axios gets needs to be processed. We can do this in
+         * in the Store on in the Controller of the component. Use callback & Controller
+         * pattern if you want to keep the store "logic free".
+         */
 
-        if (callback) callback(data, this.store);
-        else this.store.dispatch(mutation, data); // Used in some controllers when data from server needs to be processed before being set in store
+        if (callback) {
+          callback(data, this.store);
+        } else {
+          // Used in some controllers when data from server needs to be processed before being set in store
+          this.store.dispatch(mutation, data);
+        }
 
         const updated = {
           ...request,
           cancel: this.cancel.bind(this, request),
-          completed: new Date().getTime(),
+          completed: Date.now(),
           response: data,
           status: 'success',
         };
@@ -119,9 +134,12 @@ export default class Rest extends http {
           globalQueue.queuedRequests[endpoint].forEach((queued) => {
             queued.request.Promise.resolve(res); // resolve pending requests with same response
           });
+
           globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
           delete globalQueue.activeRequests[endpoint]; // done, remove the active request pointer
         }
+
+        return undefined;
       })
       .catch((err) => {
         clearTimeout(slowRequest);
@@ -130,7 +148,7 @@ export default class Rest extends http {
 
         const updated = {
           ...request,
-          completed: new Date().getTime(),
+          completed: Date.now(),
           response: err.response && err.response.data,
           status: 'failed',
         };
@@ -144,16 +162,21 @@ export default class Rest extends http {
             const next = globalQueue.queuedRequests[endpoint].shift();
             if (next) {
               const {
-                request, action, endpoint, args,
+                request: rqst,
+                action: act,
+                endpoint: end,
+                args: rest,
               } = next;
-              this.handleQueue(request, action, endpoint, ...args);
+
+              this.handleQueue(rqst, act, end, ...rest);
             }
           }
         }
+
         logger.error(err);
       });
 
-    const uuid = this.uuid;
+    const {uuid} = this;
     return {
       subscribe(){
         return new Subscriber(endpoint, uuid, this.store);
@@ -162,36 +185,44 @@ export default class Rest extends http {
   }
 
   handleQueue(request, action, endpoint, ...args){
-    if (action !== 'get') return axios[action](endpoint, ...args); // NB: check comment text about implementation of "update" requests inside queue of "get"s (on top of this file)
+    if (action !== 'get') {
+      // NB: check comment text about implementation of "update" requests inside queue of "get"s (on top of this file)
+      return axios[action](endpoint, ...args);
+    }
 
     // we need to design what patterns to look for that are common in all requests so
     // we can know with certainty that 2 requests look for the same resource
     // the "_" param is global, so now we just ignore handling queue in requests that have params
-    if (request.params && Object.keys(request.params).length > 1) return axios[action](endpoint, ...args);
+    if (request.params && Object.keys(request.params).length > 1) {
+      return axios[action](endpoint, ...args);
+    }
 
     if (!globalQueue.activeRequests[endpoint]) {
       // first request, no queue
-
       globalQueue.activeRequests[endpoint] = request;
-      if (!globalQueue.queuedRequests[endpoint]) globalQueue.queuedRequests[endpoint] = [];
+      if (!globalQueue.queuedRequests[endpoint]) {
+        globalQueue.queuedRequests[endpoint] = [];
+      }
+
       return axios[action](endpoint, ...args);
     }
-    // pending request already registered, queue this request
 
+    // pending request already registered, queue this request
     const pending = globalQueue.queuedRequests[endpoint];
     pending.push({
       action, args, endpoint, request,
     });
+
     const defered = new Promise((resolve, reject) => {
       request.Promise = {reject, resolve};
     });
+
     request.Promise.instance = defered;
     return defered;
   }
 
-
   register(action, moduleInfo, ...args){
-    this.requestCounter++;
+    this.requestCounter += 1;
     const id = [moduleInfo.apiModule, moduleInfo.resourceName, this.requestCounter].join('_');
     const httpData = args.find(obj => obj.params);
     const params = httpData && httpData.params;
@@ -199,7 +230,7 @@ export default class Rest extends http {
     const meta = {
       ...moduleInfo,
       action,
-      created: new Date().getTime(),
+      created: Date.now(),
       id,
       params,
       status: 'registered',
@@ -215,6 +246,6 @@ export default class Rest extends http {
   cancel(req){
     req.discard = true;
     req.status = 'canceled';
-    req.completed = new Date().getTime();
+    req.completed = Date.now();
   }
 }

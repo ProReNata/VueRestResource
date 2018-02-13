@@ -1,8 +1,7 @@
+import noop from 'lodash/noop';
 
 const actions = {
-  init(){
-    // empty
-  },
+  init: noop,
   registerComponentInStore(store, uuid){
     store.commit('registerComponent', uuid);
   },
@@ -22,7 +21,10 @@ const actions = {
 
 const mutations = {
   registerComponent(state, uuid){
-    if (state.registeredComponents[uuid]) throw 'component already registered';
+    if (state.registeredComponents[uuid]) {
+      throw new Error('component already registered');
+    }
+
     state.registeredComponents[uuid] = [];
   },
   registerRequest(state, req){
@@ -36,7 +38,10 @@ const mutations = {
     };
   },
   unregisterComponent(state, uuid){
-    if (!state.registeredComponents[uuid]) throw 'component not registered';
+    if (!state.registeredComponents[uuid]) {
+      throw new Error('component not registered');
+    }
+
     state.registeredComponents[uuid] = null;
     delete state.registeredComponents[uuid];
   },

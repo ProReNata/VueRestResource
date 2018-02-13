@@ -5,15 +5,15 @@ import requestsStore from './src/requestsStore';
 import MODULE_NAME from './src/moduleName';
 
 export default (config) => {
-    const {store} = config;
-    store.registerModule(MODULE_NAME, requestsStore);
+  const {store} = config;
+  store.registerModule(MODULE_NAME, requestsStore);
 
-    return {
-        registerResource: (resources) => {
-            const uuid = createUUID();
-            store.dispatch('Requests/registerComponentInStore', uuid);
-            return new Rest(uuid, resources, config);
-        },
-        HTTP: HTTP,
-    }
-}
+  return {
+    registerResource: (resources) => {
+      const uuid = createUUID();
+      store.dispatch('Requests/registerComponentInStore', uuid);
+      return new Rest(uuid, resources, config);
+    },
+    HTTP,
+  };
+};

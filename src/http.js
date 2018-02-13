@@ -53,7 +53,7 @@ export default class {
       handler: this.handler.list,
     };
     return this.dispatch('list', resources, {
-        ...this.httpHeaders,
+      ...this.httpHeaders,
       params: {
         ...data,
         ...this.defaultParams,
@@ -69,7 +69,7 @@ export default class {
       handler: this.handler.create,
     };
     return this.dispatch('post', resources, data, {
-        ...this.httpHeaders,
+      ...this.httpHeaders,
     });
   }
 
@@ -81,7 +81,7 @@ export default class {
       handler: this.handler.update,
     };
     return this.dispatch('put', resources, data, {
-        ...this.httpHeaders,
+      ...this.httpHeaders,
     });
   }
 
@@ -93,7 +93,7 @@ export default class {
       handler: this.handler.delete || (() => id),
     };
     return this.dispatch('delete', resources, {
-        ...this.httpHeaders,
+      ...this.httpHeaders,
     });
   }
 
@@ -103,7 +103,7 @@ export default class {
     return this.dispatch(this.resource.httpMethod, resources, data, {
       headers: {
         ...this.httpHeaders.headers,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
     });
   }
