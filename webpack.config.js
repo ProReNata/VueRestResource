@@ -94,6 +94,12 @@ module.exports = (env = {}) => {
    */
   const CLI_BUILD = !!env.cli;
 
+  /**
+   * Indicates if build should be uglified.
+   * @type {boolean}
+   */
+  const UGLIFY = !!env.uglify;
+
   if (CLI_BUILD) {
     console.info(`::: Build platform ${os.platform()}.`);
     console.info(`::: Number of logical system CPUs ${CPU_COUNT}.`);
@@ -169,7 +175,7 @@ module.exports = (env = {}) => {
   ];
 
   /* Add uglify plugin if production. */
-  if (NODE_ENV === PRODUCTION) {
+  if (UGLIFY && NODE_ENV === PRODUCTION) {
     /**
      * How many logical system CPUS to use for Uglify process.
      * @type {number}
@@ -541,6 +547,7 @@ module.exports = (env = {}) => {
      */
     output: {
       filename: 'index.js',
+      libraryTarget: 'umd',
       path: BUILD_DIR,
     },
 
