@@ -11,9 +11,13 @@ export default (config) => {
   return {
     registerResource: (resources) => {
       const uuid = createUUID();
-      store.dispatch('Requests/registerComponentInStore', uuid);
+      store.dispatch(`${MODULE_NAME}/registerComponentInStore`, uuid);
       return new Rest(uuid, resources, config);
     },
-    HTTP,
+    HTTP: class extends HTTP {
+      constructor(resource){
+        super(resource, config);
+      }
+    },
   };
 };

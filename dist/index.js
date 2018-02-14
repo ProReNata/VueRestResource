@@ -2425,6 +2425,22 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _getPrototypeOf = __webpack_require__(135);
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(36);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _possibleConstructorReturn2 = __webpack_require__(138);
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(150);
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
 var _newArrowCheck2 = __webpack_require__(15);
 
 var _newArrowCheck3 = _interopRequireDefault(_newArrowCheck2);
@@ -2464,10 +2480,19 @@ exports.default = function (config) {
       (0, _newArrowCheck3.default)(undefined, undefined);
 
       var uuid = (0, _v2.default)();
-      store.dispatch('Requests/registerComponentInStore', uuid);
+      store.dispatch(String(_moduleName2.default) + '/registerComponentInStore', uuid);
       return new _rest2.default(uuid, resources, config);
     }.bind(undefined),
-    HTTP: _http2.default
+    HTTP: function (_HTTP2) {
+      (0, _inherits3.default)(HTTP, _HTTP2);
+
+      function HTTP(resource) {
+        (0, _classCallCheck3.default)(this, HTTP);
+        return (0, _possibleConstructorReturn3.default)(this, (HTTP.__proto__ || (0, _getPrototypeOf2.default)(HTTP)).call(this, resource, config));
+      }
+
+      return HTTP;
+    }(_http2.default)
   };
 }.bind(undefined);
 
