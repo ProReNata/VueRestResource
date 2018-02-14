@@ -39,9 +39,9 @@ export default class Rest extends http{
 
   // Dispatcher methods (overrides HTTP dispatch method)
   dispatch(action, {
-    endpoint, handler, callback, resourceName, apiModule,
+    endpoint, handler, callback, apiModel, apiModule,
   }, ...args){
-    const mutation = `${apiModule}/${action}${capitalizeFirst(resourceName)}`;
+    const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
     if (action === 'list') {
       // axios has no 'list'
       action = 'get';
@@ -57,7 +57,7 @@ export default class Rest extends http{
      *   - pending
      */
 
-    const request = this.register(action, {apiModule, endpoint, resourceName}, ...args);
+    const request = this.register(action, {apiModule, endpoint, apiModel}, ...args);
     this.store.dispatch(REGISTER, request);
 
     // prepare for slow request
@@ -223,7 +223,7 @@ export default class Rest extends http{
 
   register(action, moduleInfo, ...args){
     this.requestCounter += 1;
-    const id = [moduleInfo.apiModule, moduleInfo.resourceName, this.requestCounter].join('_');
+    const id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
     const httpData = args.find(obj => obj.params);
     const params = httpData && httpData.params;
 

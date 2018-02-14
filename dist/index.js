@@ -1471,7 +1471,6 @@ var _class = function () {
   function _class(resource, config) {
     (0, _classCallCheck3.default)(this, _class);
 
-    this.resourceName = resource.resourceName;
     this.handler = (0, _extends3.default)({}, defaultResourceHandlers, resource.handler);
     this.baseUrl = config.baseUrl;
     this.apiModel = resource.apiModel;
@@ -1483,8 +1482,7 @@ var _class = function () {
 
     this.actionObjectDefault = {
       apiModel: this.apiModel,
-      apiModule: this.apiModule,
-      resourceName: this.resourceName
+      apiModule: this.apiModule
     };
   }
 
@@ -3905,10 +3903,10 @@ var Rest = function (_http) {
       var endpoint = _ref.endpoint,
           handler = _ref.handler,
           callback = _ref.callback,
-          resourceName = _ref.resourceName,
+          apiModel = _ref.apiModel,
           apiModule = _ref.apiModule;
 
-      var mutation = String(apiModule) + '/' + String(action) + String(capitalizeFirst(resourceName));
+      var mutation = String(apiModule) + '/' + String(action) + String(capitalizeFirst(apiModel));
       if (action === 'list') {
         // axios has no 'list'
         action = 'get';
@@ -3928,7 +3926,7 @@ var Rest = function (_http) {
         args[_key - 2] = arguments[_key];
       }
 
-      var request = this.register.apply(this, [action, { apiModule: apiModule, endpoint: endpoint, resourceName: resourceName }].concat(args));
+      var request = this.register.apply(this, [action, { apiModule: apiModule, endpoint: endpoint, apiModel: apiModel }].concat(args));
       this.store.dispatch(REGISTER, request);
 
       // prepare for slow request
@@ -4109,7 +4107,7 @@ var Rest = function (_http) {
       var _this4 = this;
 
       this.requestCounter += 1;
-      var id = [moduleInfo.apiModule, moduleInfo.resourceName, this.requestCounter].join('_');
+      var id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
 
       for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
         args[_key3 - 2] = arguments[_key3];

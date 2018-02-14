@@ -9,7 +9,6 @@ const defaultResourceHandlers = {
 
 export default class {
   constructor(resource, config){
-    this.resourceName = resource.resourceName;
     this.handler = {
       // set the default handler if its not overrided in the local module resource
       ...defaultResourceHandlers,
@@ -26,7 +25,6 @@ export default class {
     this.actionObjectDefault = {
       apiModel: this.apiModel,
       apiModule: this.apiModule,
-      resourceName: this.resourceName,
     };
   }
   get(id, data = {}, cb){
