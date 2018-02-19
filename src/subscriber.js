@@ -2,26 +2,32 @@ const activeListeners = {
   mutation: {},
 };
 
-/*
-const unsubscribe = store.subscribe((mutation, state) => {
-  const {type} = mutation; // endpoint
-  if (type !== 'Requests/updateRequest') return;
+const registeredStores = {};
 
-  const {
-    uuid, status, endpoint, response,
-  } = mutation.payload;
-  const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
-  if (!listeners) return;
+function connectStore(store, stores){
+  if (stores[store]) return;
 
-  if (status === 'success') {
-    listeners.forEach(({callbacks}) => callbacks.onSuccess && callbacks.onSuccess(response.id));
-  } else if (status === 'timeout' || status === 'failed') {
-    listeners.forEach(({callbacks}) => callbacks.onFail && callbacks.onFail(status, mutation.payload));
-  } else if (status === 'slow') {
-    listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
-  }
-});
-*/
+  stores[store] = store.subscribe((mutation) => {
+    const {type} = mutation; // endpoint
+    if (type !== 'Requests/updateRequest') return;
+
+    const {
+      uuid, status, endpoint, response,
+    } = mutation.payload;
+    const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
+    if (!listeners) return;
+
+    if (status === 'success') {
+      listeners.forEach(({callbacks}) => callbacks.onSuccess && callbacks.onSuccess(response.id));
+    } else if (status === 'timeout' || status === 'failed') {
+      listeners.forEach(({callbacks}) => callbacks.onFail && callbacks.onFail(status, mutation.payload));
+    } else if (status === 'slow') {
+      listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
+    }
+  });
+}
+
+
 
 export default class Subscriber{
   constructor(endpoint, uuid, store){
@@ -29,6 +35,7 @@ export default class Subscriber{
     this.uuid = uuid;
     this.callbacks = {};
     this.store = store;
+    connectStore(store, registeredStores);
     this.registerListener();
     return this;
   }

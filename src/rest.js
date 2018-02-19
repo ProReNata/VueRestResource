@@ -176,10 +176,10 @@ export default class Rest extends http{
         logger.error(err);
       });
 
-    const {uuid} = this;
+    const {uuid, store} = this;
     return {
       subscribe(){
-        return new Subscriber(endpoint, uuid, this.store);
+        return new Subscriber(endpoint, uuid, store);
       },
     };
   }
