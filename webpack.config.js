@@ -51,7 +51,7 @@ const DEVELOPMENT = 'development';
  * The default exclude regex.
  * @type {string}
  */
-const DEFAULT_EXCLUDE_RX = /(node_modules|bower_components)/;
+const DEFAULT_EXCLUDE_RX = /node_modules/;
 
 /**
  * Allows you to pass in as many environment variables as you like using --env.
@@ -125,13 +125,7 @@ module.exports = (env = {}) => {
    * @type {string}
    * @see {@link https://webpack.js.org/configuration/devtool/}
    */
-  const devTool = NODE_ENV === PRODUCTION ? 'nosources-source-map' : 'eval-source-map';
-
-  // https://github.com/github/fetch
-  // https://github.com/webpack-contrib/imports-loader
-  // https://github.com/webpack-contrib/exports-loader
-  // https://webpack.js.org/guides/migrating/#automatic-loader-module-name-extension-removed
-  const WHATWG_FETCH = 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch';
+  const devTool = NODE_ENV === PRODUCTION ? 'source-map' : 'eval-source-map';
 
   /**
    * Plugins are the backbone of webpack. webpack itself is built on the same plugin system
@@ -154,24 +148,11 @@ module.exports = (env = {}) => {
     }),
 
     /**
-     * Fetch polyfill for environments that are missing the API.
-     * Only loads if reaquired.
-     * @type {!Object}
-     * @see {@linkhttps://webpack.js.org/plugins/provide-plugin/
-     */
-    new webpack.ProvidePlugin({
-      fetch: WHATWG_FETCH,
-      'window.fetch': WHATWG_FETCH,
-    }),
-
-    /**
      * Smaller lodash builds. We are not opting in to path feature.
      * @type {!Object}
      * @see {@link https://github.com/lodash/lodash-webpack-plugin}
      */
-    new LodashModuleReplacementPlugin({
-      paths: true,
-    }),
+    new LodashModuleReplacementPlugin(),
   ];
 
   /* Add uglify plugin if production. */

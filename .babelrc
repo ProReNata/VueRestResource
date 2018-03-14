@@ -15,7 +15,7 @@
           "Android >= 6"
         ]
       },
-      "useBuiltIns": "usage",
+      "useBuiltIns": false,
       "debug": false
     }],
     "stage-2"
@@ -28,7 +28,12 @@
     "transform-es5-property-mutators",
     "transform-export-extensions",
     "transform-object-rest-spread",
-    "transform-runtime",
+    ["transform-runtime", {
+      "helpers": true,
+      "polyfill": false,
+      "useESModules": false,
+      "useBuiltIns": true
+    }],
     "transform-vue-jsx"
   ]
 }
