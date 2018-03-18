@@ -22,7 +22,6 @@
   ],
   "plugins": [
     "dynamic-import-node",
-    "js-logger",
     "lodash",
     "transform-class-properties",
     "transform-es5-property-mutators",
@@ -34,6 +33,5 @@
       "useESModules": false,
       "useBuiltIns": true
     }],
-    "transform-vue-jsx"
   ]
 }
