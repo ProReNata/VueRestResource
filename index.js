@@ -1,6 +1,7 @@
 import createUUID from 'uuid/v4';
 import HTTP from './src/http';
 import Rest from './src/rest';
+import helpers from './src/helpers';
 import requestsStore from './src/requestsStore';
 import MODULE_NAME from './src/moduleName';
 
@@ -19,5 +20,6 @@ export default (config) => {
         super(resource, config);
       }
     },
+    ...helpers,
   };
 };
