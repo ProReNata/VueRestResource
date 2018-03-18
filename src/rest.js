@@ -112,9 +112,9 @@ export default class Rest extends http{
          */
 
         if (callback) {
+          // Used in some controllers when data from server needs to be processed before being set in store
           callback(data, this.store);
         } else {
-          // Used in some controllers when data from server needs to be processed before being set in store
           this.store.dispatch(mutation, data);
         }
 
