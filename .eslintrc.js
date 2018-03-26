@@ -229,14 +229,6 @@ module.exports = {
   ],
 
   /**
-   * You can define global variables here.
-   * @see {@link https://eslint.org/docs/user-guide/configuring#specifying-globals|globals}
-   */
-  globals: {
-    logger: false,
-  },
-
-  /**
    * Sometimes a more fine-controlled configuration is necessary, for example if the configuration
    * for files within the same directory has to be different.
    * @see {@link https://eslint.org/docs/user-guide/configuring#configuration-based-on-glob-patterns|overrides}

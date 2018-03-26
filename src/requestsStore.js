@@ -65,7 +65,7 @@ const mutations = {
     const index = componentRequests.findIndex(r => r.id === req.id && r.uuid === req.uuid);
 
     if (index === -1) {
-      logger.log('store mutations > updateRequest: Request not found in store');
+      console.log('store mutations > updateRequest: Request not found in store');
     }
 
     componentRequests[index] = {

@@ -41,7 +41,6 @@
   ],
   "dependencies": {
     "axios": "^0.18.0",
-    "js-logger": "^1.4.1",
     "lodash": "^4.17.5",
     "uuid": "^3.2.1"
   },
@@ -49,7 +48,6 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-dynamic-import-node": "^1.2.0",
-    "babel-plugin-js-logger": "^1.0.17",
     "babel-plugin-lodash": "^3.3.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-es5-property-mutators": "^6.24.1",

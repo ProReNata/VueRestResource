@@ -173,7 +173,7 @@ export default class Rest extends http{
           }
         }
 
-        logger.error(err);
+        console.error(err);
       });
 
     const {uuid, store} = this;
