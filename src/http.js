@@ -1,4 +1,5 @@
 import axios from 'axios';
+import noop from 'lodash/noop';
 
 const defaultResourceHandlers = {
   create: response => response.data,
@@ -97,6 +98,7 @@ export default class {
 
   remoteAction(id, data = {}){
     const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
+    if (!resources.handler) resources.handler = noop;
 
     return this.dispatch(this.resource.httpMethod, resources, data, {
       headers: {
@@ -116,7 +118,7 @@ export default class {
     if (action === 'list') action = 'get'; // axios has no 'list'
     const ajax = axios[action](endpoint, ...args);
     return ajax.then(res => handler(res)).catch((reason) => {
-      logger.error('http dispatch', reason);
+      console.log('http dispatch', reason);
     });
   }
 }
