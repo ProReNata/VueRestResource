@@ -1,4 +1,6 @@
 
+const noValueFound = {};
+
 const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsyncID){
   if (this.relatedAsyncID === -1) return;
   let resourceValue = relatedAsyncID;
@@ -11,11 +13,11 @@ const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsy
       this, resourceValue, asyncKey, RestResources[i],
     );
 
-    if (!storeValue) {
+    if (storeValue === noValueFound) {
       RestResources[i].get(resourceValue);
       return; // resource not loaded yet, the computed function will be called again when store is updated
     }
-    resourceValue = AsyncValueResolver(storeValue); // re-assign resourceValue to be applied as next foreign key
+    resourceValue = AsyncValueResolver(storeValue, noValueFound); // re-assign resourceValue to be applied as next foreign key
   }
   return resourceValue;
 };
@@ -30,7 +32,7 @@ const getStoreResourceValue = function(asyncID, asyncKey, resource){
   } else if (state[asyncKey] === asyncID) {
     return state;
   }
-  return null;
+  return noValueFound;
 };
 
 
