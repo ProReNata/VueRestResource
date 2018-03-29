@@ -4688,6 +4688,8 @@ var _newArrowCheck3 = _interopRequireDefault(_newArrowCheck2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var noValueFound = {};
+
 var getResourceValue = function getResourceValue(RestResources, AsyncValueResolvers, relatedAsyncID) {
   if (this.relatedAsyncID === -1) return;
   var resourceValue = relatedAsyncID;
@@ -4698,11 +4700,11 @@ var getResourceValue = function getResourceValue(RestResources, AsyncValueResolv
 
     var storeValue = getStoreResourceValue.call(this, resourceValue, asyncKey, RestResources[i]);
 
-    if (!storeValue) {
+    if (storeValue === noValueFound) {
       RestResources[i].get(resourceValue);
       return; // resource not loaded yet, the computed function will be called again when store is updated
     }
-    resourceValue = AsyncValueResolver(storeValue); // re-assign resourceValue to be applied as next foreign key
+    resourceValue = AsyncValueResolver(storeValue, noValueFound); // re-assign resourceValue to be applied as next foreign key
   }
   return resourceValue;
 };
@@ -4724,7 +4726,7 @@ var getStoreResourceValue = function getStoreResourceValue(asyncID, asyncKey, re
   } else if (state[asyncKey] === asyncID) {
     return state;
   }
-  return null;
+  return noValueFound;
 };
 
 exports.default = {
