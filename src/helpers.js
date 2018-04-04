@@ -28,7 +28,7 @@ const getStoreResourceValue = function(asyncID, asyncKey, resource){
   const state = this.$store.getters[`${apiModule}/${apiModel}`] || [];
 
   if (Array.isArray(state)) {
-    return state.find(obj => obj[asyncKey] === asyncID);
+    return state.find(obj => obj[asyncKey] === asyncID) || noValueFound;
   } else if (state[asyncKey] === asyncID) {
     return state;
   }

@@ -4722,7 +4722,7 @@ var getStoreResourceValue = function getStoreResourceValue(asyncID, asyncKey, re
     return state.find(function (obj) {
       (0, _newArrowCheck3.default)(this, _this);
       return obj[asyncKey] === asyncID;
-    }.bind(this));
+    }.bind(this)) || noValueFound;
   } else if (state[asyncKey] === asyncID) {
     return state;
   }
