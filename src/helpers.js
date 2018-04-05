@@ -14,8 +14,13 @@ const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsy
     );
 
     if (storeValue === noValueFound) {
-      RestResources[i].get(resourceValue);
-      return; // resource not loaded yet, the computed function will be called again when store is updated
+
+      // we need a setTimeout here so the values/getters this method calls don't get loggedby computed properties
+      // and so don't get registered as dependencies to react on
+      setTimeout(() => RestResources[i].get(resourceValue), 1);
+
+      // resource not loaded yet, the computed function will be called again when store is updated
+      return;
     }
     resourceValue = AsyncValueResolver(storeValue, noValueFound); // re-assign resourceValue to be applied as next foreign key
   }
