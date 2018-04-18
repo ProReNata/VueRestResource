@@ -177,11 +177,9 @@ export default class Rest extends http{
       });
 
     const {uuid, store} = this;
-    return {
-      subscribe(){
-        return new Subscriber(endpoint, uuid, store);
-      },
-    };
+    return new Promise((resolve, reject) => {
+      new Subscriber(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
+    });
   }
 
   handleQueue(request, action, endpoint, ...args){
