@@ -68,10 +68,13 @@ const mutations = {
       console.log('store mutations > updateRequest: Request not found in store');
     }
 
-    componentRequests[index] = {
-      ...componentRequests[index],
-      ...req,
+    state.registeredComponents = {
+      ...state.registeredComponents,
+      [req.uuid]: componentRequests.map(
+        (entry, i) => index === i ? req : entry
+      ),
     };
+
   },
 };
 
