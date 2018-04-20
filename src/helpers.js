@@ -1,8 +1,9 @@
 
 const noValueFound = {};
+const arrayFrom = (identity) => Array.isArray(identity) ? identity : [identity];
 
 const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsyncID){
-  if (this.relatedAsyncID === -1) return;
+  if (relatedAsyncID === -1) return;
   let resourceValue = relatedAsyncID;
 
   for (let i = 0, l = RestResources.length; i < l; i++) {
@@ -14,15 +15,17 @@ const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsy
     );
 
     if (storeValue === noValueFound) {
-
       // we need a setTimeout here so the values/getters this method calls don't get loggedby computed properties
       // and so don't get registered as dependencies to react on
       setTimeout(() => RestResources[i].get(resourceValue), 1);
 
-      // resource not loaded yet, the computed function will be called again when store is updated
+      // resource not loaded yet,
+      // the computed function will be called again when store is updated
       return;
     }
-    resourceValue = AsyncValueResolver(storeValue, noValueFound); // re-assign resourceValue to be applied as next foreign key
+
+    // re-assign resourceValue to be applied as next foreign key
+    resourceValue = AsyncValueResolver(storeValue, noValueFound);
   }
   return resourceValue;
 };
@@ -46,7 +49,7 @@ export default {
   asyncResourceValue: {
     asyncResourceValue: function(){
       const {RestResources, relatedAsyncID, AsyncValueResolver} = this;
-      return getResourceValue.call(this, RestResources, AsyncValueResolver, relatedAsyncID);
+      return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID);
     }
   },
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
