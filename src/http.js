@@ -29,8 +29,8 @@ const globalQueue = {
   queuedRequests: {}, // endpoints as key values
 };
 
-export default class Rest extends methods{
-  constructor(uuid, resources, config){
+export default class Rest extends methods {
+  constructor(uuid, resources, config) {
     super(resources, config);
     this.uuid = uuid;
     this.requestCounter = 0;
@@ -40,7 +40,7 @@ export default class Rest extends methods{
   // Dispatcher methods (overrides HTTP dispatch method)
   dispatch(action, {
     endpoint, handler, callback, apiModel, apiModule,
-  }, ...args){
+  }, ...args) {
     const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
     if (action === 'list') {
       // axios has no 'list'
@@ -58,7 +58,6 @@ export default class Rest extends methods{
      */
 
     const request = this.register(action, {apiModule, endpoint, apiModel}, ...args);
-    console.log('>>>>', REGISTER, request);
     this.store.dispatch(REGISTER, request);
 
     // prepare for slow request
@@ -67,7 +66,7 @@ export default class Rest extends methods{
         ...request,
         status: 'slow',
       });
-    }, 1000);
+    }, this.slowTimeout);
 
     // prepare for request timeout
     let timeout = false;
@@ -78,7 +77,7 @@ export default class Rest extends methods{
         completed: Date.now(),
         status: 'timeout',
       });
-    }, 20000); // todo: make this configurable
+    }, this.failedTimeout);
 
     const ajax = this.handleQueue(request, action, endpoint, ...args);
     /* @todo: add a global warning component when requests fail */
@@ -183,7 +182,7 @@ export default class Rest extends methods{
     });
   }
 
-  handleQueue(request, action, endpoint, ...args){
+  handleQueue(request, action, endpoint, ...args) {
     if (action !== 'get') {
       // NB: check comment text about implementation of "update" requests inside queue of "get"s (on top of this file)
       return axios[action](endpoint, ...args);
@@ -220,7 +219,7 @@ export default class Rest extends methods{
     return defered;
   }
 
-  register(action, moduleInfo, ...args){
+  register(action, moduleInfo, ...args) {
     this.requestCounter += 1;
     const id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
     const httpData = args.find(obj => obj.params);
@@ -238,11 +237,11 @@ export default class Rest extends methods{
     return meta;
   }
 
-  unregister(request){
+  unregister(request) {
     this.store.dispatch(UNREGISTER, request);
   }
 
-  cancel(req){
+  cancel(req) {
     req.discard = true;
     req.status = 'canceled';
     req.completed = Date.now();

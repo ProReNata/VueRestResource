@@ -16,6 +16,9 @@ export default class {
       ...resource.handler,
     };
     this.baseUrl = config.baseUrl;
+    this.slowTimeout = config.slowTimeout || 2000;
+    this.failedTimeout = config.failedTimeout || 15000;
+
     this.apiModel = resource.apiModel;
     this.apiModule = resource.apiModule;
     this.endpoint = `${this.baseUrl}/${this.apiModule}/${this.apiModel}/`.toLowerCase();
