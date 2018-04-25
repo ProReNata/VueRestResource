@@ -120,8 +120,6 @@ export default class {
     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     if (action === 'list') action = 'get'; // axios has no 'list'
     const ajax = axios[action](endpoint, ...args);
-    return ajax.then(res => handler(res)).catch((reason) => {
-      console.log('methods dispatch', reason);
-    });
+    return ajax.then(res => handler(res));
   }
 }
