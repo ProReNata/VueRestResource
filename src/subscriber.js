@@ -20,7 +20,7 @@ function connectStore(store, stores){
     if (status === 'success') {
       listeners.forEach(({callbacks}) => callbacks.onSuccess && callbacks.onSuccess(response.id));
     } else if (status === 'timeout' || status === 'failed') {
-      listeners.forEach(({callbacks}) => callbacks.onFail && callbacks.onFail(status, mutation.payload));
+      listeners.forEach(({callbacks}) => callbacks.onFail && callbacks.onFail(mutation.payload));
     } else if (status === 'slow') {
       listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
     }
@@ -70,8 +70,8 @@ export default class Subscriber{
   }
 
   onFail(fn){
-    this.callbacks.onFail = (status, requestData) => {
-      fn(status, requestData);
+    this.callbacks.onFail = (requestData) => {
+      fn(requestData);
       this.unregisterListener();
     };
     return this;
