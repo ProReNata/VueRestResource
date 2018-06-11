@@ -2,12 +2,12 @@
 const noValueFound = {};
 const arrayFrom = (identity) => Array.isArray(identity) ? identity : [identity];
 
-const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsyncID){
+const getResourceValue = function(RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys){
   if (relatedAsyncID === -1) return;
   let resourceValue = relatedAsyncID;
 
   for (let i = 0, l = RestResources.length; i < l; i++) {
-    const asyncKey = this.asyncKey[i];
+    const asyncKey = asyncKeys[i];
     const AsyncValueResolver = AsyncValueResolvers[i];
 
     const storeValue = getStoreResourceValue.call(
@@ -48,20 +48,21 @@ export default {
   // use as `...asyncResourceValue` in the components computed properties
   asyncResourceValue: {
     asyncResourceValue: function(){
-      const {RestResources, relatedAsyncID, AsyncValueResolver} = this;
-      return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID);
+      const {RestResources, relatedAsyncID, AsyncValueResolver, asyncKey} = this;
+      return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
     }
   },
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
-  asyncResourceGetter: function(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath){
+  asyncResourceGetter: function(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath){
     return {
       [computedPropertyName]: function(){
         // get the needed values from object nested (or not) paths in `this`
-        const [RestResources, AsyncValueResolvers, relatedAsyncID] = [RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath].map(path => {
+        const [RestResources, AsyncValueResolvers, relatedAsyncID, asyncKey] = [RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath].map(path => {
+          if (typeof path !== 'string') return path;
           return path.split('.').reduce((obj, key) => obj[key] || {}, this);
         });
 
-        return getResourceValue.call(this, RestResources, AsyncValueResolvers, relatedAsyncID);
+        return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolvers), relatedAsyncID);
       }
     }
   }
