@@ -62,7 +62,7 @@ export default {
           return path.split('.').reduce((obj, key) => obj[key] || {}, this);
         });
 
-        return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolvers), relatedAsyncID);
+        return getResourceValue.call(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolvers), relatedAsyncID, asyncKey);
       }
     }
   }
