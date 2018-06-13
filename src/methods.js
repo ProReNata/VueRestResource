@@ -93,6 +93,7 @@ export default class {
       callback: cb,
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.delete || (() => id),
+      deletedId: id
     };
     return this.dispatch('delete', resources, {
       ...this.httpHeaders,
@@ -113,11 +114,11 @@ export default class {
 
   // dispatch for de-coupled components
   dispatch(action, {endpoint, handler}, ...args){
-    /* * * * * * * * * * * ** * * * * * * * * * * * * * * * * *
-    *     This class method is only for components that       *
-    *      need to speak with server de-coupled from store.    *
-    *     Rule is: all Components should instanciate methods.js  *
-    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /* * * * * * * * * * * ** * * * * * * * * * * * * * * * * * * *
+    *     This class method is only for components that           *
+    *     need to speak with server de-coupled from store.        *
+    *     Rule is: all Components should instanciate methods.js   *
+    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     if (action === 'list') action = 'get'; // axios has no 'list'
     const ajax = axios[action](endpoint, ...args);
     return ajax.then(res => handler(res));

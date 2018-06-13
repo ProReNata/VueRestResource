@@ -39,7 +39,7 @@ export default class Rest extends methods {
 
   // Dispatcher methods (overrides HTTP dispatch method)
   dispatch(action, {
-    endpoint, handler, callback, apiModel, apiModule,
+    endpoint, handler, callback, apiModel, apiModule, deletedId
   }, ...args) {
     const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
     if (action === 'list') {
@@ -101,6 +101,7 @@ export default class Rest extends methods {
           return undefined;
         }
 
+        if (!res && action === 'delete') res = deletedId;
         const responseCopy = JSON.parse(JSON.stringify(res)); //
         const data = handler(responseCopy, this.store);
 
