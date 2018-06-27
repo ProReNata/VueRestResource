@@ -2,16 +2,16 @@ import axios from 'axios';
 import noop from 'lodash/noop';
 
 const defaultResourceHandlers = {
-  create: response => response.data,
-  get: response => response.data,
-  list: response => response.data.objects,
-  update: response => response.data,
+  create: (response) => response.data,
+  get: (response) => response.data,
+  list: (response) => response.data.objects,
+  update: (response) => response.data,
 };
 
 export default class {
-  constructor(resource, config){
+  constructor(resource, config) {
     this.handler = {
-      // set the default handler if its not overrided in the local module resource
+      // set the default handler if its not overridden in the local module resource
       ...defaultResourceHandlers,
       ...resource.handler,
     };
@@ -31,7 +31,8 @@ export default class {
       apiModule: this.apiModule,
     };
   }
-  get(id, data = {}, cb){
+
+  get(id, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
@@ -47,7 +48,7 @@ export default class {
     });
   }
 
-  list(data = {}, cb){
+  list(data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
@@ -63,7 +64,7 @@ export default class {
     });
   }
 
-  create(data = {}, cb){
+  create(data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
@@ -75,7 +76,7 @@ export default class {
     });
   }
 
-  update(id, data = {}, cb){
+  update(id, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
@@ -87,20 +88,20 @@ export default class {
     });
   }
 
-  delete(id, cb){
+  delete(id, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
+      deletedId: id,
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.delete || (() => id),
-      deletedId: id
     };
     return this.dispatch('delete', resources, {
       ...this.httpHeaders,
     });
   }
 
-  remoteAction(id, data = {}){
+  remoteAction(id, data = {}) {
     const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
     if (!resources.handler) resources.handler = noop;
 
@@ -113,14 +114,14 @@ export default class {
   }
 
   // dispatch for de-coupled components
-  dispatch(action, {endpoint, handler}, ...args){
-    /* * * * * * * * * * * ** * * * * * * * * * * * * * * * * * * *
-    *     This class method is only for components that           *
-    *     need to speak with server de-coupled from store.        *
-    *     Rule is: all Components should instanciate methods.js   *
-    * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    if (action === 'list') action = 'get'; // axios has no 'list'
-    const ajax = axios[action](endpoint, ...args);
-    return ajax.then(res => handler(res));
+  dispatch(action, {endpoint, handler}, ...args) {
+    /** * * * * * * * * * ** * * * * * * * * * * * * * * * * * * *
+     *     This class method is only for components that           *
+     *     need to speak with server de-coupled from store.        *
+     *     Rule is: all Components should instanciate methods.js   *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
+    const ajax = axios[actionType](endpoint, ...args);
+    return ajax.then((res) => handler(res));
   }
 }
