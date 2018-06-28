@@ -4,16 +4,14 @@ const activeListeners = {
 
 const registeredStores = {};
 
-function connectStore(store, stores){
+const connectStore = (store, stores) => {
   if (stores[store]) return;
 
   stores[store] = store.subscribe((mutation) => {
     const {type} = mutation; // endpoint
     if (type !== 'Requests/updateRequest') return;
 
-    const {
-      uuid, status, endpoint, response,
-    } = mutation.payload;
+    const {uuid, status, endpoint, response} = mutation.payload;
     const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
     if (!listeners) return;
 
@@ -25,12 +23,10 @@ function connectStore(store, stores){
       listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
     }
   });
-}
+};
 
-
-
-export default class Subscriber{
-  constructor(endpoint, uuid, store){
+export default class Subscriber {
+  constructor(endpoint, uuid, store) {
     this.endpoint = endpoint;
     this.uuid = uuid;
     this.callbacks = {};
@@ -40,7 +36,7 @@ export default class Subscriber{
     return this;
   }
 
-  registerListener(){
+  registerListener() {
     if (!activeListeners.mutation[this.endpoint]) {
       activeListeners.mutation[this.endpoint] = {};
     }
@@ -51,12 +47,12 @@ export default class Subscriber{
     activeListeners.mutation[this.endpoint][this.uuid].push(this);
   }
 
-  unregisterListener(){
+  unregisterListener() {
     const index = activeListeners.mutation[this.endpoint][this.uuid].indexOf(this);
     activeListeners.mutation[this.endpoint][this.uuid].splice(index, 1);
   }
 
-  onSuccess(fn){
+  onSuccess(fn) {
     this.callbacks.onSuccess = (id) => {
       fn(id);
       this.unregisterListener();
@@ -64,12 +60,12 @@ export default class Subscriber{
     return this;
   }
 
-  onSlow(fn){
+  onSlow(fn) {
     this.callbacks.onSlow = fn;
     return this;
   }
 
-  onFail(fn){
+  onFail(fn) {
     this.callbacks.onFail = (requestData) => {
       fn(requestData);
       this.unregisterListener();

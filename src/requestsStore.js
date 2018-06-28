@@ -2,32 +2,32 @@ import noop from 'lodash/noop';
 
 const actions = {
   init: noop,
-  registerComponentInStore(store, uuid){
+  registerComponentInStore(store, uuid) {
     store.commit('registerComponent', uuid);
   },
-  registerRequest(store, req){
+  registerRequest(store, req) {
     store.commit('registerRequest', req);
   },
-  unregisterComponentInStore(store, uuid){
+  unregisterComponentInStore(store, uuid) {
     store.commit('unregisterComponent', uuid);
   },
-  unregisterRequest(store, ref){
+  unregisterRequest(store, ref) {
     store.commit('unregisterRequest', ref);
   },
-  updateRequest(store, req){
+  updateRequest(store, req) {
     store.commit('updateRequest', req);
   },
 };
 
 const mutations = {
-  registerComponent(state, uuid){
+  registerComponent(state, uuid) {
     if (state.registeredComponents[uuid]) {
       throw new Error('component already registered');
     }
 
     state.registeredComponents[uuid] = [];
   },
-  registerRequest(state, req){
+  registerRequest(state, req) {
     state.registeredComponents[req.uuid].push({...req});
 
     // register by endpoint
@@ -37,7 +37,7 @@ const mutations = {
       [req.endpoint]: current.concat(req),
     };
   },
-  unregisterComponent(state, uuid){
+  unregisterComponent(state, uuid) {
     if (!state.registeredComponents[uuid]) {
       throw new Error('component not registered');
     }
@@ -45,47 +45,43 @@ const mutations = {
     state.registeredComponents[uuid] = null;
     delete state.registeredComponents[uuid];
   },
-  unregisterRequest(state, request){
-    const {registeredComponents} = state;
-    const {uuid, id, endpoint} = request;
+  unregisterRequest(state, request) {
+    const {id, endpoint} = request;
 
     // unregister endpoint
-    const others = state.activeRequestsToEndpoint[endpoint].filter(req => req.id !== id);
+    const others = state.activeRequestsToEndpoint[endpoint].filter((req) => req.id !== id);
     state.activeRequestsToEndpoint = {
       ...state.activeRequestsToEndpoint,
       [endpoint]: others,
     };
   },
-  updateRequest(state, req){
+  updateRequest(state, req) {
     // Since we cannot use listener for complex/nested objects
     // we use a shallow state key that triggers listeners in components
     // and they can check if the change is related to them or ignore the call
     state.lastUpdatedComponent = req.uuid;
     const componentRequests = state.registeredComponents[req.uuid];
-    const index = componentRequests.findIndex(r => r.id === req.id && r.uuid === req.uuid);
+    const index = componentRequests.findIndex((r) => r.id === req.id && r.uuid === req.uuid);
 
     if (index === -1) {
-      console.log('store mutations > updateRequest: Request not found in store');
+      console.info('store mutations > updateRequest: Request not found in store');
     }
 
     state.registeredComponents = {
       ...state.registeredComponents,
-      [req.uuid]: componentRequests.map(
-        (entry, i) => index === i ? req : entry
-      ),
+      [req.uuid]: componentRequests.map((entry, i) => (index === i ? req : entry)),
     };
-
   },
 };
 
 const getters = {
-  activeRequestsToEndpoint(state){
+  activeRequestsToEndpoint(state) {
     return state.activeRequestsToEndpoint;
   },
-  lastUpdatedComponent(state){
+  lastUpdatedComponent(state) {
     return state.lastUpdatedComponent;
   },
-  registeredComponents(state){
+  registeredComponents(state) {
     return state.registeredComponents;
   },
 };

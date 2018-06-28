@@ -10,16 +10,18 @@ export default (config) => {
   store.registerModule(MODULE_NAME, requestsStore);
 
   return {
+    ...helpers,
+
+    HTTP: class extends HTTP {
+      constructor(resource) {
+        super(resource, config);
+      }
+    },
+
     registerResource: (resources) => {
       const uuid = createUUID();
       store.dispatch(`${MODULE_NAME}/registerComponentInStore`, uuid);
       return new Rest(uuid, resources, config);
     },
-    HTTP: class extends HTTP {
-      constructor(resource){
-        super(resource, config);
-      }
-    },
-    ...helpers,
   };
 };

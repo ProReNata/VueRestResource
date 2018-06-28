@@ -6,7 +6,7 @@ import MODULE_NAME from './moduleName';
 const REGISTER = `${MODULE_NAME}/registerRequest`;
 const UPDATE = `${MODULE_NAME}/updateRequest`;
 const UNREGISTER = `${MODULE_NAME}/unregisterRequest`;
-const capitalizeFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /*
  * Global Queue has the purpose of preventing N requests being sent in a row to same endpoint.
@@ -38,14 +38,9 @@ export default class Rest extends methods {
   }
 
   // Dispatcher methods (overrides HTTP dispatch method)
-  dispatch(action, {
-    endpoint, handler, callback, apiModel, apiModule, deletedId
-  }, ...args) {
+  dispatch(action, {endpoint, handler, callBack, apiModel, apiModule, deletedId}, ...args) {
     const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
-    if (action === 'list') {
-      // axios has no 'list'
-      action = 'get';
-    }
+    const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
     /*
      * Status types:
@@ -57,7 +52,7 @@ export default class Rest extends methods {
      *   - pending
      */
 
-    const request = this.register(action, {apiModule, endpoint, apiModel}, ...args);
+    const request = this.register(actionType, {apiModel, apiModule, endpoint}, ...args);
     this.store.dispatch(REGISTER, request);
 
     // prepare for slow request
@@ -79,7 +74,7 @@ export default class Rest extends methods {
       });
     }, this.failedTimeout);
 
-    const ajax = this.handleQueue(request, action, endpoint, ...args);
+    const ajax = this.handleQueue(request, actionType, endpoint, ...args);
     /* @todo: add a global warning component when requests fail */
 
     // tell the store a request was fired
@@ -101,8 +96,8 @@ export default class Rest extends methods {
           return undefined;
         }
 
-        if (!res && action === 'delete') res = deletedId;
-        const responseCopy = JSON.parse(JSON.stringify(res)); //
+        const response = !res && action === 'delete' ? deletedId : res;
+        const responseCopy = JSON.parse(JSON.stringify(response)); //
         const data = handler(responseCopy, this.store);
 
         /*
@@ -112,9 +107,9 @@ export default class Rest extends methods {
          * pattern if you want to keep the store "logic free".
          */
 
-        if (callback) {
+        if (callBack) {
           // Used in some controllers when data from server needs to be processed before being set in store
-          callback(data, this.store);
+          callBack(data, this.store);
         } else {
           this.store.dispatch(mutation, data);
         }
@@ -133,7 +128,7 @@ export default class Rest extends methods {
         const aciveRequest = globalQueue.activeRequests[endpoint];
         if (aciveRequest && aciveRequest.id === request.id) {
           globalQueue.queuedRequests[endpoint].forEach((queued) => {
-            queued.request.Promise.resolve(res); // resolve pending requests with same response
+            queued.request.Promise.resolve(response); // resolve pending requests with same response
           });
 
           globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
@@ -162,12 +157,7 @@ export default class Rest extends methods {
             delete globalQueue.activeRequests[endpoint];
             const next = globalQueue.queuedRequests[endpoint].shift();
             if (next) {
-              const {
-                request: rqst,
-                action: act,
-                endpoint: end,
-                args: rest,
-              } = next;
+              const {request: rqst, action: act, endpoint: end, args: rest} = next;
 
               this.handleQueue(rqst, act, end, ...rest);
             }
@@ -209,24 +199,27 @@ export default class Rest extends methods {
     // pending request already registered, queue this request
     const pending = globalQueue.queuedRequests[endpoint];
     pending.push({
-      action, args, endpoint, request,
+      action,
+      args,
+      endpoint,
+      request,
     });
 
-    const defered = new Promise((resolve, reject) => {
+    const deferred = new Promise((resolve, reject) => {
       request.Promise = {reject, resolve};
     });
 
-    request.Promise.instance = defered;
-    return defered;
+    request.Promise.instance = deferred;
+    return deferred;
   }
 
   register(action, moduleInfo, ...args) {
     this.requestCounter += 1;
     const id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
-    const httpData = args.find(obj => obj.params);
+    const httpData = args.find((obj) => obj.params);
     const params = httpData && httpData.params;
 
-    const meta = {
+    return {
       ...moduleInfo,
       action,
       created: Date.now(),
@@ -235,7 +228,6 @@ export default class Rest extends methods {
       status: 'registered',
       uuid: this.uuid,
     };
-    return meta;
   }
 
   unregister(request) {
