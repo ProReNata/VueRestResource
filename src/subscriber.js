@@ -4,7 +4,7 @@ const activeListeners = {
 
 const registeredStores = {};
 
-function connectStore(store, stores) {
+const connectStore = (store, stores) => {
   if (stores[store]) return;
 
   stores[store] = store.subscribe((mutation) => {
@@ -23,7 +23,7 @@ function connectStore(store, stores) {
       listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
     }
   });
-}
+};
 
 export default class Subscriber {
   constructor(endpoint, uuid, store) {

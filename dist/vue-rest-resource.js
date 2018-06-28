@@ -1,11 +1,11 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-06-27T23:51:28.404Z",
+  "date": "2018-06-28T00:06:09.007Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "3616bfa4ae7561a97a23",
+  "hash": "b2594a872f0c2318fbf1",
   "license": "ISC",
   "version": "0.11.0"
 }
@@ -2434,13 +2434,13 @@ var activeListeners = {
 
 var registeredStores = {};
 
-function connectStore(store, stores) {
-  var _this = this;
+var connectStore = function (store, stores) {
+  (0, _newArrowCheck3.default)(undefined, undefined);
 
   if (stores[store]) return;
 
   stores[store] = store.subscribe(function (mutation) {
-    (0, _newArrowCheck3.default)(this, _this);
+    (0, _newArrowCheck3.default)(undefined, undefined);
     var type = mutation.type; // endpoint
 
     if (type !== 'Requests/updateRequest') return;
@@ -2457,24 +2457,24 @@ function connectStore(store, stores) {
     if (status === 'success') {
       listeners.forEach(function (_ref) {
         var callbacks = _ref.callbacks;
-        (0, _newArrowCheck3.default)(this, _this);
+        (0, _newArrowCheck3.default)(undefined, undefined);
         return callbacks.onSuccess && callbacks.onSuccess(response.id);
-      }.bind(this));
+      }.bind(undefined));
     } else if (status === 'timeout' || status === 'failed') {
       listeners.forEach(function (_ref2) {
         var callbacks = _ref2.callbacks;
-        (0, _newArrowCheck3.default)(this, _this);
+        (0, _newArrowCheck3.default)(undefined, undefined);
         return callbacks.onFail && callbacks.onFail(mutation.payload);
-      }.bind(this));
+      }.bind(undefined));
     } else if (status === 'slow') {
       listeners.forEach(function (_ref3) {
         var callbacks = _ref3.callbacks;
-        (0, _newArrowCheck3.default)(this, _this);
+        (0, _newArrowCheck3.default)(undefined, undefined);
         return callbacks.onSlow && callbacks.onSlow();
-      }.bind(this));
+      }.bind(undefined));
     }
-  }.bind(this));
-}
+  }.bind(undefined));
+}.bind(undefined);
 
 var Subscriber = function () {
   function Subscriber(endpoint, uuid, store) {
@@ -2510,10 +2510,10 @@ var Subscriber = function () {
   }, {
     key: 'onSuccess',
     value: function onSuccess(fn) {
-      var _this2 = this;
+      var _this = this;
 
       this.callbacks.onSuccess = function (id) {
-        (0, _newArrowCheck3.default)(this, _this2);
+        (0, _newArrowCheck3.default)(this, _this);
 
         fn(id);
         this.unregisterListener();
@@ -2529,10 +2529,10 @@ var Subscriber = function () {
   }, {
     key: 'onFail',
     value: function onFail(fn) {
-      var _this3 = this;
+      var _this2 = this;
 
       this.callbacks.onFail = function (requestData) {
-        (0, _newArrowCheck3.default)(this, _this3);
+        (0, _newArrowCheck3.default)(this, _this2);
 
         fn(requestData);
         this.unregisterListener();
