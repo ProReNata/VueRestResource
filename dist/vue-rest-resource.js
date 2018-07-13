@@ -1,7 +1,7 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-06-28T00:06:09.007Z",
+  "date": "2018-07-13T12:17:47.268Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
