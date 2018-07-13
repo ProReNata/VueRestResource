@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-07-13T12:17:47.268Z",
+  "date": "2018-07-13T22:30:29.607Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "b2594a872f0c2318fbf1",
+  "hash": "26d25425f544d1a0a8d8",
   "license": "ISC",
-  "version": "0.11.0"
+  "version": "0.11.1"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2816,7 +2816,7 @@ var Rest = function (_methods) {
 
       var endpoint = _ref.endpoint,
           handler = _ref.handler,
-          callBack = _ref.callBack,
+          callBack = _ref.callback,
           apiModel = _ref.apiModel,
           apiModule = _ref.apiModule,
           deletedId = _ref.deletedId;

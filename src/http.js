@@ -38,7 +38,7 @@ export default class Rest extends methods {
   }
 
   // Dispatcher methods (overrides HTTP dispatch method)
-  dispatch(action, {endpoint, handler, callBack, apiModel, apiModule, deletedId}, ...args) {
+  dispatch(action, {endpoint, handler, callback: callBack, apiModel, apiModule, deletedId}, ...args) {
     const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
