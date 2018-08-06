@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-08-06T08:27:37.255Z",
+  "date": "2018-08-06T08:55:02.262Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "bd7d341a279bba86b39d",
+  "hash": "08df6253f1b2bdab91e3",
   "license": "ISC",
-  "version": "0.12.0"
+  "version": "0.12.2"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2408,10 +2408,10 @@ exports.default = {
         var _this2 = this;
 
         var self = this;
-        if (!updatedValue) return;
-        var updated = typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
-        var outdated = typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
-        var resourceMatches = outdated && updated === outdated;
+        if (typeof updatedValue === 'undefined' && !immediate) return;
+        var updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
+        var outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
+        var resourceMatches = outdated && updated === outdated || updatedValue && !oldValue;
         if (resourceMatches) {
           arrayFrom(resources).map(function (resource) {
             (0, _newArrowCheck3.default)(this, _this2);
