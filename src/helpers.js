@@ -74,10 +74,10 @@ export default {
         immediate,
         handler(updatedValue, oldValue) {
           const self = this;
-          if (!updatedValue) return;
-          const updated = typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
-          const outdated = typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
-          const resourceMatches = outdated && updated === outdated;
+          if (typeof updatedValue === 'undefined' && !immediate) return;
+          const updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
+          const outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
+          const resourceMatches = (outdated && updated === outdated) || (updatedValue && !oldValue);
           if (resourceMatches) {
             arrayFrom(resources)
               .map((resource) => self[resource])
