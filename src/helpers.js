@@ -68,10 +68,10 @@ export default {
       return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
-  updateResourceListWatcher: function(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
+  updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
     return {
       [watcherPropertyName]: {
-        immediate: immediate,
+        immediate,
         handler(updatedValue, oldValue) {
           const self = this;
           if (!updatedValue) return;
