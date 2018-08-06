@@ -24,7 +24,7 @@
   ],
   "main": "dist/vue-rest-resource.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/jest",
     "build": "cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
     "lint": "eslint -f 'node_modules/eslint-friendly-formatter' --ext .js .",
     "lint-fix": "npm run lint -- --fix",
@@ -82,6 +82,7 @@
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-sort-class-members": "^1.3.1",
     "eslint-plugin-vue": "^4.5.0",
+    "jest": "^23.4.2",
     "jscodeshift": "^0.5.1",
     "lodash-webpack-plugin": "^0.11.5",
     "nsp": "^3.2.1",
@@ -92,6 +93,11 @@
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.0.8",
     "webpack-merge": "^4.1.3"
+  },
+  "jest": {
+    "testRegex": "/__tests__/.*\\.test\\.js$",
+    "verbose": true,
+    "testURL": "http://localhost/"
   },
   "engines": {
     "node": ">=8.11.0",
