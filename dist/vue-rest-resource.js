@@ -1,11 +1,11 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-08-06T08:55:02.262Z",
+  "date": "2018-08-06T09:48:33.100Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "08df6253f1b2bdab91e3",
+  "hash": "352e43c4239be4b8e509",
   "license": "ISC",
   "version": "0.12.2"
 }
@@ -2420,7 +2420,7 @@ exports.default = {
             (0, _newArrowCheck3.default)(this, _this2);
 
             var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
-            setInterval(function () {
+            setTimeout(function () {
               (0, _newArrowCheck3.default)(this, _this2);
 
               resource.list((0, _defineProperty3.default)({}, resourceKey, updated));

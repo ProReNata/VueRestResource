@@ -83,7 +83,7 @@ export default {
               .map((resource) => self[resource])
               .forEach((resource, i) => {
                 const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
-                setInterval(() => {
+                setTimeout(() => {
                   resource.list({
                     [resourceKey]: updated,
                   });
