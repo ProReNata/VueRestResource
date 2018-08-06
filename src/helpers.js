@@ -68,4 +68,30 @@ export default {
       return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
+  updateResourceListWatcher: function(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
+    return {
+      [watcherPropertyName]: {
+        immediate: immediate,
+        handler(updatedValue, oldValue) {
+          const self = this;
+          if (!updatedValue) return;
+          const updated = typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
+          const outdated = typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
+          const resourceMatches = outdated && updated === outdated;
+          if (resourceMatches) {
+            arrayFrom(resources)
+              .map((resource) => self[resource])
+              .forEach((resource, i) => {
+                const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
+                setInterval(() => {
+                  resource.list({
+                    [resourceKey]: updated,
+                  });
+                }, 1);
+              });
+          }
+        },
+      },
+    };
+  },
 };
