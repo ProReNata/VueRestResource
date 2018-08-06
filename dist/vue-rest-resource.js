@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-07-13T22:30:29.607Z",
+  "date": "2018-08-06T08:27:37.255Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "26d25425f544d1a0a8d8",
+  "hash": "bd7d341a279bba86b39d",
   "license": "ISC",
-  "version": "0.11.1"
+  "version": "0.12.0"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2400,6 +2400,35 @@ exports.default = {
 
       return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
     }
+  },
+  updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
+    return (0, _defineProperty3.default)({}, watcherPropertyName, {
+      immediate: immediate,
+      handler: function handler(updatedValue, oldValue) {
+        var _this2 = this;
+
+        var self = this;
+        if (!updatedValue) return;
+        var updated = typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
+        var outdated = typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
+        var resourceMatches = outdated && updated === outdated;
+        if (resourceMatches) {
+          arrayFrom(resources).map(function (resource) {
+            (0, _newArrowCheck3.default)(this, _this2);
+            return self[resource];
+          }.bind(this)).forEach(function (resource, i) {
+            (0, _newArrowCheck3.default)(this, _this2);
+
+            var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
+            setInterval(function () {
+              (0, _newArrowCheck3.default)(this, _this2);
+
+              resource.list((0, _defineProperty3.default)({}, resourceKey, updated));
+            }.bind(this), 1);
+          }.bind(this));
+        }
+      }
+    });
   }
 };
 
