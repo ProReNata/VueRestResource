@@ -1,0 +1,15 @@
+sudo: false
+language: node_js
+branches:
+  only:
+    - master
+notifications:
+  email: false
+node_js:
+  - "10"
+  - "9"
+  - "8"
+script:
+  - npm run test
+matrix:
+  fast_finish: true
