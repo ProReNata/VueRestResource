@@ -1,7 +1,7 @@
-<a href="https://travis-ci.org/@prorenata/vue-rest-resource"
+<a href="https://travis-ci.org/ProReNata/VueRestResource"
    title="Travis status">
 <img
-   src="https://travis-ci.org/@prorenata/vue-rest-resource.svg?branch=master"
+   src="https://travis-ci.org/ProReNata/VueRestResource.svg?branch=master"
    alt="Travis status" height="18"/>
 </a>
 <a href="https://david-dm.org/ProReNata/VueRestResource"
@@ -14,11 +14,11 @@
 <img src="https://david-dm.org/ProReNata/VueRestResource/dev-status.svg"
    alt="devDependency status" height="18"/>
 </a>
-<a href="https://badge.fury.io/js/@prorenata/vue-rest-resource" title="npm version">
-<img src="https://badge.fury.io/js/@prorenata/vue-rest-resource.svg"
+<a href="https://badge.fury.io/js/ProReNata/VueRestResource" title="npm version">
+<img src="https://badge.fury.io/js/ProReNata/VueRestResource.svg"
    alt="npm version" height="18"/>
 </a>
-<a name="@prorenata/vue-rest-resource"></a>
+<a name="ProReNata/VueRestResource"></a>
 
 # VueRestResource
 
