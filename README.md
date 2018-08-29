@@ -14,8 +14,8 @@
 <img src="https://david-dm.org/ProReNata/VueRestResource/dev-status.svg"
    alt="devDependency status" height="18"/>
 </a>
-<a href="https://badge.fury.io/js/ProReNata/VueRestResource" title="npm version">
-<img src="https://badge.fury.io/js/ProReNata/VueRestResource.svg"
+<a href="https://badge.fury.io/gh/ProReNata%2FVueRestResource" title="npm version">
+<img src="https://badge.fury.io/gh/ProReNata%2FVueRestResource.svg"
    alt="npm version" height="18"/>
 </a>
 <a name="ProReNata/VueRestResource"></a>
