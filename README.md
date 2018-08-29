@@ -1,24 +1,24 @@
-<a href="https://travis-ci.org/ProReNata/VueRestResource"
+<a href="https://travis-ci.org/ProReNata/vue-rest-resource"
    title="Travis status">
 <img
-   src="https://travis-ci.org/ProReNata/VueRestResource.svg?branch=master"
+   src="https://travis-ci.org/ProReNata/vue-rest-resource.svg?branch=master"
    alt="Travis status" height="18"/>
 </a>
-<a href="https://david-dm.org/ProReNata/VueRestResource"
+<a href="https://david-dm.org/ProReNata/vue-rest-resource"
    title="Dependency status">
-<img src="https://david-dm.org/ProReNata/VueRestResource.svg"
+<img src="https://david-dm.org/ProReNata/vue-rest-resource.svg"
    alt="Dependency status" height="18"/>
 </a>
-<a href="https://david-dm.org/ProReNata/VueRestResource#info=devDependencies"
+<a href="https://david-dm.org/ProReNata/vue-rest-resource#info=devDependencies"
    title="devDependency status">
-<img src="https://david-dm.org/ProReNata/VueRestResource/dev-status.svg"
+<img src="https://david-dm.org/ProReNata/vue-rest-resource/dev-status.svg"
    alt="devDependency status" height="18"/>
 </a>
-<a href="https://badge.fury.io/js/VueRestResource" title="npm version">
-<img src="https://badge.fury.io/js/VueRestResource.svg"
+<a href="https://badge.fury.io/js/vue-rest-resource" title="npm version">
+<img src="https://badge.fury.io/js/vue-rest-resource.svg"
    alt="npm version" height="18"/>
 </a>
-<a name="VueRestResource"></a>
+<a name="vue-rest-resource"></a>
 
 # VueRestResource
 
