@@ -9,7 +9,7 @@
 <img src="https://david-dm.org/ProReNata/VueRestResource.svg"
    alt="Dependency status" height="18"/>
 </a>
-<a href="https://david-dm.org/ProReNata/VueRestResource#info=devDependencies"
+<a href="https://david-dm.org/ProReNata/VueRestResource?type=dev"
    title="devDependency status">
 <img src="https://david-dm.org/ProReNata/VueRestResource/dev-status.svg"
    alt="devDependency status" height="18"/>
