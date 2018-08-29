@@ -254,20 +254,6 @@ module.exports = (env = {}) => {
   const babelLoader = {
     exclude: DEFAULT_EXCLUDE_RX,
     loader: 'babel-loader',
-    options: {
-      plugins: ['lodash'],
-      presets: [
-        [
-          'env',
-          {
-            modules: false,
-            targets: {
-              node: 8,
-            },
-          },
-        ],
-      ],
-    },
   };
 
   /**
@@ -291,7 +277,6 @@ module.exports = (env = {}) => {
           ...eslintLoader,
           enforce: 'pre',
           exclude: DEFAULT_EXCLUDE_RX,
-
           // json does not work because of ESM import
           test: /\.(js|vue)$/,
         }
