@@ -1,3 +1,25 @@
+<a href="https://travis-ci.org/ProReNata/VueRestResource"
+   title="Travis status">
+<img
+   src="https://travis-ci.org/ProReNata/VueRestResource.svg?branch=master"
+   alt="Travis status" height="18"/>
+</a>
+<a href="https://david-dm.org/ProReNata/VueRestResource"
+   title="Dependency status">
+<img src="https://david-dm.org/ProReNata/VueRestResource.svg"
+   alt="Dependency status" height="18"/>
+</a>
+<a href="https://david-dm.org/ProReNata/VueRestResource#info=devDependencies"
+   title="devDependency status">
+<img src="https://david-dm.org/ProReNata/VueRestResource/dev-status.svg"
+   alt="devDependency status" height="18"/>
+</a>
+<a href="https://badge.fury.io/js/VueRestResource" title="npm version">
+<img src="https://badge.fury.io/js/VueRestResource.svg"
+   alt="npm version" height="18"/>
+</a>
+<a name="VueRestResource"></a>
+
 # VueRestResource
 
 Rest HTTP resource management for Vue.js and Vuex projects. 
