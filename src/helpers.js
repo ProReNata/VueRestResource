@@ -2,21 +2,29 @@ const noValueFound = {};
 const arrayFrom = (identity) => (Array.isArray(identity) ? identity : [identity]);
 
 const getStoreResourceValue = (instance, asyncID, asyncKey, resource) => {
-  if (asyncID === null) return null;
+  if (asyncID === null) {
+    return null;
+  }
+
   const {apiModule, apiModel} = resource;
   const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
 
   if (Array.isArray(state)) {
     return state.find((obj) => obj[asyncKey] === asyncID) || noValueFound;
   }
+
   if (state[asyncKey] === asyncID) {
     return state;
   }
+
   return noValueFound;
 };
 
 const getResourceValue = (instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) => {
-  if (relatedAsyncID === -1) return undefined;
+  if (relatedAsyncID === -1) {
+    return undefined;
+  }
+
   let resourceValue = relatedAsyncID;
 
   for (let i = 0, l = RestResources.length; i < l; i += 1) {
@@ -38,6 +46,7 @@ const getResourceValue = (instance, RestResources, AsyncValueResolvers, relatedA
     // re-assign resourceValue to be applied as next foreign key
     resourceValue = asyncValueResolver(storeValue, noValueFound);
   }
+
   return resourceValue;
 };
 
@@ -53,7 +62,10 @@ export default {
           relatedAsyncIDPath,
           asyncKeyPath,
         ].map((path) => {
-          if (typeof path !== 'string') return path;
+          if (typeof path !== 'string') {
+            return path;
+          }
+
           return path.split('.').reduce((obj, key) => obj[key] || {}, this);
         });
 
@@ -65,6 +77,7 @@ export default {
   asyncResourceValue: {
     asyncResourceValue() {
       const {RestResources, relatedAsyncID, AsyncValueResolver, asyncKey} = this;
+
       return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
@@ -74,10 +87,15 @@ export default {
         immediate,
         handler(updatedValue, oldValue) {
           const self = this;
-          if (typeof updatedValue === 'undefined' && !immediate) return;
+
+          if (typeof updatedValue === 'undefined' && !immediate) {
+            return;
+          }
+
           const updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
           const outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
           const resourceMatches = (outdated && updated === outdated) || (updatedValue && !oldValue);
+
           if (resourceMatches) {
             arrayFrom(resources)
               .map((resource) => self[resource])

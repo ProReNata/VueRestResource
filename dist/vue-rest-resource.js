@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-08-29T07:41:29.001Z",
+  "date": "2018-10-03T10:12:53.040Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "a49c67aef826e238d2c0",
+  "hash": "9b5d4cbceb18c793ceb7",
   "license": "MIT",
-  "version": "0.13.0"
+  "version": "0.13.1"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -697,7 +697,11 @@ function () {
     value: function remoteAction(id) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
-      if (!resources.handler) resources.handler = _noop.default;
+
+      if (!resources.handler) {
+        resources.handler = _noop.default;
+      }
+
       return this.dispatch(this.resource.httpMethod, resources, data, {
         headers: _objectSpread({}, this.httpHeaders.headers, {
           'Content-Type': 'application/json'
@@ -2713,7 +2717,10 @@ var connectStore = function connectStore(store, stores) {
 
   _newArrowCheck(this, _this);
 
-  if (stores[store]) return;
+  if (stores[store]) {
+    return;
+  }
+
   stores[store] = store.subscribe(function (mutation) {
     var _this3 = this;
 
@@ -2721,14 +2728,20 @@ var connectStore = function connectStore(store, stores) {
 
     var type = mutation.type; // endpoint
 
-    if (type !== 'Requests/updateRequest') return;
+    if (type !== 'Requests/updateRequest') {
+      return;
+    }
+
     var _mutation$payload = mutation.payload,
         uuid = _mutation$payload.uuid,
         status = _mutation$payload.status,
         endpoint = _mutation$payload.endpoint,
         response = _mutation$payload.response;
     var listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
-    if (!listeners) return;
+
+    if (!listeners) {
+      return;
+    }
 
     if (status === 'success') {
       listeners.forEach(function (_ref) {
@@ -2874,7 +2887,10 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, as
 
   _newArrowCheck(this, _this);
 
-  if (asyncID === null) return null;
+  if (asyncID === null) {
+    return null;
+  }
+
   var apiModule = resource.apiModule,
       apiModel = resource.apiModel;
   var state = instance.$store.getters["".concat(apiModule, "/").concat(apiModel)] || [];
@@ -2897,7 +2913,10 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, as
 var getResourceValue = function getResourceValue(instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) {
   _newArrowCheck(this, _this);
 
-  if (relatedAsyncID === -1) return undefined;
+  if (relatedAsyncID === -1) {
+    return undefined;
+  }
+
   var resourceValue = relatedAsyncID;
 
   var _loop = function _loop(i, l) {
@@ -2947,7 +2966,10 @@ var _default = {
 
         _newArrowCheck(this, _this4);
 
-        if (typeof path !== 'string') return path;
+        if (typeof path !== 'string') {
+          return path;
+        }
+
         return path.split('.').reduce(function (obj, key) {
           _newArrowCheck(this, _this5);
 
@@ -2980,7 +3002,11 @@ var _default = {
         var _this6 = this;
 
         var self = this;
-        if (typeof updatedValue === 'undefined' && !immediate) return;
+
+        if (typeof updatedValue === 'undefined' && !immediate) {
+          return;
+        }
+
         var updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
         var outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
         var resourceMatches = outdated && updated === outdated || updatedValue && !oldValue;

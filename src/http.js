@@ -87,6 +87,7 @@ export default class Rest extends methods {
       .then((res) => {
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
+
         if (timeout) {
           return undefined;
         }
@@ -126,6 +127,7 @@ export default class Rest extends methods {
         this.unregister(request);
 
         const aciveRequest = globalQueue.activeRequests[endpoint];
+
         if (aciveRequest && aciveRequest.id === request.id) {
           globalQueue.queuedRequests[endpoint].forEach((queued) => {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
@@ -150,12 +152,15 @@ export default class Rest extends methods {
         };
 
         this.store.dispatch(UPDATE, updated);
+
         if (globalQueue.queuedRequests[endpoint]) {
           // call next in queue
           const aciveRequest = globalQueue.activeRequests[endpoint];
+
           if (aciveRequest && aciveRequest.id === request.id) {
             delete globalQueue.activeRequests[endpoint];
             const next = globalQueue.queuedRequests[endpoint].shift();
+
             if (next) {
               const {request: rqst, action: act, endpoint: end, args: rest} = next;
 
@@ -168,6 +173,7 @@ export default class Rest extends methods {
       });
 
     const {uuid, store} = this;
+
     return new Promise((resolve, reject) => {
       new Subscriber(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
     });
@@ -189,6 +195,7 @@ export default class Rest extends methods {
     if (!globalQueue.activeRequests[endpoint]) {
       // first request, no queue
       globalQueue.activeRequests[endpoint] = request;
+
       if (!globalQueue.queuedRequests[endpoint]) {
         globalQueue.queuedRequests[endpoint] = [];
       }
@@ -210,6 +217,7 @@ export default class Rest extends methods {
     });
 
     request.Promise.instance = deferred;
+
     return deferred;
   }
 

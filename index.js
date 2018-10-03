@@ -21,6 +21,7 @@ export default (config) => {
     registerResource: (resources) => {
       const uuid = createUUID();
       store.dispatch(`${MODULE_NAME}/registerComponentInStore`, uuid);
+
       return new Rest(uuid, resources, config);
     },
   };

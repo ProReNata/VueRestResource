@@ -5,15 +5,23 @@ const activeListeners = {
 const registeredStores = {};
 
 const connectStore = (store, stores) => {
-  if (stores[store]) return;
+  if (stores[store]) {
+    return;
+  }
 
   stores[store] = store.subscribe((mutation) => {
     const {type} = mutation; // endpoint
-    if (type !== 'Requests/updateRequest') return;
+
+    if (type !== 'Requests/updateRequest') {
+      return;
+    }
 
     const {uuid, status, endpoint, response} = mutation.payload;
     const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
-    if (!listeners) return;
+
+    if (!listeners) {
+      return;
+    }
 
     if (status === 'success') {
       listeners.forEach(({callbacks}) => callbacks.onSuccess && callbacks.onSuccess(response.id));
@@ -33,6 +41,7 @@ export default class Subscriber {
     this.store = store;
     connectStore(store, registeredStores);
     this.registerListener();
+
     return this;
   }
 
@@ -40,6 +49,7 @@ export default class Subscriber {
     if (!activeListeners.mutation[this.endpoint]) {
       activeListeners.mutation[this.endpoint] = {};
     }
+
     if (!activeListeners.mutation[this.endpoint][this.uuid]) {
       activeListeners.mutation[this.endpoint][this.uuid] = [];
     }
@@ -57,11 +67,13 @@ export default class Subscriber {
       fn(id);
       this.unregisterListener();
     };
+
     return this;
   }
 
   onSlow(fn) {
     this.callbacks.onSlow = fn;
+
     return this;
   }
 
@@ -70,6 +82,7 @@ export default class Subscriber {
       fn(requestData);
       this.unregisterListener();
     };
+
     return this;
   }
 }

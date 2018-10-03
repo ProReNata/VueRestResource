@@ -15,10 +15,22 @@ const transform = (file, api) => {
   const naturalSortObject = (obj) => {
     const arr = obj.value.properties;
     arr.sort((a, b) => {
-      if (a.type.match(/^Spread/)) return -1;
-      if (b.type.match(/^Spread/)) return 1;
-      if (!a.key || !b.key) return 0;
-      if (!a.key.name || !b.key.name) return 0;
+      if (a.type.match(/^Spread/)) {
+        return -1;
+      }
+
+      if (b.type.match(/^Spread/)) {
+        return 1;
+      }
+
+      if (!a.key || !b.key) {
+        return 0;
+      }
+
+      if (!a.key.name || !b.key.name) {
+        return 0;
+      }
+
       return a.key.name.localeCompare(b.key.name);
     });
   };
@@ -42,11 +54,26 @@ const jsFileExtraSort = (file, api) => {
   const naturalSortObject = (obj) => {
     const arr = obj.value.properties;
     arr.sort((a, b) => {
-      if (a.type.match(/^Spread/)) return -1;
-      if (b.type.match(/^Spread/)) return 1;
-      if (!a.key || !b.key) return 0;
-      if (!a.key.name || !b.key.name) return 0;
-      if (typeof a.key.name === 'number' && typeof b.key.name === 'number') return b.key.name - a.key.name;
+      if (a.type.match(/^Spread/)) {
+        return -1;
+      }
+
+      if (b.type.match(/^Spread/)) {
+        return 1;
+      }
+
+      if (!a.key || !b.key) {
+        return 0;
+      }
+
+      if (!a.key.name || !b.key.name) {
+        return 0;
+      }
+
+      if (typeof a.key.name === 'number' && typeof b.key.name === 'number') {
+        return b.key.name - a.key.name;
+      }
+
       return a.key.name.localeCompare(b.key.name);
     });
   };
@@ -60,13 +87,27 @@ const jsFileExtraSort = (file, api) => {
     .find(jscodeshift.Identifier, {name: 'Vue'})
     .filter((path) => path.parentPath.value.type === 'NewExpression')
     .map((path) => {
-      if (!path.parentPath.value.arguments[0] || !path.parentPath.value.arguments[0].properties) return path;
+      if (!path.parentPath.value.arguments[0] || !path.parentPath.value.arguments[0].properties) {
+        return path;
+      }
 
       path.parentPath.value.arguments[0].properties = path.parentPath.value.arguments[0].properties.sort((a, b) => {
-        if (a.type.match(/^Spread/)) return -1;
-        if (b.type.match(/^Spread/)) return 1;
-        if (!a.key || !b.key) return 0;
-        if (!a.key.name || !b.key.name) return 0;
+        if (a.type.match(/^Spread/)) {
+          return -1;
+        }
+
+        if (b.type.match(/^Spread/)) {
+          return 1;
+        }
+
+        if (!a.key || !b.key) {
+          return 0;
+        }
+
+        if (!a.key.name || !b.key.name) {
+          return 0;
+        }
+
         return 0;
       });
 
@@ -77,7 +118,10 @@ const jsFileExtraSort = (file, api) => {
 
 function processFile(file) {
   const shouldIgnore = ignoredFiles.find((ignoredPath) => file.includes(ignoredPath));
-  if (shouldIgnore) return;
+
+  if (shouldIgnore) {
+    return;
+  }
 
   console.log('Processing:', file);
   const isVueFile = Boolean(file.match(/.vue$/));
@@ -87,7 +131,11 @@ function processFile(file) {
 
   if (isVueFile) {
     const match = fileContent.match(scriptContent);
-    if (!match) return;
+
+    if (!match) {
+      return;
+    }
+
     source = match[0].slice('<script>'.length, -'</script>'.length);
   }
 
@@ -96,7 +144,9 @@ function processFile(file) {
 
   let transformed = transform({source}, {jscodeshift});
 
-  if (!isVueFile) transformed = jsFileExtraSort({source: transformed}, {jscodeshift});
+  if (!isVueFile) {
+    transformed = jsFileExtraSort({source: transformed}, {jscodeshift});
+  }
 
   // console.log('::: JSCODESHIFT :::');
   // console.log(transformed);
@@ -113,6 +163,7 @@ function processFile(file) {
       const sourceFiles = files.filter((filePath) => !filePath.includes('node_modules') && !filePath.includes('sandbox'));
       console.log('Found', sourceFiles.length, 'files of type:', type);
       sourceFiles.forEach(processFile);
+
       return sourceFiles;
     })
     .catch((err) => console.log(err));

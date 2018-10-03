@@ -39,6 +39,7 @@ export default class {
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.get,
     };
+
     return this.dispatch('get', resources, {
       headers: this.httpHeaders,
       params: {
@@ -55,6 +56,7 @@ export default class {
       endpoint: this.endpoint,
       handler: this.handler.list,
     };
+
     return this.dispatch('list', resources, {
       ...this.httpHeaders,
       params: {
@@ -71,6 +73,7 @@ export default class {
       endpoint: this.endpoint,
       handler: this.handler.create,
     };
+
     return this.dispatch('post', resources, data, {
       ...this.httpHeaders,
     });
@@ -83,6 +86,7 @@ export default class {
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.update,
     };
+
     return this.dispatch('put', resources, data, {
       ...this.httpHeaders,
     });
@@ -96,6 +100,7 @@ export default class {
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.delete || (() => id),
     };
+
     return this.dispatch('delete', resources, {
       ...this.httpHeaders,
     });
@@ -103,7 +108,10 @@ export default class {
 
   remoteAction(id, data = {}) {
     const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
-    if (!resources.handler) resources.handler = noop;
+
+    if (!resources.handler) {
+      resources.handler = noop;
+    }
 
     return this.dispatch(this.resource.httpMethod, resources, data, {
       headers: {
@@ -122,6 +130,7 @@ export default class {
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
     const ajax = axios[actionType](endpoint, ...args);
+
     return ajax.then((res) => handler(res));
   }
 }
