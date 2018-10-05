@@ -1,7 +1,8 @@
-const noValueFound = {};
-const arrayFrom = (identity) => (Array.isArray(identity) ? identity : [identity]);
+import castArray from 'lodash/castArray';
 
-const getStoreResourceValue = (instance, asyncID, asyncKey, resource) => {
+const noValueFound = {};
+
+const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, asyncKey, resource) {
   if (asyncID === null) {
     return null;
   }
@@ -10,7 +11,11 @@ const getStoreResourceValue = (instance, asyncID, asyncKey, resource) => {
   const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
 
   if (Array.isArray(state)) {
-    return state.find((obj) => obj[asyncKey] === asyncID) || noValueFound;
+    const findStatePredicate = function findStatePredicate(obj) {
+      return obj[asyncKey] === asyncID;
+    };
+
+    return state.find(findStatePredicate) || noValueFound;
   }
 
   if (state[asyncKey] === asyncID) {
@@ -20,7 +25,7 @@ const getStoreResourceValue = (instance, asyncID, asyncKey, resource) => {
   return noValueFound;
 };
 
-const getResourceValue = (instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) => {
+const getResourceValue = function getResourceValue(instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) {
   if (relatedAsyncID === -1) {
     return undefined;
   }
@@ -50,6 +55,10 @@ const getResourceValue = (instance, RestResources, AsyncValueResolvers, relatedA
   return resourceValue;
 };
 
+const pathIteratee = function pathIteratee(obj, key) {
+  return obj[key] || {};
+};
+
 export default {
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
   asyncResourceGetter(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
@@ -66,10 +75,10 @@ export default {
             return path;
           }
 
-          return path.split('.').reduce((obj, key) => obj[key] || {}, this);
+          return path.split('.').reduce(pathIteratee, this);
         });
 
-        return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolvers), relatedAsyncID, asyncKey);
+        return getResourceValue(this, castArray(RestResources), castArray(AsyncValueResolvers), relatedAsyncID, asyncKey);
       },
     };
   },
@@ -78,7 +87,7 @@ export default {
     asyncResourceValue() {
       const {RestResources, relatedAsyncID, AsyncValueResolver, asyncKey} = this;
 
-      return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
+      return getResourceValue(this, castArray(RestResources), castArray(AsyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
   updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
@@ -86,8 +95,6 @@ export default {
       [watcherPropertyName]: {
         immediate,
         handler(updatedValue, oldValue) {
-          const self = this;
-
           if (typeof updatedValue === 'undefined' && !immediate) {
             return;
           }
@@ -97,16 +104,19 @@ export default {
           const resourceMatches = (outdated && updated === outdated) || (updatedValue && !oldValue);
 
           if (resourceMatches) {
-            arrayFrom(resources)
-              .map((resource) => self[resource])
-              .forEach((resource, i) => {
-                const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
-                setTimeout(() => {
-                  resource.list({
-                    [resourceKey]: updated,
-                  });
-                }, 1);
-              });
+            const resourceIteratee = function resourceIteratee(resource, i) {
+              const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
+
+              setTimeout(() => {
+                resource.list({
+                  [resourceKey]: updated,
+                });
+              }, 1);
+            };
+
+            castArray(resources)
+              .map((resource) => this[resource])
+              .forEach(resourceIteratee);
           }
         },
       },

@@ -49,7 +49,11 @@ const mutations = {
     const {id, endpoint} = request;
 
     // unregister endpoint
-    const others = state.activeRequestsToEndpoint[endpoint].filter((req) => req.id !== id);
+    const activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
+      return req.id !== id;
+    };
+
+    const others = state.activeRequestsToEndpoint[endpoint].filter(activeRequestsToEndpointPredicate);
     state.activeRequestsToEndpoint = {
       ...state.activeRequestsToEndpoint,
       [endpoint]: others,
@@ -61,15 +65,23 @@ const mutations = {
     // and they can check if the change is related to them or ignore the call
     state.lastUpdatedComponent = req.uuid;
     const componentRequests = state.registeredComponents[req.uuid];
-    const index = componentRequests.findIndex((r) => r.id === req.id && r.uuid === req.uuid);
+    const componentRequestsPredicate = function componentRequestsPredicate(r) {
+      return r.id === req.id && r.uuid === req.uuid;
+    };
+
+    const index = componentRequests.findIndex(componentRequestsPredicate);
 
     if (index === -1) {
       console.info('store mutations > updateRequest: Request not found in store');
     }
 
+    const componentRequestsIteratee = function componentRequestsIteratee(entry, i) {
+      return index === i ? req : entry;
+    };
+
     state.registeredComponents = {
       ...state.registeredComponents,
-      [req.uuid]: componentRequests.map((entry, i) => (index === i ? req : entry)),
+      [req.uuid]: componentRequests.map(componentRequestsIteratee),
     };
   },
 };

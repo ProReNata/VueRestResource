@@ -129,9 +129,11 @@ export default class Rest extends methods {
         const aciveRequest = globalQueue.activeRequests[endpoint];
 
         if (aciveRequest && aciveRequest.id === request.id) {
-          globalQueue.queuedRequests[endpoint].forEach((queued) => {
+          const queuedRquestsIteratee = function queuedRquestsIteratee(queued) {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
-          });
+          };
+
+          globalQueue.queuedRequests[endpoint].forEach(queuedRquestsIteratee);
 
           globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
           delete globalQueue.activeRequests[endpoint]; // done, remove the active request pointer
@@ -173,10 +175,11 @@ export default class Rest extends methods {
       });
 
     const {uuid, store} = this;
-
-    return new Promise((resolve, reject) => {
+    const executor = function executor(resolve, reject) {
       new Subscriber(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
-    });
+    };
+
+    return new Promise(executor);
   }
 
   handleQueue(request, action, endpoint, ...args) {
@@ -212,9 +215,11 @@ export default class Rest extends methods {
       request,
     });
 
-    const deferred = new Promise((resolve, reject) => {
+    const executor = function executor(resolve, reject) {
       request.Promise = {reject, resolve};
-    });
+    };
+
+    const deferred = new Promise(executor);
 
     request.Promise.instance = deferred;
 

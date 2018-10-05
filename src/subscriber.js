@@ -3,34 +3,53 @@ const activeListeners = {
 };
 
 const registeredStores = {};
+const subscriber = function subscriber(mutation) {
+  const {type} = mutation; // endpoint
 
-const connectStore = (store, stores) => {
+  if (type !== 'Requests/updateRequest') {
+    return;
+  }
+
+  const {uuid, status, endpoint, response} = mutation.payload;
+  const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
+
+  if (!listeners) {
+    return;
+  }
+
+  if (status === 'success') {
+    const successIteratee = function successIteratee({callbacks}) {
+      if (callbacks.onSuccess) {
+        callbacks.onSuccess(response.id);
+      }
+    };
+
+    listeners.forEach(successIteratee);
+  } else if (status === 'timeout' || status === 'failed') {
+    const timeoutIteratee = function timeoutIteratee({callbacks}) {
+      if (callbacks.onFail) {
+        callbacks.onFail(mutation.payload);
+      }
+    };
+
+    listeners.forEach(timeoutIteratee);
+  } else if (status === 'slow') {
+    const slowIteratee = function slowIteratee({callbacks}) {
+      if (callbacks.onSlow) {
+        callbacks.onSlow();
+      }
+    };
+
+    listeners.forEach(slowIteratee);
+  }
+};
+
+const connectStore = function connectStore(store, stores) {
   if (stores[store]) {
     return;
   }
 
-  stores[store] = store.subscribe((mutation) => {
-    const {type} = mutation; // endpoint
-
-    if (type !== 'Requests/updateRequest') {
-      return;
-    }
-
-    const {uuid, status, endpoint, response} = mutation.payload;
-    const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
-
-    if (!listeners) {
-      return;
-    }
-
-    if (status === 'success') {
-      listeners.forEach(({callbacks}) => callbacks.onSuccess && callbacks.onSuccess(response.id));
-    } else if (status === 'timeout' || status === 'failed') {
-      listeners.forEach(({callbacks}) => callbacks.onFail && callbacks.onFail(mutation.payload));
-    } else if (status === 'slow') {
-      listeners.forEach(({callbacks}) => callbacks.onSlow && callbacks.onSlow());
-    }
-  });
+  stores[store] = store.subscribe(subscriber);
 };
 
 export default class Subscriber {

@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-10-03T10:12:53.040Z",
+  "date": "2018-10-05T07:16:12.021Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "9b5d4cbceb18c793ceb7",
+  "hash": "0548660047f3c11cabe2",
   "license": "MIT",
-  "version": "0.13.1"
+  "version": "0.13.2"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -1071,7 +1071,7 @@ module.exports = __webpack_require__(12);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = createVueRestResource;
 
 var _v = _interopRequireDefault(__webpack_require__(13));
 
@@ -1081,11 +1081,9 @@ var _http = _interopRequireDefault(__webpack_require__(35));
 
 var _helpers = _interopRequireDefault(__webpack_require__(37));
 
-var _requestsStore = _interopRequireDefault(__webpack_require__(38));
+var _requestsStore = _interopRequireDefault(__webpack_require__(40));
 
 var _moduleName = _interopRequireDefault(__webpack_require__(10));
-
-var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1107,13 +1105,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
-var _default = function (config) {
-  var _this2 = this;
-
-  _newArrowCheck(this, _this);
-
+function createVueRestResource(config) {
   var store = config.store;
   store.registerModule(_moduleName.default, _requestsStore.default);
   return _objectSpread({}, _helpers.default, {
@@ -1131,16 +1123,12 @@ var _default = function (config) {
       return HTTP;
     }(_methods.default),
     registerResource: function registerResource(resources) {
-      _newArrowCheck(this, _this2);
-
       var uuid = (0, _v.default)();
       store.dispatch("".concat(_moduleName.default, "/registerComponentInStore"), uuid);
       return new _http.default(uuid, resources, config);
-    }.bind(this)
+    }
   });
-}.bind(void 0);
-
-exports.default = _default;
+}
 
 /***/ }),
 /* 13 */
@@ -2488,8 +2476,6 @@ function (_methods) {
         status: 'pending'
       }));
       ajax.then(function (res) {
-        var _this4 = this;
-
         _newArrowCheck(this, _this3);
 
         clearTimeout(slowRequest);
@@ -2534,11 +2520,11 @@ function (_methods) {
         var aciveRequest = globalQueue.activeRequests[endpoint];
 
         if (aciveRequest && aciveRequest.id === request.id) {
-          globalQueue.queuedRequests[endpoint].forEach(function (queued) {
-            _newArrowCheck(this, _this4);
-
+          var queuedRquestsIteratee = function queuedRquestsIteratee(queued) {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
-          }.bind(this));
+          };
+
+          globalQueue.queuedRequests[endpoint].forEach(queuedRquestsIteratee);
           globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
 
           delete globalQueue.activeRequests[endpoint]; // done, remove the active request pointer
@@ -2582,17 +2568,16 @@ function (_methods) {
       }.bind(this));
       var uuid = this.uuid,
           store = this.store;
-      return new Promise(function (resolve, reject) {
-        _newArrowCheck(this, _this3);
 
+      var executor = function executor(resolve, reject) {
         new _subscriber.default(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
-      }.bind(this));
+      };
+
+      return new Promise(executor);
     }
   }, {
     key: "handleQueue",
     value: function handleQueue(request, action, endpoint) {
-      var _this5 = this;
-
       for (var _len2 = arguments.length, args = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
         args[_key2 - 3] = arguments[_key2];
       }
@@ -2628,21 +2613,22 @@ function (_methods) {
         endpoint: endpoint,
         request: request
       });
-      var deferred = new Promise(function (resolve, reject) {
-        _newArrowCheck(this, _this5);
 
+      var executor = function executor(resolve, reject) {
         request.Promise = {
           reject: reject,
           resolve: resolve
         };
-      }.bind(this));
+      };
+
+      var deferred = new Promise(executor);
       request.Promise.instance = deferred;
       return deferred;
     }
   }, {
     key: "register",
     value: function register(action, moduleInfo) {
-      var _this6 = this;
+      var _this4 = this;
 
       this.requestCounter += 1;
       var id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
@@ -2652,7 +2638,7 @@ function (_methods) {
       }
 
       var httpData = args.find(function (obj) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this4);
 
         return obj.params;
       }.bind(this));
@@ -2697,7 +2683,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _this = void 0;
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2705,71 +2691,69 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
 var activeListeners = {
   mutation: {}
 };
 var registeredStores = {};
 
+var subscriber = function subscriber(mutation) {
+  var type = mutation.type; // endpoint
+
+  if (type !== 'Requests/updateRequest') {
+    return;
+  }
+
+  var _mutation$payload = mutation.payload,
+      uuid = _mutation$payload.uuid,
+      status = _mutation$payload.status,
+      endpoint = _mutation$payload.endpoint,
+      response = _mutation$payload.response;
+  var listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
+
+  if (!listeners) {
+    return;
+  }
+
+  if (status === 'success') {
+    var successIteratee = function successIteratee(_ref) {
+      var callbacks = _ref.callbacks;
+
+      if (callbacks.onSuccess) {
+        callbacks.onSuccess(response.id);
+      }
+    };
+
+    listeners.forEach(successIteratee);
+  } else if (status === 'timeout' || status === 'failed') {
+    var timeoutIteratee = function timeoutIteratee(_ref2) {
+      var callbacks = _ref2.callbacks;
+
+      if (callbacks.onFail) {
+        callbacks.onFail(mutation.payload);
+      }
+    };
+
+    listeners.forEach(timeoutIteratee);
+  } else if (status === 'slow') {
+    var slowIteratee = function slowIteratee(_ref3) {
+      var callbacks = _ref3.callbacks;
+
+      if (callbacks.onSlow) {
+        callbacks.onSlow();
+      }
+    };
+
+    listeners.forEach(slowIteratee);
+  }
+};
+
 var connectStore = function connectStore(store, stores) {
-  var _this2 = this;
-
-  _newArrowCheck(this, _this);
-
   if (stores[store]) {
     return;
   }
 
-  stores[store] = store.subscribe(function (mutation) {
-    var _this3 = this;
-
-    _newArrowCheck(this, _this2);
-
-    var type = mutation.type; // endpoint
-
-    if (type !== 'Requests/updateRequest') {
-      return;
-    }
-
-    var _mutation$payload = mutation.payload,
-        uuid = _mutation$payload.uuid,
-        status = _mutation$payload.status,
-        endpoint = _mutation$payload.endpoint,
-        response = _mutation$payload.response;
-    var listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
-
-    if (!listeners) {
-      return;
-    }
-
-    if (status === 'success') {
-      listeners.forEach(function (_ref) {
-        var callbacks = _ref.callbacks;
-
-        _newArrowCheck(this, _this3);
-
-        return callbacks.onSuccess && callbacks.onSuccess(response.id);
-      }.bind(this));
-    } else if (status === 'timeout' || status === 'failed') {
-      listeners.forEach(function (_ref2) {
-        var callbacks = _ref2.callbacks;
-
-        _newArrowCheck(this, _this3);
-
-        return callbacks.onFail && callbacks.onFail(mutation.payload);
-      }.bind(this));
-    } else if (status === 'slow') {
-      listeners.forEach(function (_ref3) {
-        var callbacks = _ref3.callbacks;
-
-        _newArrowCheck(this, _this3);
-
-        return callbacks.onSlow && callbacks.onSlow();
-      }.bind(this));
-    }
-  }.bind(this));
-}.bind(void 0);
+  stores[store] = store.subscribe(subscriber);
+};
 
 var Subscriber =
 /*#__PURE__*/
@@ -2808,10 +2792,10 @@ function () {
   }, {
     key: "onSuccess",
     value: function onSuccess(fn) {
-      var _this4 = this;
+      var _this = this;
 
       this.callbacks.onSuccess = function (id) {
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this);
 
         fn(id);
         this.unregisterListener();
@@ -2828,10 +2812,10 @@ function () {
   }, {
     key: "onFail",
     value: function onFail(fn) {
-      var _this5 = this;
+      var _this2 = this;
 
       this.callbacks.onFail = function (requestData) {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this2);
 
         fn(requestData);
         this.unregisterListener();
@@ -2858,7 +2842,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _this = void 0;
+var _castArray = _interopRequireDefault(__webpack_require__(38));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -2870,23 +2856,13 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var noValueFound = {};
 
-var arrayFrom = function arrayFrom(identity) {
-  _newArrowCheck(this, _this);
-
-  return Array.isArray(identity) ? identity : [identity];
-}.bind(void 0);
-
 var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, asyncKey, resource) {
-  var _this2 = this;
-
-  _newArrowCheck(this, _this);
-
   if (asyncID === null) {
     return null;
   }
@@ -2896,11 +2872,11 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, as
   var state = instance.$store.getters["".concat(apiModule, "/").concat(apiModel)] || [];
 
   if (Array.isArray(state)) {
-    return state.find(function (obj) {
-      _newArrowCheck(this, _this2);
-
+    var findStatePredicate = function findStatePredicate(obj) {
       return obj[asyncKey] === asyncID;
-    }.bind(this)) || noValueFound;
+    };
+
+    return state.find(findStatePredicate) || noValueFound;
   }
 
   if (state[asyncKey] === asyncID) {
@@ -2908,11 +2884,9 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, as
   }
 
   return noValueFound;
-}.bind(void 0);
+};
 
 var getResourceValue = function getResourceValue(instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) {
-  _newArrowCheck(this, _this);
-
   if (relatedAsyncID === -1) {
     return undefined;
   }
@@ -2920,7 +2894,7 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
   var resourceValue = relatedAsyncID;
 
   var _loop = function _loop(i, l) {
-    var _this3 = this;
+    var _this = this;
 
     var asyncKey = asyncKeys[i];
     var asyncValueResolver = AsyncValueResolvers[i];
@@ -2930,7 +2904,7 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
       setTimeout(function () {
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this);
 
         return RestResources[i].get(resourceValue);
       }.bind(this), 1); // resource not loaded yet,
@@ -2952,29 +2926,27 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
   }
 
   return resourceValue;
-}.bind(void 0);
+};
+
+var pathIteratee = function pathIteratee(obj, key) {
+  return obj[key] || {};
+};
 
 var _default = {
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
   asyncResourceGetter: function asyncResourceGetter(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
     return _defineProperty({}, computedPropertyName, function () {
-      var _this4 = this;
+      var _this2 = this;
 
       // get the needed values from object nested (or not) paths in `this`
       var _map = [RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath].map(function (path) {
-        var _this5 = this;
-
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this2);
 
         if (typeof path !== 'string') {
           return path;
         }
 
-        return path.split('.').reduce(function (obj, key) {
-          _newArrowCheck(this, _this5);
-
-          return obj[key] || {};
-        }.bind(this), this);
+        return path.split('.').reduce(pathIteratee, this);
       }.bind(this)),
           _map2 = _slicedToArray(_map, 4),
           RestResources = _map2[0],
@@ -2982,7 +2954,7 @@ var _default = {
           relatedAsyncID = _map2[2],
           asyncKey = _map2[3];
 
-      return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolvers), relatedAsyncID, asyncKey);
+      return getResourceValue(this, (0, _castArray.default)(RestResources), (0, _castArray.default)(AsyncValueResolvers), relatedAsyncID, asyncKey);
     });
   },
   // use as `...asyncResourceValue` in the components computed properties
@@ -2992,16 +2964,14 @@ var _default = {
           relatedAsyncID = this.relatedAsyncID,
           AsyncValueResolver = this.AsyncValueResolver,
           asyncKey = this.asyncKey;
-      return getResourceValue(this, arrayFrom(RestResources), arrayFrom(AsyncValueResolver), relatedAsyncID, asyncKey);
+      return getResourceValue(this, (0, _castArray.default)(RestResources), (0, _castArray.default)(AsyncValueResolver), relatedAsyncID, asyncKey);
     }
   },
   updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
     return _defineProperty({}, watcherPropertyName, {
       immediate: immediate,
       handler: function handler(updatedValue, oldValue) {
-        var _this6 = this;
-
-        var self = this;
+        var _this4 = this;
 
         if (typeof updatedValue === 'undefined' && !immediate) {
           return;
@@ -3012,22 +2982,22 @@ var _default = {
         var resourceMatches = outdated && updated === outdated || updatedValue && !oldValue;
 
         if (resourceMatches) {
-          arrayFrom(resources).map(function (resource) {
-            _newArrowCheck(this, _this6);
-
-            return self[resource];
-          }.bind(this)).forEach(function (resource, i) {
-            var _this7 = this;
-
-            _newArrowCheck(this, _this6);
+          var resourceIteratee = function resourceIteratee(resource, i) {
+            var _this3 = this;
 
             var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
             setTimeout(function () {
-              _newArrowCheck(this, _this7);
+              _newArrowCheck(this, _this3);
 
               resource.list(_defineProperty({}, resourceKey, updated));
             }.bind(this), 1);
-          }.bind(this));
+          };
+
+          (0, _castArray.default)(resources).map(function (resource) {
+            _newArrowCheck(this, _this4);
+
+            return this[resource];
+          }.bind(this)).forEach(resourceIteratee);
         }
       }
     });
@@ -3037,6 +3007,88 @@ exports.default = _default;
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isArray = __webpack_require__(39);
+
+/**
+ * Casts `value` as an array if it's not one.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.4.0
+ * @category Lang
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast array.
+ * @example
+ *
+ * _.castArray(1);
+ * // => [1]
+ *
+ * _.castArray({ 'a': 1 });
+ * // => [{ 'a': 1 }]
+ *
+ * _.castArray('abc');
+ * // => ['abc']
+ *
+ * _.castArray(null);
+ * // => [null]
+ *
+ * _.castArray(undefined);
+ * // => [undefined]
+ *
+ * _.castArray();
+ * // => []
+ *
+ * var array = [1, 2, 3];
+ * console.log(_.castArray(array) === array);
+ * // => true
+ */
+function castArray() {
+  if (!arguments.length) {
+    return [];
+  }
+  var value = arguments[0];
+  return isArray(value) ? value : [value];
+}
+
+module.exports = castArray;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3050,8 +3102,6 @@ exports.default = void 0;
 var _noop = _interopRequireDefault(__webpack_require__(9));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -3098,41 +3148,38 @@ var mutations = {
     delete state.registeredComponents[uuid];
   },
   unregisterRequest: function unregisterRequest(state, request) {
-    var _this = this;
-
     var id = request.id,
         endpoint = request.endpoint; // unregister endpoint
 
-    var others = state.activeRequestsToEndpoint[endpoint].filter(function (req) {
-      _newArrowCheck(this, _this);
-
+    var activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
       return req.id !== id;
-    }.bind(this));
+    };
+
+    var others = state.activeRequestsToEndpoint[endpoint].filter(activeRequestsToEndpointPredicate);
     state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others));
   },
   updateRequest: function updateRequest(state, req) {
-    var _this2 = this;
-
     // Since we cannot use listener for complex/nested objects
     // we use a shallow state key that triggers listeners in components
     // and they can check if the change is related to them or ignore the call
     state.lastUpdatedComponent = req.uuid;
     var componentRequests = state.registeredComponents[req.uuid];
-    var index = componentRequests.findIndex(function (r) {
-      _newArrowCheck(this, _this2);
 
+    var componentRequestsPredicate = function componentRequestsPredicate(r) {
       return r.id === req.id && r.uuid === req.uuid;
-    }.bind(this));
+    };
+
+    var index = componentRequests.findIndex(componentRequestsPredicate);
 
     if (index === -1) {
       console.info('store mutations > updateRequest: Request not found in store');
     }
 
-    state.registeredComponents = _objectSpread({}, state.registeredComponents, _defineProperty({}, req.uuid, componentRequests.map(function (entry, i) {
-      _newArrowCheck(this, _this2);
-
+    var componentRequestsIteratee = function componentRequestsIteratee(entry, i) {
       return index === i ? req : entry;
-    }.bind(this))));
+    };
+
+    state.registeredComponents = _objectSpread({}, state.registeredComponents, _defineProperty({}, req.uuid, componentRequests.map(componentRequestsIteratee)));
   }
 };
 var getters = {
