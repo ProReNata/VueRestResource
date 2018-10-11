@@ -1,6 +1,6 @@
 {
   "name": "@prorenata/vue-rest-resource",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "homepage": "https://github.com/ProReNata/VueRestResource",
   "repository": {
@@ -22,7 +22,9 @@
       "email": "graham.fairweather@prorenata.se"
     }
   ],
+  "browser": "dist/vue-rest-resource.min.js",
   "main": "dist/vue-rest-resource.js",
+  "module": "src/index.js",
   "scripts": {
     "test": "./node_modules/.bin/jest",
     "build": "cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",

@@ -316,7 +316,7 @@ module.exports = (env = {}) => {
      * @type {array.<string>}
      * @see {@link https://webpack.js.org/concepts/entry-points/}
      */
-    entry: [path.join(__dirname, 'index.js')],
+    entry: [path.join(__dirname, 'src/index.js')],
 
     mode: NODE_ENV === PRODUCTION ? PRODUCTION : DEVELOPMENT,
 

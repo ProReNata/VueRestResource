@@ -1,9 +1,9 @@
 import createUUID from 'uuid/v4';
-import HTTP from './src/methods';
-import Rest from './src/http';
-import helpers from './src/helpers';
-import requestsStore from './src/requestsStore';
-import MODULE_NAME from './src/moduleName';
+import HTTP from './methods';
+import Rest from './http';
+import helpers from './helpers';
+import requestsStore from './requestsStore';
+import MODULE_NAME from './moduleName';
 
 export default function createVueRestResource(config) {
   const {store} = config;
