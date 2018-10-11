@@ -12,13 +12,15 @@ const os = require('os');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const childProcess = require('child_process');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const eslintFriendlyFormatter = require('eslint-friendly-formatter');
 const stylish = require('eslint/lib/formatters/stylish');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const getGlobal = function() {
+  'use strict';
+
   if (typeof self !== 'undefined') {
     return self;
   }
@@ -85,10 +87,10 @@ const PRODUCTION = 'production';
 const DEVELOPMENT = 'development';
 
 /**
- * The default exclude regex.
- * @type {regexp}
+ * The default include paths.
+ * @type {string}
  */
-const DEFAULT_EXCLUDE_RX = /node_modules/;
+const DEFAULT_INCLUDE = [path.resolve(__dirname, 'src'), path.resolve(__dirname, '__tests__')];
 
 /**
  * Allows you to pass in as many environment variables as you like using --env.
@@ -252,7 +254,7 @@ module.exports = (env = {}) => {
    * @see {@link https://github.com/babel/babel-loader}
    */
   const babelLoader = {
-    exclude: DEFAULT_EXCLUDE_RX,
+    include: DEFAULT_INCLUDE,
     loader: 'babel-loader',
   };
 
@@ -276,7 +278,7 @@ module.exports = (env = {}) => {
       ? {
           ...eslintLoader,
           enforce: 'pre',
-          exclude: DEFAULT_EXCLUDE_RX,
+          include: DEFAULT_INCLUDE,
           // json does not work because of ESM import
           test: /\.(js|vue)$/,
         }
@@ -403,7 +405,6 @@ module.exports = (env = {}) => {
      */
     watchOptions: {
       aggregateTimeout: 300,
-      ignored: DEFAULT_EXCLUDE_RX,
     },
   };
 
@@ -425,10 +426,10 @@ module.exports = (env = {}) => {
      * @see {@link https://github.com/webpack-contrib/webpack-bundle-analyzer}
      */
     plugins: [
-      new UglifyJsPlugin({
+      new TerserPlugin({
         parallel: LOGICAL_CPU_USE,
         sourceMap: BUILD_SOURCEMAPS,
-        uglifyOptions: {
+        terserOptions: {
           ecma: 5,
         },
       }),

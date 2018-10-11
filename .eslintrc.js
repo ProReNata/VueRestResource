@@ -32,14 +32,6 @@ module.exports = {
    */
   overrides: [
     {
-      files: ['webpack.*.js'],
-      rules: {
-        'func-names': 'off',
-        'no-new-func': 'off',
-        'no-restricted-globals': 'off',
-      },
-    },
-    {
       files: ['helpers.js'],
       rules: {
         'no-loop-func': 'off',
