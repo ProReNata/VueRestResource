@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-10-11T18:30:01.133Z",
+  "date": "2018-12-03T23:15:10.320Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "af1e7b5839ed6098eb4a",
+  "hash": "59275ae976931d185de8",
   "license": "MIT",
-  "version": "0.14.1"
+  "version": "0.14.2"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -800,7 +800,7 @@ module.exports = function xhrAdapter(config) {
     // For IE 8/9 CORS support
     // Only supports POST and GET calls and doesn't returns the response headers.
     // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if ("production" !== 'test' &&
+    if ( true &&
         typeof window !== 'undefined' &&
         window.XDomainRequest && !('withCredentials' in request) &&
         !isURLSameOrigin(config.url)) {
