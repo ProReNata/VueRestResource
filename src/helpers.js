@@ -25,23 +25,23 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
   return noValueFound;
 };
 
-const getResourceValue = function getResourceValue(instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) {
+const getResourceValue = function getResourceValue(instance, restResources, asyncValueResolvers, relatedAsyncID, asyncKeys) {
   if (relatedAsyncID === -1) {
     return undefined;
   }
 
   let resourceValue = relatedAsyncID;
 
-  for (let i = 0, l = RestResources.length; i < l; i += 1) {
+  for (let i = 0, l = restResources.length; i < l; i += 1) {
     const asyncKey = asyncKeys[i];
-    const asyncValueResolver = AsyncValueResolvers[i];
+    const asyncValueResolver = asyncValueResolvers[i];
 
-    const storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, RestResources[i]);
+    const storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, restResources[i]);
 
     if (storeValue === noValueFound) {
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
-      setTimeout(() => RestResources[i].get(resourceValue), 1);
+      setTimeout(() => restResources[i].get(resourceValue), 1);
 
       // resource not loaded yet,
       // the computed function will be called again when store is updated
@@ -61,13 +61,13 @@ const pathIteratee = function pathIteratee(obj, key) {
 
 export default {
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
-  asyncResourceGetter(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
+  asyncResourceGetter(computedPropertyName, restResourcesPath, asyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
     return {
       [computedPropertyName]() {
         // get the needed values from object nested (or not) paths in `this`
-        const [RestResources, AsyncValueResolvers, relatedAsyncID, asyncKey] = [
-          RestResourcesPath,
-          AsyncValueResolversPath,
+        const [restResources, asyncValueResolvers, relatedAsyncID, asyncKey] = [
+          restResourcesPath,
+          asyncValueResolversPath,
           relatedAsyncIDPath,
           asyncKeyPath,
         ].map((path) => {
@@ -78,16 +78,16 @@ export default {
           return path.split('.').reduce(pathIteratee, this);
         });
 
-        return getResourceValue(this, castArray(RestResources), castArray(AsyncValueResolvers), relatedAsyncID, asyncKey);
+        return getResourceValue(this, castArray(restResources), castArray(asyncValueResolvers), relatedAsyncID, asyncKey);
       },
     };
   },
   // use as `...asyncResourceValue` in the components computed properties
   asyncResourceValue: {
     asyncResourceValue() {
-      const {RestResources, relatedAsyncID, AsyncValueResolver, asyncKey} = this;
+      const {restResources, relatedAsyncID, asyncValueResolver, asyncKey} = this;
 
-      return getResourceValue(this, castArray(RestResources), castArray(AsyncValueResolver), relatedAsyncID, asyncKey);
+      return getResourceValue(this, castArray(restResources), castArray(asyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
   updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {

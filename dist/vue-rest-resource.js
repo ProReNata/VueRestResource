@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-12-03T23:15:10.320Z",
+  "date": "2018-12-03T23:45:37.608Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "59275ae976931d185de8",
+  "hash": "545e56f9940c7d694cc4",
   "license": "MIT",
-  "version": "0.14.2"
+  "version": "0.15.0"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2888,7 +2888,7 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, as
   return noValueFound;
 };
 
-var getResourceValue = function getResourceValue(instance, RestResources, AsyncValueResolvers, relatedAsyncID, asyncKeys) {
+var getResourceValue = function getResourceValue(instance, restResources, asyncValueResolvers, relatedAsyncID, asyncKeys) {
   if (relatedAsyncID === -1) {
     return undefined;
   }
@@ -2899,8 +2899,8 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
     var _this = this;
 
     var asyncKey = asyncKeys[i];
-    var asyncValueResolver = AsyncValueResolvers[i];
-    var storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, RestResources[i]);
+    var asyncValueResolver = asyncValueResolvers[i];
+    var storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, restResources[i]);
 
     if (storeValue === noValueFound) {
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
@@ -2908,7 +2908,7 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
       setTimeout(function () {
         _newArrowCheck(this, _this);
 
-        return RestResources[i].get(resourceValue);
+        return restResources[i].get(resourceValue);
       }.bind(this), 1); // resource not loaded yet,
       // the computed function will be called again when store is updated
 
@@ -2921,7 +2921,7 @@ var getResourceValue = function getResourceValue(instance, RestResources, AsyncV
     resourceValue = asyncValueResolver(storeValue, noValueFound);
   };
 
-  for (var i = 0, l = RestResources.length; i < l; i += 1) {
+  for (var i = 0, l = restResources.length; i < l; i += 1) {
     var _ret = _loop(i, l);
 
     if (_typeof(_ret) === "object") return _ret.v;
@@ -2936,12 +2936,12 @@ var pathIteratee = function pathIteratee(obj, key) {
 
 var _default = {
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
-  asyncResourceGetter: function asyncResourceGetter(computedPropertyName, RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
+  asyncResourceGetter: function asyncResourceGetter(computedPropertyName, restResourcesPath, asyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath) {
     return _defineProperty({}, computedPropertyName, function () {
       var _this2 = this;
 
       // get the needed values from object nested (or not) paths in `this`
-      var _map = [RestResourcesPath, AsyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath].map(function (path) {
+      var _map = [restResourcesPath, asyncValueResolversPath, relatedAsyncIDPath, asyncKeyPath].map(function (path) {
         _newArrowCheck(this, _this2);
 
         if (typeof path !== 'string') {
@@ -2951,22 +2951,22 @@ var _default = {
         return path.split('.').reduce(pathIteratee, this);
       }.bind(this)),
           _map2 = _slicedToArray(_map, 4),
-          RestResources = _map2[0],
-          AsyncValueResolvers = _map2[1],
+          restResources = _map2[0],
+          asyncValueResolvers = _map2[1],
           relatedAsyncID = _map2[2],
           asyncKey = _map2[3];
 
-      return getResourceValue(this, (0, _castArray.default)(RestResources), (0, _castArray.default)(AsyncValueResolvers), relatedAsyncID, asyncKey);
+      return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolvers), relatedAsyncID, asyncKey);
     });
   },
   // use as `...asyncResourceValue` in the components computed properties
   asyncResourceValue: {
     asyncResourceValue: function asyncResourceValue() {
-      var RestResources = this.RestResources,
+      var restResources = this.restResources,
           relatedAsyncID = this.relatedAsyncID,
-          AsyncValueResolver = this.AsyncValueResolver,
+          asyncValueResolver = this.asyncValueResolver,
           asyncKey = this.asyncKey;
-      return getResourceValue(this, (0, _castArray.default)(RestResources), (0, _castArray.default)(AsyncValueResolver), relatedAsyncID, asyncKey);
+      return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolver), relatedAsyncID, asyncKey);
     }
   },
   updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
