@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2018-12-03T23:45:37.608Z",
+  "date": "2019-01-21T13:10:43.931Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
   "hash": "545e56f9940c7d694cc4",
   "license": "MIT",
-  "version": "0.15.0"
+  "version": "0.16.0"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
