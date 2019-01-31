@@ -40,10 +40,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
 
     const storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, restResources[i]);
 
-
-
     if (storeValue === noValueFound) {
-
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
       const action = get(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
