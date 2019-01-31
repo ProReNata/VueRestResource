@@ -1,4 +1,5 @@
 import castArray from 'lodash/castArray';
+import get from 'lodash/get';
 
 const noValueFound = {};
 
@@ -31,6 +32,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
   }
 
   let resourceValue = relatedAsyncID;
+  const storeValues = [];
 
   for (let i = 0, l = restResources.length; i < l; i += 1) {
     const asyncKey = asyncKeys[i];
@@ -38,18 +40,24 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
 
     const storeValue = getStoreResourceValue(instance, resourceValue, asyncKey, restResources[i]);
 
+
+
     if (storeValue === noValueFound) {
+
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
-      setTimeout(() => restResources[i].get(resourceValue), 1);
+      const action = get(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
+      setTimeout(() => restResources[i][action](resourceValue), 1);
 
       // resource not loaded yet,
       // the computed function will be called again when store is updated
       return undefined;
     }
 
+    storeValues.push(storeValue);
+
     // re-assign resourceValue to be applied as next foreign key
-    resourceValue = asyncValueResolver(storeValue, noValueFound);
+    resourceValue = asyncValueResolver(storeValue, noValueFound, storeValues);
   }
 
   return resourceValue;
