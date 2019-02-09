@@ -131,16 +131,20 @@ export default {
     return {
       [computedPropertyName]() {
         const noValueFound = {};
-        const valuesArray = initialValues.split('.').reduce((obj, key) => obj[key] || noValueFound, this);
-        const values = valuesArray !== noValueFound ? valuesArray : [];
-        const handlers = valuesArray.map(() => (data) => data);
+
+        const values = (() => {
+          const computed = initialValues.split('.').reduce((obj, key) => obj[key] || noValueFound, this);
+          return computed !== noValueFound ? castArray(computed) : [];
+        })();
+
+        const handlers = values.map(() => (data) => data);
         const resourceValues = values
           .map((value, i) => {
             return getResourceValue(this, [resource], handlers, value, castArray(keyName));
           })
           .filter((val) => typeof val !== 'undefined');
 
-        return resourceValues.length === valuesArray.length ? resourceValues : [];
+        return resourceValues.length === values.length && values.length > 0 ? resourceValues : [];
       },
     };
   },
