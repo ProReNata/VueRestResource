@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-02-08T10:39:13.580Z",
+  "date": "2019-02-09T12:12:22.462Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "032923220d4acce50fd2",
+  "hash": "a41ca21c50617a0e239c",
   "license": "MIT",
-  "version": "0.17.1"
+  "version": "0.18.0"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2758,19 +2758,27 @@ var _default = {
       var _this5 = this;
 
       var noValueFound = {};
-      var valuesArray = initialValues.split('.').reduce(function (obj, key) {
-        _newArrowCheck(this, _this5);
 
-        return obj[key] || noValueFound;
-      }.bind(this), this);
-      var values = valuesArray !== noValueFound ? valuesArray : [];
-      var handlers = valuesArray.map(function () {
+      var values = function () {
         var _this6 = this;
 
         _newArrowCheck(this, _this5);
 
-        return function (data) {
+        var computed = initialValues.split('.').reduce(function (obj, key) {
           _newArrowCheck(this, _this6);
+
+          return obj[key] || noValueFound;
+        }.bind(this), this);
+        return computed !== noValueFound ? (0, _castArray.default)(computed) : [];
+      }.bind(this)();
+
+      var handlers = values.map(function () {
+        var _this7 = this;
+
+        _newArrowCheck(this, _this5);
+
+        return function (data) {
+          _newArrowCheck(this, _this7);
 
           return data;
         }.bind(this);
@@ -2784,7 +2792,7 @@ var _default = {
 
         return typeof val !== 'undefined';
       }.bind(this));
-      return resourceValues.length === valuesArray.length ? resourceValues : [];
+      return resourceValues.length === values.length && values.length > 0 ? resourceValues : [];
     });
   }
 };
