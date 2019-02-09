@@ -76,7 +76,7 @@ export default {
           relatedAsyncIDPath,
           asyncKeyPath,
         ].map((path) => {
-          if (typeof path !== 'string') {
+          if (typeof path !== 'string' || !path.match(/\./)) {
             return path;
           }
 
@@ -124,6 +124,23 @@ export default {
               .forEach(resourceIteratee);
           }
         },
+      },
+    };
+  },
+  resourceListGetter(computedPropertyName, resource, initialValues, keyName) {
+    return {
+      [computedPropertyName]() {
+        const noValueFound = {};
+        const valuesArray = initialValues.split('.').reduce((obj, key) => obj[key] || noValueFound, this);
+        const values = valuesArray !== noValueFound ? valuesArray : [];
+        const handlers = valuesArray.map(() => (data) => data);
+        const resourceValues = values
+          .map((value, i) => {
+            return getResourceValue(this, [resource], handlers, value, castArray(keyName));
+          })
+          .filter((val) => typeof val !== 'undefined');
+
+        return resourceValues.length === valuesArray.length ? resourceValues : [];
       },
     };
   },
