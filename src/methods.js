@@ -126,7 +126,7 @@ export default class {
     /** * * * * * * * * * ** * * * * * * * * * * * * * * * * * * *
      *     This class method is only for components that           *
      *     need to speak with server de-coupled from store.        *
-     *     Rule is: all Components should instanciate methods.js   *
+     *     Rule is: all Components should instantiate methods.js   *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
     const ajax = axios[actionType](endpoint, ...args);

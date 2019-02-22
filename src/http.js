@@ -15,7 +15,7 @@ const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  * queued requests, without them having to be fired to server.
  *
  * All requests gets registered in store as pending, so we can track they existed.
- * We add a prop .debouncedResponce with value: null - if the request got its own
+ * We add a prop .debouncedResponse with value: null - if the request got its own
  * response; Object - the request object of the request that got the response data
  *
  * Not implemented yet:
@@ -104,7 +104,7 @@ export default class Rest extends methods {
         /*
          * About using callbacks here:
          * Sometimes the data Axios gets needs to be processed. We can do this in
-         * in the Store on in the Controller of the component. Use callback & Controller
+         * the Store or in the Controller of the component. Use callback & Controller
          * pattern if you want to keep the store "logic free".
          */
 
@@ -157,9 +157,9 @@ export default class Rest extends methods {
 
         if (globalQueue.queuedRequests[endpoint]) {
           // call next in queue
-          const aciveRequest = globalQueue.activeRequests[endpoint];
+          const activeRequest = globalQueue.activeRequests[endpoint];
 
-          if (aciveRequest && aciveRequest.id === request.id) {
+          if (activeRequest && activeRequest.id === request.id) {
             delete globalQueue.activeRequests[endpoint];
             const next = globalQueue.queuedRequests[endpoint].shift();
 

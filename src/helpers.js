@@ -95,7 +95,19 @@ export default {
       return getResourceValue(this, castArray(restResources), castArray(asyncValueResolver), relatedAsyncID, asyncKey);
     },
   },
-  updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys, verificationKey) {
+
+  /**
+   * Updates the store with a list based on a relation of keys.
+   *
+   * @param {string} watcherPropertyName - Of computed property,.
+   * @param {boolean} immediate - Run directly on page load.
+   * @param {Object[] | Object} resources - The model to use.
+   * @param {string[] | string} [resourceRelatedKeys=id] - Key to look for in the database.
+   * @param {string} [verificationKey] - No idea.
+   *
+   * @returns {Object} - Places a watcher property with the values in your state.
+   */
+  updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys = 'id', verificationKey) {
     return {
       [watcherPropertyName]: {
         immediate,
@@ -130,18 +142,15 @@ export default {
   resourceListGetter(computedPropertyName, resource, initialValues, keyName) {
     return {
       [computedPropertyName]() {
-        const noValueFound = {};
-
         const values = (() => {
           const computed = initialValues.split('.').reduce((obj, key) => obj[key] || noValueFound, this);
+
           return computed !== noValueFound ? castArray(computed) : [];
         })();
 
         const handlers = values.map(() => (data) => data);
         const resourceValues = values
-          .map((value, i) => {
-            return getResourceValue(this, [resource], handlers, value, castArray(keyName));
-          })
+          .map((value) => getResourceValue(this, [resource], handlers, value, castArray(keyName)))
           .filter((val) => typeof val !== 'undefined');
 
         return resourceValues.length === values.length && values.length > 0 ? resourceValues : [];

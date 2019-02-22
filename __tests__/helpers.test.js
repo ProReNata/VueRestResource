@@ -1,7 +1,7 @@
 const helpers = require('../src/helpers').default;
 
 test('All helpers are present', () => {
-  expect(Object.keys(helpers).length).toBe(3);
+  expect(Object.keys(helpers).length).toBe(4);
 });
 
 test('Resource list to be called', (done) => {
