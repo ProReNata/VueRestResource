@@ -131,6 +131,8 @@ export default class {
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
     const ajax = axios[actionType](endpoint, ...args);
 
-    return ajax.then((res) => handler(res));
+    return ajax.then((res) => handler(res)).catch(err => {
+      console.log('VRR error', err.message);
+    });
   }
 }
