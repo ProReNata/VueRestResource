@@ -13,7 +13,7 @@ export default class {
     this.handler = {
       // set the default handler if its not overridden in the local module resource
       ...defaultResourceHandlers,
-      ...resource.handler,
+      ...(resource.handler || {}),
     };
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
