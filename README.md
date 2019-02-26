@@ -22,7 +22,11 @@
 
 # VueRestResource
 
-Rest HTTP resource management for Vue.js and Vuex projects. 
+VueRestResource is a Rest HTTP resource management for Vue.js and Vuex projects. This library integrates 
+Vuex and the server data in a powerful way. 
+
+The goal of this library is to reduce boilerplate, simplify synchronise server and client data (in Vuex),
+take decisions so the workflow is more predictable.
 
 ---
 
@@ -33,9 +37,9 @@ import VRR from 'VueRestResource';
 import store from 'your/vuex/store/instance';
 
 const RestConfig = {
-  baseUrl: '/api/path',
+  baseUrl: '/api/path', // optional, depends on server configuration
   httpHeaders: {'X-CSRFToken': window.myPrivateToken}, // optional
-  store: store
+  store: store // Vuex store
 };
 
 export const {HTTP, registerResource} = VRR(RestConfig);
@@ -44,6 +48,9 @@ export const {HTTP, registerResource} = VRR(RestConfig);
 This will configure the resource and from here you can use:
  - the `HTTP` class to do direct Axios/Ajax requests with _Promises_ 
  - the `registerResource` factory function taking the resource object as argument
+ 
+ >**Note:** VueRestResource will register a module _Requests_ in the store. The store has to be _namespaced_. 
+
 
 **The resource object**:
 
@@ -72,6 +79,10 @@ export default {
   },
 };
 ```
+
+The `apiModule` and `apiModel` will be used to form the server endpoint, together with the `baseUrl` from the options (if given)
+and with the `id` (if given).
+
 
 ## Glossary
 
@@ -119,17 +130,20 @@ This is the name of an object in your module. e.g. the posts of a user.
 ### registerResource
 
 `import {registerResource} from VRR;`  
+
 Use this method to create a Resource.  
-It takes in 1 parameter, resources which needs to be a store object in the following format.  
+It takes in 1 parameter, resources which needs to be a store object in the following format. 
+ 
 ```
 Blocks: {
   apiModel: 'blocks',
   apiModule: MODULE,
-  handler: {},
+  handler: {}, // optional
 },
 ```
 The apiModule is the name of the store module.  
 The apiModel is the name of the object in this module.
+The handler object is where you can pass functions to change the data just before it is added to the store. 
 It will create a memory for this resource.
 
 You should first import the module using the path to your store.  
@@ -140,22 +154,22 @@ Then you can use the module to get the object.
 
 You need to pass in this resource when calling the other methods.
 
-RETURNS a Resource Class with the following methods
+The `registerResource` function will return a Resource Class with the following methods:
 
 #### get
+
 `Resource.get(id)`
 
-Param 1: Number: id to get
+Param 1: _Number_, the id of the model you want to get
 
 Fetches it from the server.
 Puts the resource data with id in the store.
 
 #### Create
-`Resource.update(id, obj)`
 
-Param : /: Object without id
+`Resource.create(obj)`
 
-Returns an id
+Param 1: _Object_, the object/model you want to save (without id).
 
 Updates the server.
 Updates the store.
@@ -163,8 +177,8 @@ Updates the store.
 #### Update
 `Resource.update(id, obj)`
 
-Param 1: Number: id to update
-Param 2: /: New Value
+Param 1: _Number_, the id of the model you want to update.
+Param 2: _Object_, the object/model you want to update.
 
 Updates the server.
 Updates the store.
@@ -172,32 +186,38 @@ Updates the store.
 #### List
 `Resource.List()`
 
-Puts the resource into the store.
+Puts the resources into the store.
 
 
 ### asyncResourceValue
 
 ### asyncResourceGetter
 
-Loads in he specific object in the store.
+This method is similar to Vuex's `mapGetters`.   
 
+The idea is to get resources from the server whose you have the `id` for. 
+If you have a `id` of a model/object and that id changes, the VRR will check the store for it. 
+If it doesn't find it it will get it from the server for you and update the store. So you can use the computed property this function returns as the pointer to the value you want.
+
+In other words:
+
+Loads in the specific object in the store.
 Use this to bind a state to a computed property.
+If the Object is not found in the store, it fills the store with data from the server.
 
-Object not found in the store: Fills the store with data from the server.
-Returns the object.
-
-Param 1: String: name of the local state  
-Param 2: Resource: pass in the resource Object  
-Param 3: Function: callback  
-Param 4: Value to match  
-Param 5: Array: Value to check
+Param 1: _String_, name of the computed property the Vue instance will receive  
+Param 2: _Object_, the resource Object  
+Param 3: _Function_, callback to transform the data from the store before providing it as the value of the computed property. 
+If you don't need it just pass `(data) => data`.  
+Param 4: _String|Number_, the `id` of the object you want or the name of the instance value/property to observe.
 
 e.g.
 ```
 computed: {
-  ...asyncResourceGetter('firstUser', UserResource, (data) => data, 1, ['id']),
+  ...asyncResourceGetter('firstUser', UserResource, (data) => data, 'myUserIdProp'),
 },
 ```
+
 
 ### HTTP
 
