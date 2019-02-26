@@ -30,8 +30,8 @@ const globalQueue = {
 };
 
 export default class Rest extends methods {
-  constructor(uuid, resources, config) {
-    super(resources, config);
+  constructor(uuid, resource, config) {
+    super(resource, config);
     this.uuid = uuid;
     this.requestCounter = 0;
     this.store = config.store;

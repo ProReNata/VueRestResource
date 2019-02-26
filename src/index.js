@@ -18,11 +18,11 @@ export default function createVueRestResource(config) {
       }
     },
 
-    registerResource(resources) {
+    registerResource(resource) {
       const uuid = createUUID();
       store.dispatch(`${MODULE_NAME}/registerComponentInStore`, uuid);
 
-      return new Rest(uuid, resources, config);
+      return new Rest(uuid, resource, config);
     },
   };
 }
