@@ -132,7 +132,7 @@ This is the name of an object in your module. e.g. the posts of a user.
 `import {registerResource} from VRR;`  
 
 Use this method to create a Resource.  
-It takes in 1 parameter, resources which needs to be a store object in the following format. 
+It takes in 1 parameter, resource which needs to be a store object in the following format. 
  
 ```
 Blocks: {
@@ -142,7 +142,7 @@ Blocks: {
 },
 ```
 The apiModule is the name of the store module.  
-The apiModel is the name of the object in this module.
+The apiModel is the name of the object in this module.  
 The handler object is where you can pass functions to change the data just before it is added to the store. 
 It will create a memory for this resource.
 
