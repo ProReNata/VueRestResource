@@ -61,7 +61,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
 
 const pathIteratee = function pathIteratee(obj, key, i) {
   if (key === 'this' && i === 0) return obj;
-  return obj[key] || {};
+  return obj[key] || noValueFound;
 };
 
 export default {
@@ -102,6 +102,7 @@ export default {
    *
    * @returns {Object} - Places a watcher property with the values in your state.
    */
+  // PROBABLY WILL BE DEPRECATED / REWRITEN
   updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys = 'id', verificationKey) {
     return {
       [watcherPropertyName]: {
@@ -134,21 +135,30 @@ export default {
       },
     };
   },
-  resourceListGetter(computedPropertyName, resource, initialValues, keyName) {
+  // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
+  // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
+  resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     return {
       [computedPropertyName]() {
-        const values = (() => {
-          const computed = initialValues.split('.').reduce((obj, key) => obj[key] || noValueFound, this);
+        const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
 
-          return computed !== noValueFound ? castArray(computed) : [];
-        })();
+        if (Array.isArray(computed)) {
+          const ids = computed || [];
 
-        const handlers = values.map(() => (data) => data);
-        const resourceValues = values
-          .map((value) => getResourceValue(this, [resource], handlers, value, castArray(keyName)))
-          .filter((val) => typeof val !== 'undefined');
+          const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
+          const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+          if (allValuesInStore) {
+            return resourceValues;
+          } else {
+            // do server request
+            // NEEDS TO BE IMPLEMENTED ON SERVER
+            resource.list({id: computed.join(',')});
+          }
+        } else {
+          resource.list(computed);
+        }
 
-        return resourceValues.length === values.length && values.length > 0 ? resourceValues : [];
+        return [];
       },
     };
   },
