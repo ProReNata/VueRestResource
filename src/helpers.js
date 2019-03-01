@@ -59,22 +59,23 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
   return resourceValue;
 };
 
-const pathIteratee = function pathIteratee(obj, key) {
+const pathIteratee = function pathIteratee(obj, key, i) {
+  if (key === 'this' && i === 0) return obj;
   return obj[key] || {};
 };
 
 export default {
   // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
-  asyncResourceGetter(computedPropertyName, restResources, asyncValueResolversPath, relatedAsyncIDPath) {
+  asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
       [computedPropertyName]() {
         // get the needed values from object nested (or not) paths in `this`
-        const [asyncValueResolvers, relatedAsyncID] = [asyncValueResolversPath, relatedAsyncIDPath].map((path) => {
-          if (typeof path !== 'string') {
-            return path;
+        const [asyncValueResolvers, relatedAsyncID] = [resolverFunctions, initialId].map((value) => {
+          if (typeof value !== 'string') {
+            return value;
           }
 
-          return path.split('.').reduce(pathIteratee, this);
+          return value.split('.').reduce(pathIteratee, this);
         });
 
         return getResourceValue(this, castArray(restResources), castArray(asyncValueResolvers), relatedAsyncID);

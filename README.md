@@ -207,14 +207,14 @@ If the Object is not found in the store, it fills the store with data from the s
 
 Param 1: _String_, name of the computed property the Vue instance will receive  
 Param 2: _Object_, the resource Object  
-Param 3: _Function_, callback to transform the data from the store before providing it as the value of the computed property. 
+Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+Param 4: _Function_ (optional), callback to transform the data from the store before providing it as the value of the computed property. 
 If you don't need it just pass `(data) => data`.  
-Param 4: _String|Number_, the `id` of the object you want or the name of the instance value/property to observe.
-
 e.g.
+
 ```
 computed: {
-  ...asyncResourceGetter('firstUser', UserResource, (data) => data, 'myUserIdProp'),
+  ...asyncResourceGetter('currentUser', UserResource, 'this.myUserIdProp')
 },
 ```
 
