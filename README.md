@@ -227,15 +227,14 @@ Use this to bind a state to a computed property, but only get the data that matc
 
 Will always fill in the store with server data when the object in not found.  
 
-Param 1: String: name of the local state  
-Param 2: Resource: pass in the resource Object  
-Param 3: Array: needs to be an array of ids   **e.g.** `user.posts = [5, 4, 2, 9, 10, 7]`  
-
-Param 4: Optional | Default: 'id':  Keyname of Value to check 
+Param 1: _String_, name of the local state  
+Param 2: _Resource_, pass in the resource Object  
+Param 3: _String_, the computed property name that has a array with IDs or a object to be used as a filter for the query
 
 e.g.
+
 ```
 computed: {
-  ...resourceListGetter('userPosts', Posts, 'user.posts', 'id'),
+  ...resourceListGetter('userPosts', Posts, 'user.posts'),
 },
 ```
