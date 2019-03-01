@@ -21,7 +21,7 @@ export default class {
 
     this.apiModel = resource.apiModel;
     this.apiModule = resource.apiModule;
-    this.endpoint = [this.baseUrl, this.apiModel, this.apiModule].filter(Boolean).toLowerCase();
+    this.endpoint = [this.baseUrl, this.apiModule, this.apiModel].filter(Boolean).toLowerCase();
     this.defaultParams = config.defaultParams;
     this.httpHeaders = {headers: config.httpHeaders};
     this.resource = resource;
