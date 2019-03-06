@@ -138,19 +138,16 @@ export default {
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
-    console.log('Creating List', computedPropertyName);
 
     return {
       [computedPropertyName]() {
         const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
-        console.log('Inside List', computed);
 
         if (Array.isArray(computed)) {
           const ids = computed || [];
 
           const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
           const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
-          console.log('Inside List 2', allValuesInStore, computed.join(','));
 
           if (allValuesInStore) {
             return resourceValues;

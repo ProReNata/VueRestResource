@@ -29,7 +29,6 @@ const mergeById = (originalArray, newData) => {
 
 module.exports = {
   dataFetcher: (req, res) => {
-    console.log('url', req.originalUrl);
     const [module, model, id] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
@@ -53,7 +52,6 @@ module.exports = {
       } else {
         response = data;
       }
-      console.log('Fetching Data', err ? {} : response);
 
       res.send(err ? {} : response);
     });

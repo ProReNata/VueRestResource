@@ -1,14 +1,23 @@
 import Vue from 'vue';
-import store from './Store/store';
+import envFactory from './Store/envFactory';
 
-import {registerResource, asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} from './HTTP';
+// import {registerResource, asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} from './HTTP';
 import Hints from './Modules/Hints/Resource/resource';
+const seenHintsData = require("./DevServer/Endpoints/hints/seenhints.json");
+const hintsData = require("./DevServer/Endpoints/hints/hints.json");
 const watcherName = 'testWatcher';
 const computedPropertyName = 'TEST_COMPUTED_PROPERTY_NAME';
 const resourceKey = 'someKey';
 const resourceName = 'someName';
 const listOptionsKey = 'querySetringKey';
 const testKeyValue = 12345;
+
+const getJsonObjectById = (obj, idToMatch) => {
+  return JSON.stringify(obj.objects.find(({id}) => id === idToMatch))
+};
+const listJsonObjectById = (obj, ids) => {
+  return JSON.stringify(obj.objects.filter(({id}) => ids.includes(id)))
+};
 
 describe('Helpers', () => {
   it('All helpers are present', () => {
@@ -18,63 +27,119 @@ describe('Helpers', () => {
 
   describe('asyncResourceGetter', () => {
     it('Matches computed property key name', () => {
+      const {asyncResourceGetter} = envFactory();
       const helper = asyncResourceGetter(computedPropertyName);
       expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
     });
 
-    it('Sets the correct computed property in a Vue instance', () => {
-      const SeenHintsResource = registerResource(Hints.SeenHints);
-      const instance = new Vue({
+    it('Vue: Set computed property and is Reactive', (done) => {
+      const {asyncResourceGetter, registerResource, store} = envFactory();
+
+      const startIndex = 1;
+      const changedIndex = 2;
+      const checkData = getJsonObjectById(seenHintsData, changedIndex);
+
+      const seenHintsResource = registerResource(Hints.SeenHints);
+
+      new Vue({
         store,
+        data() {
+          return {
+            hintId: startIndex,
+          }
+        },
         computed: {
-          userId() { return 1 },
-          ...asyncResourceGetter(computedPropertyName, SeenHintsResource, 'this.userId'),
+          ...asyncResourceGetter(computedPropertyName, seenHintsResource, 'this.hintId'),
+        },
+        watch: {
+          [computedPropertyName](val) {
+            if(typeof val === 'object' && Object.keys(val).length > 0) {
+              if (this[computedPropertyName].id === startIndex) {
+                this.hintId = changedIndex;
+              } else {
+                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+                done();
+              }
+            }
+          },
+        },
+      })
+    });
+
+    it('Searches inside custom function', (done) => {
+      const {asyncResourceGetter, registerResource, store} = envFactory();
+
+      const SeenHintsResource = registerResource(Hints.SeenHints);
+      const startIndex = 1;
+      const changedIndex = 2;
+      const checkData = getJsonObjectById(seenHintsData, changedIndex);
+      console.log(store._modulesNamespaceMap['']._children.Hints.state.seenhints);
+
+      new Vue({
+        store,
+        data() {
+          return {
+            hintId: startIndex,
+          }
+        },
+        computed: {
+          ...asyncResourceGetter(computedPropertyName, SeenHintsResource, 'this.hintId'),
+        },
+        watch: {
+          [computedPropertyName](val) {
+            if(typeof val === 'object' && Object.keys(val).length > 0) {
+              if (this[computedPropertyName].id === startIndex) {
+                this.hintId = changedIndex;
+              } else {
+                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+                done();
+              }
+            }
+          },
         },
       });
-      // console.log(instance[computedPropertyName]);
-      expect(instance.hasOwnProperty(computedPropertyName)).toBeTruthy();
     });
 
   });
 
   describe('resourceListGetter', () => {
     it('Matches computed property key name', () => {
+      const {resourceListGetter} = envFactory();
+
       const helper = resourceListGetter(computedPropertyName);
       expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
     });
 
-    it('Sets the correct computed property in a Vue instance', (done) => {
+    it('Vue: Set computed property and is Reactive', (done) => {
+      const {resourceListGetter, registerResource, store} = envFactory();
       const HintsResource = registerResource(Hints.Hints);
-      const instance = new Vue({
+      const startIndex = [1, 2];
+      const changedIndex = [2, 3];
+      const checkData = listJsonObjectById(hintsData, changedIndex);
+
+      new Vue({
         store,
         data() {
           return {
-            hints: []
+            hints: startIndex,
           }
         },
         computed: {
           ...resourceListGetter(computedPropertyName, HintsResource, 'this.hints'),
         },
-        created() {
-          setTimeout(() => this.hints = [1, 2], 250)
-        },
         watch: {
           [computedPropertyName](val) {
             if(val.length > 0) {
-              console.log(instance[computedPropertyName]);
-              console.log(instance.hints);
-              expect(instance.hasOwnProperty(computedPropertyName)).toBeTruthy();
-              done();
+              if (this.hints === startIndex) {
+                this.hints = changedIndex;
+              } else {
+                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+                done();
+              }
             }
           }
         },
       });
-      // setTimeout(() => {
-      //   console.log(instance[computedPropertyName]);
-      //   console.log(instance.hints);
-      //   expect(instance.hasOwnProperty(computedPropertyName)).toBeTruthy();
-      //   done();
-      // }, 2000);
     });
 
   });

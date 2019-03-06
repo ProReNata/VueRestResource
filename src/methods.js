@@ -33,8 +33,6 @@ export default class {
       apiModel: this.apiModel,
       apiModule: this.apiModule,
     };
-
-    console.log('rest endpoint', this.endpoint);
   }
 
   get(id, data = {}, cb) {
@@ -61,8 +59,6 @@ export default class {
       endpoint: this.endpoint,
       handler: this.handler.list,
     };
-
-    console.log('data', data);
 
     const resp = this.dispatch('list', resources, {
       ...this.httpHeaders,

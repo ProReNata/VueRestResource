@@ -98,7 +98,7 @@ export default class Rest extends methods {
         }
 
         const response = !res && action === 'delete' ? deletedId : res;
-        const responseCopy = JSON.parse(JSON.stringify(response)); //
+        const responseCopy = JSON.parse(JSON.stringify({data: response.data})); //
         const data = handler(responseCopy, this.store);
 
         /*

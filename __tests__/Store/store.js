@@ -1,8 +1,5 @@
 // Prepare Vuex, our Store
-import Vue from 'vue';
 import Vuex from 'vuex';
-
-Vue.use(Vuex);
 
 // Import Modules
 import Hints from '../Modules/Hints/Store/store';
