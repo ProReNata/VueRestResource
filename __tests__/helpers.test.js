@@ -1,32 +1,36 @@
+const Vue = require('../node_modules/vue/dist/vue.common.dev');
 const helpers = require('../src/helpers').default;
+const {asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} = helpers;
 
-test('All helpers are present', () => {
-  expect(Object.keys(helpers).length).toBe(4);
-});
+const watcherName = 'testWatcher';
+const computedPropertyName = 'someComputedPropertyName'
+const resourceKey = 'someKey';
+const resourceName = 'someName';
+const listOptionsKey = 'querySetringKey';
+const testKeyValue = 12345;
 
-test('Resource list to be called', (done) => {
-  const watcherName = 'testWatcher';
-  const resourceKey = 'someKey';
-  const resourceName = 'someName';
-  const listOptionsKey = 'querySetringKey';
-  const testKeyValue = 12345;
+describe('Helpers', () => {
+  it('All helpers are present', () => {
+    expect(Object.keys(helpers).length).toBe(4);
+  });
 
-  const listCallback = function(opts) {
-    expect(opts[listOptionsKey]).toBe(testKeyValue);
-    done();
-  };
+  describe('asyncResourceGetter', () => {
 
-  const resource = {
-    list(opts) {
-      listCallback(opts);
-    },
-  };
+    it('should return the wished computed property key name', () => {
+      const helper = asyncResourceGetter(computedPropertyName);
+      expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
+    });
 
-  const instance = {
-    [resourceName]: resource,
-  };
+    it('should return the wished computed property key name', () => {
+      const instance = new Vue({
+        computed: {
+          asyncResourceGetter(computedPropertyName, )
+        }
+      });
+      console.log(instance.test);
+      // expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
+    });
 
-  const watcher = helpers.updateResourceListWatcher(watcherName, true, resourceName, listOptionsKey, resourceKey)[watcherName];
-  expect(watcher.immediate).toBe(true);
-  watcher.handler.call(instance, {[resourceKey]: testKeyValue}, {[resourceKey]: testKeyValue});
+  });
+
 });
