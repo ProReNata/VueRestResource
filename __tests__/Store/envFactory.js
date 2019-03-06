@@ -3,37 +3,38 @@ import Vuex from 'vuex';
 import Hints from '../Modules/Hints/Store/store';
 import vrr from '../../src'; // dev-path
 
-export default () => {
-  Vue.use(Vuex);
+Vue.use(Vuex);
 
-  const Modules = {
-    Hints,
-  };
+const Modules = {
+  Hints,
+};
 
 // turn ON namespacing in modules
-  const moduleKeyIteratee = function _moduleKeyIteratee(key) {
-    Modules[key].namespaced = true;
-  };
+const moduleKeyIteratee = function _moduleKeyIteratee(key) {
+  Modules[key].namespaced = true;
+};
 
-  Object.keys(Modules).forEach(moduleKeyIteratee);
+Object.keys(Modules).forEach(moduleKeyIteratee);
 
-  const store = new Vuex.Store({
-    actions: {},
+const storeDefinition = {
+  actions: {},
 
-    getters: {},
+  getters: {},
 
-    modules: Modules,
+  modules: Modules,
 
-    mutations: {},
+  mutations: {},
 
-    namespaced: true,
+  namespaced: true,
 
-    // only for global stuff, otherwise use modules
-    state: {},
+  // only for global stuff, otherwise use modules
+  state: {},
 
-    strict: false,
-  });
+  strict: false,
+};
 
+export default () => {
+  const store = new Vuex.Store(storeDefinition);
 
   const RestConfig = {
     baseUrl: 'http://localhost:8984', // Development URL
@@ -45,7 +46,10 @@ export default () => {
   const {asyncResourceValue, asyncResourceGetter, registerResource, resourceListGetter} = vrr(RestConfig);
 
   return {
-    asyncResourceValue, asyncResourceGetter, registerResource, resourceListGetter,
+    asyncResourceValue,
+    asyncResourceGetter,
+    registerResource,
+    resourceListGetter,
     store,
-  }
-}
+  };
+};
