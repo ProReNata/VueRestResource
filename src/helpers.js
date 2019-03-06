@@ -19,9 +19,9 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
     return state.find(findStatePredicate) || noValueFound;
   }
 
-  if (state[asyncKey] === asyncID) {
-    return state;
-  }
+  // if (state[asyncKey] === asyncID) {
+  //   return state;
+  // }
 
   return noValueFound;
 };
@@ -138,22 +138,27 @@ export default {
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
+    console.log('Creating List', computedPropertyName);
+
     return {
       [computedPropertyName]() {
         const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
+        console.log('Inside List', computed);
 
         if (Array.isArray(computed)) {
           const ids = computed || [];
 
           const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
           const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+          console.log('Inside List 2', allValuesInStore, computed.join(','));
+
           if (allValuesInStore) {
             return resourceValues;
-          } else {
-            // do server request
-            // NEEDS TO BE IMPLEMENTED ON SERVER
-            resource.list({id: computed.join(',')});
           }
+
+          // do server request
+          // NEEDS TO BE IMPLEMENTED ON SERVER
+          resource.list({id: computed.join(',')});
         } else {
           resource.list(computed);
         }

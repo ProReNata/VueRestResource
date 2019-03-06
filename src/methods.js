@@ -21,7 +21,10 @@ export default class {
 
     this.apiModel = resource.apiModel;
     this.apiModule = resource.apiModule;
-    this.endpoint = [this.baseUrl, this.apiModule, this.apiModel].filter(Boolean).toLowerCase();
+    this.endpoint = `${[this.baseUrl, this.apiModule, this.apiModel]
+      .filter(Boolean)
+      .join('/')
+      .toLowerCase()}/`;
     this.defaultParams = config.defaultParams;
     this.httpHeaders = {headers: config.httpHeaders};
     this.resource = resource;
@@ -30,6 +33,8 @@ export default class {
       apiModel: this.apiModel,
       apiModule: this.apiModule,
     };
+
+    console.log('rest endpoint', this.endpoint);
   }
 
   get(id, data = {}, cb) {
@@ -57,13 +62,17 @@ export default class {
       handler: this.handler.list,
     };
 
-    return this.dispatch('list', resources, {
+    console.log('data', data);
+
+    const resp = this.dispatch('list', resources, {
       ...this.httpHeaders,
       params: {
         ...data,
         ...this.defaultParams,
       },
     });
+
+    return resp;
   }
 
   create(data = {}, cb) {

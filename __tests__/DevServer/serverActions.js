@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const endpointsPath = 'Endpoints';
 
 const readFile = (filePath, cb) => {
   fs.readFile(filePath, 'utf8', (err, json) => {
@@ -27,9 +28,10 @@ const mergeById = (originalArray, newData) => {
 };
 
 module.exports = {
-  eketorpDataFetcher: (req, res) => {
+  dataFetcher: (req, res) => {
+    console.log('url', req.originalUrl);
     const [module, model, id] = req.originalUrl.split('/').filter(Boolean);
-    const filePath = path.join(__dirname, 'EketorpEnpoints', module, `${model}.json`);
+    const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
     const hasQueryFilter = Object.keys(req.query).filter(key => key !== '_').length > 0;
     const hasID = id && id[0] !== '?';
@@ -40,7 +42,10 @@ module.exports = {
         response = {
           ...data,
           objects: data.objects.filter((obj) =>
-            Object.keys(req.query).every((key) => String(obj[key]) === String(req.query[key])),
+            Object.keys(req.query).every((key) => {
+              const values = String(req.query[key]).split(',');
+              return values.includes(String(obj[key]))
+            }),
           ),
         };
       } else if (hasID) {
@@ -48,14 +53,15 @@ module.exports = {
       } else {
         response = data;
       }
+      console.log('Fetching Data', err ? {} : response);
 
       res.send(err ? {} : response);
     });
   },
 
-  eketorpDataSetter: (req, res) => {
+  dataSetter: (req, res) => {
     const [module, model, uid] = req.originalUrl.split('/').filter(Boolean);
-    const filePath = path.join(__dirname, 'EketorpEnpoints', module, `${model}.json`);
+    const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
     console.log('saving new data', module, model, uid, req.body);
 

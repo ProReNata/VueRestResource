@@ -2,10 +2,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
 
-const {eketorpDataFetcher, eketorpDataSetter} = require('./serverActions');
+const {dataFetcher, dataSetter} = require('./serverActions');
 
 const app = express();
-const port = 8080;
+const port = 8984;
 const jsonParser = bodyParser.json();
 
 app.use(cors());
@@ -13,8 +13,8 @@ app.options('*', cors());
 
 app.get(/favicon\.ico/, (req, res) => res.send(''));
 
-app.get('*', eketorpDataFetcher);
-app.put('*', jsonParser, eketorpDataSetter);
-app.post('*', jsonParser, eketorpDataSetter);
+app.get('*', dataFetcher);
+app.put('*', jsonParser, dataSetter);
+app.post('*', jsonParser, dataSetter);
 
 app.listen(port, () => console.log(`Dev server running on port ${port}!`));
