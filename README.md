@@ -218,6 +218,19 @@ computed: {
 },
 ```
 
+#### Get a nested object
+Param 1: _String_, name of the computed property the Vue instance will receive  
+Param 2: _Array_, Array of the resource Objects, executed in order  
+Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the first object.
+Param 4: _Array:Function_, Array of functions, executed in order and with the data received from the previous function. 
+If you don't need it just pass `(data) => data`.  
+e.g.
+
+```
+computed: {
+  ...asyncResourceGetter('currentUserCity', [UserResource, CityResource], id, [(userData) => userData.cityId, (cityData) => data])
+},
+
 
 ### HTTP
 

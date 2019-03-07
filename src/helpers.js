@@ -65,7 +65,8 @@ const pathIteratee = function pathIteratee(obj, key, i) {
 };
 
 export default {
-  // use as `...asyncResourceGetter(name, Resource, Resolvers, id)` in the components computed properties
+  // use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties
+  // To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
       [computedPropertyName]() {

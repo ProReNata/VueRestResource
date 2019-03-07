@@ -5,15 +5,14 @@ import envFactory from './Store/envFactory';
 import Hints from './Modules/Hints/Resource/resource';
 const seenHintsData = require('./DevServer/Endpoints/hints/seenhints.json');
 const hintsData = require('./DevServer/Endpoints/hints/hints.json');
-const watcherName = 'testWatcher';
 const computedPropertyName = 'TEST_COMPUTED_PROPERTY_NAME';
-const resourceKey = 'someKey';
-const resourceName = 'someName';
-const listOptionsKey = 'querySetringKey';
-const testKeyValue = 12345;
 
-const getJsonObjectById = (obj, idToMatch) => {
-  return JSON.stringify(obj.objects.find(({id}) => id === idToMatch));
+const getJsonObjectById = (obj, idToMatch, key = 'id') => {
+  return JSON.stringify(obj.objects.find((item) => item[key] === idToMatch));
+};
+const getRelatedObjectById = (obj, relatedObj, idToMatch, foreignKey = 'id') => {
+  const parent = obj.objects.find(({id}) => id === idToMatch);
+  return relatedObj.objects.find(({id}) => id === parent[foreignKey]);
 };
 const listJsonObjectById = (obj, ids) => {
   return JSON.stringify(obj.objects.filter(({id}) => ids.includes(id)));
@@ -54,10 +53,10 @@ describe('Helpers', () => {
         watch: {
           [computedPropertyName](val) {
             if (typeof val === 'object' && Object.keys(val).length > 0) {
-              if (this[computedPropertyName].id === startIndex) {
+              if (val.id === startIndex) {
                 this.hintId = changedIndex;
               } else {
-                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+                expect(JSON.stringify(val)).toEqual(checkData);
                 done();
               }
             }
@@ -66,31 +65,37 @@ describe('Helpers', () => {
       });
     });
 
-    it('Searches inside custom function', (done) => {
+    it('Vue: Set Nested computed property and is Reactive', (done) => {
       const {asyncResourceGetter, registerResource, store} = envFactory([Hints]);
 
       const SeenHintsResource = registerResource(Hints.SeenHints);
-      const startIndex = 1;
-      const changedIndex = 2;
-      const checkData = getJsonObjectById(seenHintsData, changedIndex);
+      const HintsResource = registerResource(Hints.Hints);
+      const startIndex = 2;
+      const changedIndex = 43;
+      const checkData = getRelatedObjectById(seenHintsData, hintsData, startIndex, 'hint');
+      const checkChangedData = getRelatedObjectById(seenHintsData, hintsData, changedIndex, 'hint');
 
       new Vue({
         store,
         data() {
           return {
-            hintId: startIndex,
+            seenHintId: startIndex,
           };
         },
         computed: {
-          ...asyncResourceGetter(computedPropertyName, SeenHintsResource, 'this.hintId'),
+          ...asyncResourceGetter(computedPropertyName, [SeenHintsResource, HintsResource], 'this.seenHintId', [(data) => data.hint, (data) => data]),
         },
         watch: {
           [computedPropertyName](val) {
             if (typeof val === 'object' && Object.keys(val).length > 0) {
-              if (this[computedPropertyName].id === startIndex) {
-                this.hintId = changedIndex;
-              } else {
-                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+
+              if (val.id === checkData.id) {
+                expect(JSON.stringify(val)).toEqual(JSON.stringify(checkData));
+                this.seenHintId = changedIndex;
+              }
+
+              if (val.id === checkChangedData.id){
+                expect(JSON.stringify(val)).toEqual(JSON.stringify(checkChangedData));
                 done();
               }
             }
@@ -111,8 +116,8 @@ describe('Helpers', () => {
     it('Vue: Set computed property and is Reactive', (done) => {
       const {resourceListGetter, registerResource, store} = envFactory([Hints]);
       const HintsResource = registerResource(Hints.Hints);
-      const startIndex = [1, 2];
-      const changedIndex = [2, 3];
+      const startIndex = [13, 23];
+      const changedIndex = [23, 33];
       const checkData = listJsonObjectById(hintsData, changedIndex);
 
       new Vue({
@@ -131,7 +136,7 @@ describe('Helpers', () => {
               if (this.hints === startIndex) {
                 this.hints = changedIndex;
               } else {
-                expect(JSON.stringify(this[computedPropertyName])).toEqual(checkData);
+                expect(JSON.stringify(val)).toEqual(checkData);
                 done();
               }
             }
