@@ -1,5 +1,5 @@
 import axios from 'axios';
-import methods from './methods';
+import HTTP from './methods';
 import Subscriber from './subscriber';
 import MODULE_NAME from './moduleName';
 
@@ -29,7 +29,7 @@ const globalQueue = {
   queuedRequests: {}, // endpoints as key values
 };
 
-export default class Rest extends methods {
+export default class Rest extends HTTP {
   constructor(uuid, resource, config) {
     super(resource, config);
     this.uuid = uuid;
