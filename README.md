@@ -230,7 +230,7 @@ e.g.
 computed: {
   ...asyncResourceGetter('currentUserCity', [UserResource, CityResource], id, [(userData) => userData.cityId, (cityData) => data])
 },
-
+```
 
 ### HTTP
 
