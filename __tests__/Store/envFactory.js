@@ -1,28 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Hints from '../Modules/Hints/Store/store';
 import vrr from '../../src';
 import storeBoilerplateGenerator from './Utils/storeBoilerplateGenerators';
 
 Vue.use(Vuex);
 
-const Modules = {
-  Hints,
-};
-
-// turn ON namespacing in modules
-const moduleKeyIteratee = function _moduleKeyIteratee(key) {
-  Modules[key].namespaced = true;
-};
-
-Object.keys(Modules).forEach(moduleKeyIteratee);
 
 const storeDefinition = {
   actions: {},
 
   getters: {},
 
-  modules: Modules,
+  modules: {},
 
   mutations: {},
 
@@ -35,7 +24,7 @@ const storeDefinition = {
 };
 
 export default (resources = []) => {
-  const store = new Vuex.Store(JSON.parse(JSON.stringify(storeDefinition)));
+  const store = new Vuex.Store(storeDefinition);
 
   resources.forEach(resource => {
     const resourceStore = storeBoilerplateGenerator(resource);
