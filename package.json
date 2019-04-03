@@ -26,9 +26,10 @@
   "main": "dist/vue-rest-resource.js",
   "module": "src/index.js",
   "scripts": {
-    "test": "concurrently \"npm run test-server\" \"npm run test-watch\"",
+    "test": "concurrently --kill-others --success first \"npm:test-server\" \"npm:test-once\"",
     "test-server": "node __tests__/DevServer/server.js",
     "test-watch": "nodemon node_modules/jasmine/bin/jasmine.js",
+    "test-once": "node_modules/jasmine/bin/jasmine.js",
     "build": "cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
     "lint": "eslint -f 'node_modules/eslint-friendly-formatter' --ext .js .",
     "lint-fix": "npm run lint -- --fix",
