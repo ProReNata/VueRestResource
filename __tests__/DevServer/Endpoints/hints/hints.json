@@ -1,0 +1,15 @@
+{
+  "end_index": 34,
+  "total": 34,
+  "limit": 10000,
+  "objects": [
+    {"id": 13, "name": "dragFieldsToTemplate"},
+    {"id": 23, "name": "sectionHandlerInfo23"},
+    {"id": 33, "name": "sectionHandlerInfo"}
+  ],
+  "pages": 1,
+  "previous": null,
+  "page": 1,
+  "start_index": 1,
+  "next": null
+}

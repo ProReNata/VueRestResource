@@ -1,32 +1,148 @@
-const helpers = require('../src/helpers').default;
+import Vue from 'vue';
+import envFactory from './Store/envFactory';
 
-test('All helpers are present', () => {
-  expect(Object.keys(helpers).length).toBe(3);
-});
+// import {registerResource, asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} from './HTTP';
+import Hints from './Modules/Hints/Resource/resource';
+const seenHintsData = require('./DevServer/Endpoints/hints/seenhints.json');
+const hintsData = require('./DevServer/Endpoints/hints/hints.json');
+const computedPropertyName = 'TEST_COMPUTED_PROPERTY_NAME';
 
-test('Resource list to be called', (done) => {
-  const watcherName = 'testWatcher';
-  const resourceKey = 'someKey';
-  const resourceName = 'someName';
-  const listOptionsKey = 'querySetringKey';
-  const testKeyValue = 12345;
+const getJsonObjectById = (obj, idToMatch, key = 'id') => {
+  return JSON.stringify(obj.objects.find((item) => item[key] === idToMatch));
+};
+const getRelatedObjectById = (obj, relatedObj, idToMatch, foreignKey = 'id') => {
+  const parent = obj.objects.find(({id}) => id === idToMatch);
+  return relatedObj.objects.find(({id}) => id === parent[foreignKey]);
+};
+const listJsonObjectById = (obj, ids) => {
+  return JSON.stringify(obj.objects.filter(({id}) => ids.includes(id)));
+};
 
-  const listCallback = function(opts) {
-    expect(opts[listOptionsKey]).toBe(testKeyValue);
-    done();
-  };
+describe('Helpers', () => {
+  it('All helpers are present', () => {
+    const helpers = require('../src/helpers').default;
+    expect(Object.keys(helpers).length).toBe(4);
+  });
 
-  const resource = {
-    list(opts) {
-      listCallback(opts);
-    },
-  };
+  describe('asyncResourceGetter', () => {
+    it('Matches computed property key name', () => {
+      const {asyncResourceGetter} = envFactory([Hints]);
+      const helper = asyncResourceGetter(computedPropertyName);
+      expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
+    });
 
-  const instance = {
-    [resourceName]: resource,
-  };
+    it('Vue: Set computed property and is Reactive', (done) => {
+      const {asyncResourceGetter, registerResource, store} = envFactory([Hints]);
 
-  const watcher = helpers.updateResourceListWatcher(watcherName, true, resourceName, listOptionsKey, resourceKey)[watcherName];
-  expect(watcher.immediate).toBe(true);
-  watcher.handler.call(instance, {[resourceKey]: testKeyValue}, {[resourceKey]: testKeyValue});
+      const startIndex = 1;
+      const changedIndex = 2;
+      const checkData = getJsonObjectById(seenHintsData, changedIndex);
+
+      const seenHintsResource = registerResource(Hints.SeenHints);
+
+      new Vue({
+        store,
+        data() {
+          return {
+            hintId: startIndex,
+          };
+        },
+        computed: {
+          ...asyncResourceGetter(computedPropertyName, seenHintsResource, 'this.hintId'),
+        },
+        watch: {
+          [computedPropertyName](val) {
+            if (typeof val === 'object' && Object.keys(val).length > 0) {
+              if (val.id === startIndex) {
+                this.hintId = changedIndex;
+              } else {
+                expect(JSON.stringify(val)).toEqual(checkData);
+                done();
+              }
+            }
+          },
+        },
+      });
+    });
+
+    it('Vue: Set Nested computed property and is Reactive', (done) => {
+      const {asyncResourceGetter, registerResource, store} = envFactory([Hints]);
+
+      const SeenHintsResource = registerResource(Hints.SeenHints);
+      const HintsResource = registerResource(Hints.Hints);
+      const startIndex = 2;
+      const changedIndex = 43;
+      const checkData = getRelatedObjectById(seenHintsData, hintsData, startIndex, 'hint');
+      const checkChangedData = getRelatedObjectById(seenHintsData, hintsData, changedIndex, 'hint');
+
+      new Vue({
+        store,
+        data() {
+          return {
+            seenHintId: startIndex,
+          };
+        },
+        computed: {
+          ...asyncResourceGetter(computedPropertyName, [SeenHintsResource, HintsResource], 'this.seenHintId', [(data) => data.hint, (data) => data]),
+        },
+        watch: {
+          [computedPropertyName](val) {
+            if (typeof val === 'object' && Object.keys(val).length > 0) {
+
+              if (val.id === checkData.id) {
+                expect(JSON.stringify(val)).toEqual(JSON.stringify(checkData));
+                this.seenHintId = changedIndex;
+              }
+
+              if (val.id === checkChangedData.id){
+                expect(JSON.stringify(val)).toEqual(JSON.stringify(checkChangedData));
+                done();
+              }
+            }
+          },
+        },
+      });
+    });
+  });
+
+  describe('resourceListGetter', () => {
+    it('Matches computed property key name', () => {
+      const {resourceListGetter} = envFactory();
+
+      const helper = resourceListGetter(computedPropertyName);
+      expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
+    });
+
+    it('Vue: Set computed property and is Reactive', (done) => {
+      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
+      const HintsResource = registerResource(Hints.Hints);
+      const startIndex = [13, 23];
+      const changedIndex = [23, 33];
+      const checkData = listJsonObjectById(hintsData, changedIndex);
+
+      new Vue({
+        store,
+        data() {
+          return {
+            hints: startIndex,
+          };
+        },
+        computed: {
+          ...resourceListGetter(computedPropertyName, HintsResource, 'this.hints'),
+        },
+        watch: {
+          [computedPropertyName](val) {
+            if (val.length > 0) {
+              if (this.hints === startIndex) {
+                this.hints = changedIndex;
+              } else {
+                expect(JSON.stringify(val)).toEqual(checkData);
+                done();
+              }
+            }
+          },
+        },
+      });
+    });
+  });
 });

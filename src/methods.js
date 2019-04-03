@@ -13,7 +13,7 @@ export default class {
     this.handler = {
       // set the default handler if its not overridden in the local module resource
       ...defaultResourceHandlers,
-      ...resource.handler,
+      ...(resource.handler || {}),
     };
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
@@ -21,7 +21,10 @@ export default class {
 
     this.apiModel = resource.apiModel;
     this.apiModule = resource.apiModule;
-    this.endpoint = `${this.baseUrl}/${this.apiModule}/${this.apiModel}/`.toLowerCase();
+    this.endpoint = `${[this.baseUrl, this.apiModule, this.apiModel]
+      .filter(Boolean)
+      .join('/')
+      .toLowerCase()}/`;
     this.defaultParams = config.defaultParams;
     this.httpHeaders = {headers: config.httpHeaders};
     this.resource = resource;
@@ -57,13 +60,15 @@ export default class {
       handler: this.handler.list,
     };
 
-    return this.dispatch('list', resources, {
+    const resp = this.dispatch('list', resources, {
       ...this.httpHeaders,
       params: {
         ...data,
         ...this.defaultParams,
       },
     });
+
+    return resp;
   }
 
   create(data = {}, cb) {
@@ -126,7 +131,7 @@ export default class {
     /** * * * * * * * * * ** * * * * * * * * * * * * * * * * * * *
      *     This class method is only for components that           *
      *     need to speak with server de-coupled from store.        *
-     *     Rule is: all Components should instanciate methods.js   *
+     *     Rule is: all Components should instantiate methods.js   *
      * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
     const ajax = axios[actionType](endpoint, ...args);

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import methods from './methods';
+import HTTP from './methods';
 import Subscriber from './subscriber';
 import MODULE_NAME from './moduleName';
 
@@ -15,7 +15,7 @@ const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  * queued requests, without them having to be fired to server.
  *
  * All requests gets registered in store as pending, so we can track they existed.
- * We add a prop .debouncedResponce with value: null - if the request got its own
+ * We add a prop .debouncedResponse with value: null - if the request got its own
  * response; Object - the request object of the request that got the response data
  *
  * Not implemented yet:
@@ -29,9 +29,9 @@ const globalQueue = {
   queuedRequests: {}, // endpoints as key values
 };
 
-export default class Rest extends methods {
-  constructor(uuid, resources, config) {
-    super(resources, config);
+export default class Rest extends HTTP {
+  constructor(uuid, resource, config) {
+    super(resource, config);
     this.uuid = uuid;
     this.requestCounter = 0;
     this.store = config.store;
@@ -98,13 +98,13 @@ export default class Rest extends methods {
         }
 
         const response = !res && action === 'delete' ? deletedId : res;
-        const responseCopy = JSON.parse(JSON.stringify(response)); //
+        const responseCopy = JSON.parse(JSON.stringify({data: response.data})); //
         const data = handler(responseCopy, this.store);
 
         /*
          * About using callbacks here:
          * Sometimes the data Axios gets needs to be processed. We can do this in
-         * in the Store on in the Controller of the component. Use callback & Controller
+         * the Store or in the Controller of the component. Use callback & Controller
          * pattern if you want to keep the store "logic free".
          */
 
@@ -157,9 +157,9 @@ export default class Rest extends methods {
 
         if (globalQueue.queuedRequests[endpoint]) {
           // call next in queue
-          const aciveRequest = globalQueue.activeRequests[endpoint];
+          const activeRequest = globalQueue.activeRequests[endpoint];
 
-          if (aciveRequest && aciveRequest.id === request.id) {
+          if (activeRequest && activeRequest.id === request.id) {
             delete globalQueue.activeRequests[endpoint];
             const next = globalQueue.queuedRequests[endpoint].shift();
 
