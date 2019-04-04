@@ -1,6 +1,6 @@
-import mergeById from 'Global/Store/Utils/mergeById';
-import filterDuplicatesById from 'Global/Store/Utils/filterDuplicatesById';
-import propertyAction from 'Global/Store/Utils/propertyAction';
+import mergeById from 'HTTP/Utils/mergeById';
+import filterDuplicatesById from 'HTTP/Utils/filterDuplicatesById';
+import propertyAction from 'HTTP/Utils/propertyAction';
 
 const defaultActions = Object.freeze(['list', 'get', 'post', 'delete']);
 

@@ -1,4 +1,4 @@
-import storeGenerator from 'Global/Store/Utils/storeGenerator';
+import storeGenerator from 'HTTP/Utils/storeGenerator';
 
 export default function storeSectionsGenerators(resourceNames, actions) {
   const resourceNamesIteratee = function _resourceNamesIteratee(obj, resourceName, i) {

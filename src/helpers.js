@@ -60,7 +60,10 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
 };
 
 const pathIteratee = function pathIteratee(obj, key, i) {
-  if (key === 'this' && i === 0) return obj;
+  if (key === 'this' && i === 0) {
+    return obj;
+  }
+
   return obj[key] || noValueFound;
 };
 
@@ -139,7 +142,6 @@ export default {
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
-
     return {
       [computedPropertyName]() {
         const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
