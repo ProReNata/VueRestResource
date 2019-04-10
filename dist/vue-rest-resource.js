@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-04-04T14:34:53.980Z",
+  "date": "2019-04-10T10:21:37.735Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "9d5be9745b32a8b01177",
+  "hash": "5d2ce5c1be6a93f1cd88",
   "license": "MIT",
-  "version": "0.18.1"
+  "version": "1.0.1"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -3070,38 +3070,46 @@ var _default = {
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
   resourceListGetter: function resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
+    var emptyArray = [];
     return _defineProperty({}, computedPropertyName, function () {
       var _this6 = this;
 
       var computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
 
-      if (Array.isArray(computed)) {
-        var ids = computed || [];
-        var resourceValues = ids.map(function (id) {
-          _newArrowCheck(this, _this6);
-
-          return getStoreResourceValue(this, id, resource);
-        }.bind(this));
-        var allValuesInStore = resourceValues.every(function (value) {
-          _newArrowCheck(this, _this6);
-
-          return value !== noValueFound;
-        }.bind(this));
-
-        if (allValuesInStore) {
-          return resourceValues;
-        } // do server request
-        // NEEDS TO BE IMPLEMENTED ON SERVER
-
-
-        resource.list({
-          id: computed.join(',')
-        });
-      } else {
-        resource.list(computed);
+      if (computed === noValueFound) {
+        return emptyArray;
       }
 
-      return [];
+      var isArray = Array.isArray(computed);
+      var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
+      var resourceValues = ids.map(function (id) {
+        _newArrowCheck(this, _this6);
+
+        return getStoreResourceValue(this, id, resource);
+      }.bind(this));
+      var allValuesInStore = resourceValues.every(function (value) {
+        _newArrowCheck(this, _this6);
+
+        return value !== noValueFound;
+      }.bind(this));
+
+      if (allValuesInStore) {
+        if (isArray) {
+          return resourceValues;
+        }
+
+        return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
+      } // do server request
+
+
+      setTimeout(function () {
+        _newArrowCheck(this, _this6);
+
+        resource.list(isArray ? {
+          id: computed.join(',')
+        } : computed);
+      }.bind(this), 1);
+      return emptyArray;
     });
   }
 };
