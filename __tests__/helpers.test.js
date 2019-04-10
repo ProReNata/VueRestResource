@@ -83,18 +83,20 @@ describe('Helpers', () => {
           };
         },
         computed: {
-          ...asyncResourceGetter(computedPropertyName, [SeenHintsResource, HintsResource], 'this.seenHintId', [(data) => data.hint, (data) => data]),
+          ...asyncResourceGetter(computedPropertyName, [SeenHintsResource, HintsResource], 'this.seenHintId', [
+            (data) => data.hint,
+            (data) => data,
+          ]),
         },
         watch: {
           [computedPropertyName](val) {
             if (typeof val === 'object' && Object.keys(val).length > 0) {
-
               if (val.id === checkData.id) {
                 expect(JSON.stringify(val)).toEqual(JSON.stringify(checkData));
                 this.seenHintId = changedIndex;
               }
 
-              if (val.id === checkChangedData.id){
+              if (val.id === checkChangedData.id) {
                 expect(JSON.stringify(val)).toEqual(JSON.stringify(checkChangedData));
                 done();
               }
@@ -140,6 +142,51 @@ describe('Helpers', () => {
                 done();
               }
             }
+          },
+        },
+      });
+    });
+
+    it('Vue: Should handle delayed async values in the pathToInitialValues', (done) => {
+      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
+      const HintsResource = registerResource(Hints.Hints);
+      const startIndex = [13, 23];
+      const checkData = listJsonObjectById(hintsData, startIndex);
+
+      let hasBeenUndefined = false;
+      
+      let watcherCalled = 0;
+
+      new Vue({
+        store,
+        data() {
+          return {
+            hints: undefined,
+          };
+        },
+        created() {
+          expect(this.hints).toEqual(undefined);
+          hasBeenUndefined = true;
+
+          setTimeout(() => {
+            this.hints = startIndex;
+          }, 200);
+        },
+        computed: {
+          ...resourceListGetter(computedPropertyName, HintsResource, 'this.hints'),
+        },
+        watch: {
+          [computedPropertyName]: {
+            imediate: true,
+            handler(val) {
+              watcherCalled++;
+              if (val.length !== 0) {
+                expect(hasBeenUndefined).toEqual(true);
+                expect(JSON.stringify(val)).toEqual(checkData);
+                expect(watcherCalled).toEqual(1);
+                done();
+              }
+            },
           },
         },
       });

@@ -142,28 +142,35 @@ export default {
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
+    const emptyArray = [];
+
     return {
       [computedPropertyName]() {
         const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
 
-        if (Array.isArray(computed)) {
-          const ids = computed || [];
+        if (computed === noValueFound) {
+          return emptyArray;
+        }
 
-          const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
-          const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+        const isArray = Array.isArray(computed);
+        const ids = isArray ? computed || [] : castArray(computed);
+        const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
+        const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
 
-          if (allValuesInStore) {
+        if (allValuesInStore) {
+          if (isArray) {
             return resourceValues;
           }
 
-          // do server request
-          // NEEDS TO BE IMPLEMENTED ON SERVER
-          resource.list({id: computed.join(',')});
-        } else {
-          resource.list(computed);
+          return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
         }
 
-        return [];
+        // do server request
+        setTimeout(() => {
+          resource.list(isArray ? {id: computed.join(',')} : computed);
+        }, 1);
+
+        return emptyArray;
       },
     };
   },
