@@ -157,7 +157,7 @@ describe('Helpers', () => {
       const checkData = listJsonObjectById(hintsData, startIndex);
 
       let hasBeenUndefined = false;
-      
+
       let watcherCalled = 0;
 
       new Vue({
@@ -200,7 +200,6 @@ describe('Helpers', () => {
       const SeenHintsResource = registerResource(Hints.SeenHints);
       const userId = 1376;
       const checkData = getRelatedObjectsById(seenHintsData, userId, 'user');
-      console.log(checkData)
 
       new Vue({
         store,

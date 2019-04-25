@@ -26,6 +26,26 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
   return noValueFound;
 };
 
+const getStoreResourceValueByKeys = function getStoreResourceValue(instance, filter, resource) {
+  if (filter === null) {
+    return null;
+  }
+
+  const {apiModule, apiModel} = resource;
+  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+
+  if (Array.isArray(state)) {
+    const findStatePredicate = function findStatePredicate(obj) {
+      const keys = Object.keys(filter);
+      return keys.every((key) => obj[key] === filter[key]);
+    };
+
+    return state.filter(findStatePredicate) || noValueFound;
+  }
+
+  return noValueFound;
+};
+
 const getResourceValue = function getResourceValue(instance, restResources, asyncValueResolvers, relatedAsyncID) {
   if (relatedAsyncID === -1) {
     return undefined;
@@ -174,9 +194,19 @@ export default {
         }
 
         const isArray = Array.isArray(computed);
-        const ids = isArray ? computed || [] : castArray(computed);
-        const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
-        const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+        const isObject = computed instanceof Object && !isArray;
+
+        let allValuesInStore = false;
+        let resourceValues = [noValueFound];
+        if (isObject) {
+          resourceValues = getStoreResourceValueByKeys(this, computed, resource);
+          allValuesInStore = resourceValues.some((value) => value !== noValueFound);
+        }
+        if (isArray) {
+          const ids = isArray ? computed || [] : castArray(computed);
+          resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
+          allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+        }
 
         if (allValuesInStore) {
           if (isArray) {
@@ -186,7 +216,6 @@ export default {
           return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
         }
 
-        console.log('??', isArray ? {id: castArray(computed).join(',')} : computed)
         // do server request
         setTimeout(() => {
           resource.list(isArray ? {id: castArray(computed).join(',')} : computed);
