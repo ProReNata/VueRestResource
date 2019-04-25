@@ -14,6 +14,9 @@ const getRelatedObjectById = (obj, relatedObj, idToMatch, foreignKey = 'id') => 
   const parent = obj.objects.find(({id}) => id === idToMatch);
   return relatedObj.objects.find(({id}) => id === parent[foreignKey]);
 };
+const getRelatedObjectsById = (obj, idToMatch, foreignKey = 'id') => {
+  return obj.objects.filter((item) => item[foreignKey] === idToMatch);
+};
 const listJsonObjectById = (obj, ids) => {
   return JSON.stringify(obj.objects.filter(({id}) => ids.includes(id)));
 };
@@ -183,7 +186,37 @@ describe('Helpers', () => {
               if (val.length !== 0) {
                 expect(hasBeenUndefined).toEqual(true);
                 expect(JSON.stringify(val)).toEqual(checkData);
-                expect(watcherCalled).toEqual(1);
+                expect(watcherCalled >= 1).toEqual(true);
+                done();
+              }
+            },
+          },
+        },
+      });
+    });
+
+    it('Vue: Should get all seen hints by the User', (done) => {
+      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
+      const SeenHintsResource = registerResource(Hints.SeenHints);
+      const userId = 1376;
+      const checkData = getRelatedObjectsById(seenHintsData, userId, 'user');
+      console.log(checkData)
+
+      new Vue({
+        store,
+        computed: {
+          ...resourceListGetter(computedPropertyName, SeenHintsResource, 'this.queryObject'),
+          queryObject() {
+            return {
+              user: userId,
+            }
+          },
+        },
+        watch: {
+          [computedPropertyName]: {
+            handler(val) {
+              if (val.length !== 0) {
+                expect(JSON.stringify(val)).toEqual(JSON.stringify(checkData));
                 done();
               }
             },

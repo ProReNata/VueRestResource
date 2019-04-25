@@ -68,6 +68,17 @@ const pathIteratee = function pathIteratee(obj, key, i) {
 };
 
 export default {
+  /**
+   * Updates the store with a list based on a relation of keys.
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} restResources - The model to use.
+   * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+   * @param {function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property.
+   If you don't need it just pass `(data) => data`.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   // use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties
   // To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
@@ -141,6 +152,16 @@ export default {
   },
   // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
   // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
+
+  /**
+   * Updates the store with a list based on a relation of keys.
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} resource - The model to use.
+   * @param {string[] | Object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     const emptyArray = [];
 
@@ -165,9 +186,10 @@ export default {
           return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
         }
 
+        console.log('??', isArray ? {id: castArray(computed).join(',')} : computed)
         // do server request
         setTimeout(() => {
-          resource.list(isArray ? {id: computed.join(',')} : computed);
+          resource.list(isArray ? {id: castArray(computed).join(',')} : computed);
         }, 1);
 
         return emptyArray;

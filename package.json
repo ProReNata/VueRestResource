@@ -26,7 +26,7 @@
   "main": "dist/vue-rest-resource.js",
   "module": "src/index.js",
   "scripts": {
-    "test": "concurrently --kill-others --success first \"npm:test-server\" \"npm:test-once\"",
+    "test": "concurrently --kill-others --success first npm:test-server npm:test-once",
     "test-server": "node __tests__/DevServer/server.js",
     "test-watch": "nodemon node_modules/jasmine/bin/jasmine.js",
     "test-once": "node_modules/jasmine/bin/jasmine.js",
