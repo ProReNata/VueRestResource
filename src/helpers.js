@@ -26,7 +26,7 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
   return noValueFound;
 };
 
-const getStoreResourceValueByKeys = function getStoreResourceValue(instance, filter, resource) {
+const getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instance, filter, resource) {
   if (filter === null) {
     return null;
   }
@@ -37,6 +37,7 @@ const getStoreResourceValueByKeys = function getStoreResourceValue(instance, fil
   if (Array.isArray(state)) {
     const findStatePredicate = function findStatePredicate(obj) {
       const keys = Object.keys(filter);
+
       return keys.every((key) => obj[key] === filter[key]);
     };
 
@@ -198,10 +199,12 @@ export default {
 
         let allValuesInStore = false;
         let resourceValues = [noValueFound];
+
         if (isObject) {
           resourceValues = getStoreResourceValueByKeys(this, computed, resource);
           allValuesInStore = resourceValues.some((value) => value !== noValueFound);
         }
+
         if (isArray) {
           const ids = isArray ? computed || [] : castArray(computed);
           resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));

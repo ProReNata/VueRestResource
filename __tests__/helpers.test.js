@@ -214,7 +214,7 @@ describe('Helpers', () => {
         watch: {
           [computedPropertyName]: {
             handler(val) {
-              if (val.length !== 0) {
+              if (val.length >= checkData.length) {
                 expect(JSON.stringify(val)).toEqual(JSON.stringify(checkData));
                 done();
               }
