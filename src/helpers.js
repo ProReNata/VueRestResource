@@ -26,6 +26,27 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
   return noValueFound;
 };
 
+const getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instance, filter, resource) {
+  if (filter === null) {
+    return null;
+  }
+
+  const {apiModule, apiModel} = resource;
+  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+
+  if (Array.isArray(state)) {
+    const findStatePredicate = function findStatePredicate(obj) {
+      const keys = Object.keys(filter);
+
+      return keys.every((key) => obj[key] === filter[key]);
+    };
+
+    return state.filter(findStatePredicate) || noValueFound;
+  }
+
+  return noValueFound;
+};
+
 const getResourceValue = function getResourceValue(instance, restResources, asyncValueResolvers, relatedAsyncID) {
   if (relatedAsyncID === -1) {
     return undefined;
@@ -68,8 +89,21 @@ const pathIteratee = function pathIteratee(obj, key, i) {
 };
 
 export default {
-  // use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties
-  // To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties
+  /**
+   * Loads in the specific object in the store.
+   * Use this to bind a state to a computed property.
+   * If the Object is not found in the store, it fills the store with data from the server.
+   *
+   * Use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties.
+   * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} restResources - The model to use.
+   * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+   * @param {Function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
       [computedPropertyName]() {
@@ -95,17 +129,6 @@ export default {
     },
   },
 
-  /**
-   * Updates the store with a list based on a relation of keys.
-   *
-   * @param {string} watcherPropertyName - Of computed property,.
-   * @param {boolean} immediate - Run directly on page load.
-   * @param {Object[] | Object} resources - The model to use.
-   * @param {string[] | string} [resourceRelatedKeys=id] - Key to look for in the database.
-   * @param {string} [verificationKey] - No idea.
-   *
-   * @returns {Object} - Places a watcher property with the values in your state.
-   */
   // PROBABLY WILL BE DEPRECATED / REWRITEN
   updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys = 'id', verificationKey) {
     return {
@@ -139,8 +162,19 @@ export default {
       },
     };
   },
-  // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
-  // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
+
+  /**
+   * Updates the store with a list based on a relation of keys.
+   *
+   * Use: resourceListGetter('students', Patients, {school: 20, class: 'A'}).
+   * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} resource - The model to use.
+   * @param {string[] | Object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     const emptyArray = [];
 
@@ -153,9 +187,21 @@ export default {
         }
 
         const isArray = Array.isArray(computed);
-        const ids = isArray ? computed || [] : castArray(computed);
-        const resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
-        const allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+        const isObject = computed instanceof Object && !isArray;
+
+        let allValuesInStore = false;
+        let resourceValues = [noValueFound];
+
+        if (isObject) {
+          resourceValues = getStoreResourceValueByKeys(this, computed, resource);
+          allValuesInStore = resourceValues.some((value) => value !== noValueFound);
+        }
+
+        if (isArray) {
+          const ids = isArray ? computed || [] : castArray(computed);
+          resourceValues = ids.map((id) => getStoreResourceValue(this, id, resource));
+          allValuesInStore = resourceValues.every((value) => value !== noValueFound);
+        }
 
         if (allValuesInStore) {
           if (isArray) {
@@ -167,7 +213,7 @@ export default {
 
         // do server request
         setTimeout(() => {
-          resource.list(isArray ? {id: computed.join(',')} : computed);
+          resource.list(isArray ? {id: castArray(computed).join(',')} : computed);
         }, 1);
 
         return emptyArray;
