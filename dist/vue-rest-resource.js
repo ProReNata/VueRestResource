@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-04-10T10:21:37.735Z",
+  "date": "2019-04-26T12:22:31.164Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "5d2ce5c1be6a93f1cd88",
+  "hash": "224c28d5fed956451e93",
   "license": "MIT",
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2896,9 +2896,9 @@ function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = 
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 var noValueFound = {};
 
@@ -2925,6 +2925,33 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, re
   return noValueFound;
 };
 
+var getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instance, filter, resource) {
+  if (filter === null) {
+    return null;
+  }
+
+  var apiModule = resource.apiModule,
+      apiModel = resource.apiModel;
+  var state = instance.$store.getters["".concat(apiModule, "/").concat(apiModel)] || [];
+
+  if (Array.isArray(state)) {
+    var findStatePredicate = function findStatePredicate(obj) {
+      var _this = this;
+
+      var keys = Object.keys(filter);
+      return keys.every(function (key) {
+        _newArrowCheck(this, _this);
+
+        return obj[key] === filter[key];
+      }.bind(this));
+    };
+
+    return state.filter(findStatePredicate) || noValueFound;
+  }
+
+  return noValueFound;
+};
+
 var getResourceValue = function getResourceValue(instance, restResources, asyncValueResolvers, relatedAsyncID) {
   if (relatedAsyncID === -1) {
     return undefined;
@@ -2934,7 +2961,7 @@ var getResourceValue = function getResourceValue(instance, restResources, asyncV
   var storeValues = [];
 
   var _loop = function _loop(i, l) {
-    var _this = this;
+    var _this2 = this;
 
     var asyncValueResolver = asyncValueResolvers[i];
     var storeValue = getStoreResourceValue(instance, resourceValue, restResources[i]);
@@ -2944,7 +2971,7 @@ var getResourceValue = function getResourceValue(instance, restResources, asyncV
       // and so don't get registered as dependencies to react on
       var action = (0, _get.default)(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
       setTimeout(function () {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         return restResources[i][action](resourceValue);
       }.bind(this), 1); // resource not loaded yet,
@@ -2978,22 +3005,35 @@ var pathIteratee = function pathIteratee(obj, key, i) {
 };
 
 var _default = {
-  // use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties
-  // To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties
+  /**
+   * Loads in the specific object in the store.
+   * Use this to bind a state to a computed property.
+   * If the Object is not found in the store, it fills the store with data from the server.
+   *
+   * Use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties.
+   * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} restResources - The model to use.
+   * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+   * @param {Function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   asyncResourceGetter: function asyncResourceGetter(computedPropertyName, restResources, initialId) {
-    var _this2 = this;
+    var _this3 = this;
 
     var resolverFunctions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (data) {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this3);
 
       return data;
     }.bind(this);
     return _defineProperty({}, computedPropertyName, function () {
-      var _this3 = this;
+      var _this4 = this;
 
       // get the needed values from object nested (or not) paths in `this`
       var _map = [resolverFunctions, initialId].map(function (value) {
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this4);
 
         if (typeof value !== 'string') {
           return value;
@@ -3017,18 +3057,6 @@ var _default = {
       return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolver), relatedAsyncID);
     }
   },
-
-  /**
-   * Updates the store with a list based on a relation of keys.
-   *
-   * @param {string} watcherPropertyName - Of computed property,.
-   * @param {boolean} immediate - Run directly on page load.
-   * @param {Object[] | Object} resources - The model to use.
-   * @param {string[] | string} [resourceRelatedKeys=id] - Key to look for in the database.
-   * @param {string} [verificationKey] - No idea.
-   *
-   * @returns {Object} - Places a watcher property with the values in your state.
-   */
   // PROBABLY WILL BE DEPRECATED / REWRITEN
   updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources) {
     var resourceRelatedKeys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'id';
@@ -3036,7 +3064,7 @@ var _default = {
     return _defineProperty({}, watcherPropertyName, {
       immediate: immediate,
       handler: function handler(updatedValue, oldValue) {
-        var _this5 = this;
+        var _this6 = this;
 
         if (typeof updatedValue === 'undefined' && !immediate) {
           return;
@@ -3048,18 +3076,18 @@ var _default = {
 
         if (resourceMatches) {
           var resourceIteratee = function resourceIteratee(resource, i) {
-            var _this4 = this;
+            var _this5 = this;
 
             var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
             setTimeout(function () {
-              _newArrowCheck(this, _this4);
+              _newArrowCheck(this, _this5);
 
               resource.list(_defineProperty({}, resourceKey, updated));
             }.bind(this), 1);
           };
 
           (0, _castArray.default)(resources).map(function (resource) {
-            _newArrowCheck(this, _this5);
+            _newArrowCheck(this, _this6);
 
             return this[resource];
           }.bind(this)).forEach(resourceIteratee);
@@ -3067,12 +3095,23 @@ var _default = {
       }
     });
   },
-  // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
-  // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
+
+  /**
+   * Updates the store with a list based on a relation of keys.
+   *
+   * Use: resourceListGetter('students', Patients, {school: 20, class: 'A'}).
+   * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
+   *
+   * @param {string} computedPropertyName - Name of the computed property that will be created.
+   * @param {Object[] | Object} resource - The model to use.
+   * @param {string[] | Object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+   *
+   * @returns {Object} - Places a computed property with the values in your state.
+   */
   resourceListGetter: function resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     var emptyArray = [];
     return _defineProperty({}, computedPropertyName, function () {
-      var _this6 = this;
+      var _this7 = this;
 
       var computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
 
@@ -3081,17 +3120,32 @@ var _default = {
       }
 
       var isArray = Array.isArray(computed);
-      var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
-      var resourceValues = ids.map(function (id) {
-        _newArrowCheck(this, _this6);
+      var isObject = computed instanceof Object && !isArray;
+      var allValuesInStore = false;
+      var resourceValues = [noValueFound];
 
-        return getStoreResourceValue(this, id, resource);
-      }.bind(this));
-      var allValuesInStore = resourceValues.every(function (value) {
-        _newArrowCheck(this, _this6);
+      if (isObject) {
+        resourceValues = getStoreResourceValueByKeys(this, computed, resource);
+        allValuesInStore = resourceValues.some(function (value) {
+          _newArrowCheck(this, _this7);
 
-        return value !== noValueFound;
-      }.bind(this));
+          return value !== noValueFound;
+        }.bind(this));
+      }
+
+      if (isArray) {
+        var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
+        resourceValues = ids.map(function (id) {
+          _newArrowCheck(this, _this7);
+
+          return getStoreResourceValue(this, id, resource);
+        }.bind(this));
+        allValuesInStore = resourceValues.every(function (value) {
+          _newArrowCheck(this, _this7);
+
+          return value !== noValueFound;
+        }.bind(this));
+      }
 
       if (allValuesInStore) {
         if (isArray) {
@@ -3103,10 +3157,10 @@ var _default = {
 
 
       setTimeout(function () {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this7);
 
         resource.list(isArray ? {
-          id: computed.join(',')
+          id: (0, _castArray.default)(computed).join(',')
         } : computed);
       }.bind(this), 1);
       return emptyArray;
