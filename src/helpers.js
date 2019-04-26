@@ -90,18 +90,20 @@ const pathIteratee = function pathIteratee(obj, key, i) {
 
 export default {
   /**
-   * Updates the store with a list based on a relation of keys.
+   * Loads in the specific object in the store.
+   * Use this to bind a state to a computed property.
+   * If the Object is not found in the store, it fills the store with data from the server.
+   *
+   * Use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties.
+   * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
    * @param {Object[] | Object} restResources - The model to use.
    * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
-   * @param {function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property.
-   If you don't need it just pass `(data) => data`.
+   * @param {Function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
    *
    * @returns {Object} - Places a computed property with the values in your state.
    */
-  // use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties
-  // To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
       [computedPropertyName]() {
@@ -127,17 +129,6 @@ export default {
     },
   },
 
-  /**
-   * Updates the store with a list based on a relation of keys.
-   *
-   * @param {string} watcherPropertyName - Of computed property,.
-   * @param {boolean} immediate - Run directly on page load.
-   * @param {Object[] | Object} resources - The model to use.
-   * @param {string[] | string} [resourceRelatedKeys=id] - Key to look for in the database.
-   * @param {string} [verificationKey] - No idea.
-   *
-   * @returns {Object} - Places a watcher property with the values in your state.
-   */
   // PROBABLY WILL BE DEPRECATED / REWRITEN
   updateResourceListWatcher(watcherPropertyName, immediate, resources, resourceRelatedKeys = 'id', verificationKey) {
     return {
@@ -171,11 +162,12 @@ export default {
       },
     };
   },
-  // resourceListGetter('students', Patients, {school: 20, class: 'A'}) {
-  // resourceListGetter('seenhints', SeenHints, [1, 2, 4]) {
 
   /**
    * Updates the store with a list based on a relation of keys.
+   *
+   * Use: resourceListGetter('students', Patients, {school: 20, class: 'A'}).
+   * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
    * @param {Object[] | Object} resource - The model to use.
