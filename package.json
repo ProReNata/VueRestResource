@@ -1,6 +1,6 @@
 {
   "name": "@prorenata/vue-rest-resource",
-  "version": "0.17.3",
+  "version": "0.17.4",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "homepage": "https://github.com/ProReNata/VueRestResource",
   "repository": {
@@ -39,7 +39,7 @@
     "Vuex"
   ],
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "lodash": "^4.17.11",
     "uuid": "^3.3.2"
   },
