@@ -3,26 +3,35 @@ import HTTP from './methods';
 import Rest from './http';
 import helpers from './helpers';
 import requestsStore from './requestsStore';
+import storeBoilerplateGenerators from './Utils/storeBoilerplateGenerators';
 import MODULE_NAME from './moduleName';
 
-export default function createVueRestResource(config) {
-  const {store} = config;
-  store.registerModule(MODULE_NAME, requestsStore); // https://vuex.vuejs.org/guide/modules.html#dynamic-module-registration
+export default {
+  createVueRestResource(config) {
+    const {store, vrrModuleName = MODULE_NAME} = config;
+    store.registerModule(vrrModuleName, requestsStore);
 
-  return {
-    ...helpers,
+    return {
+      HTTP: class extends HTTP {
+        constructor(resource) {
+          super(resource, config);
+        }
+      },
 
-    HTTP: class extends HTTP {
-      constructor(resource) {
-        super(resource, config);
-      }
-    },
+      registerResource(resources, customStore) {
 
-    registerResource(resource) {
-      const uuid = createUUID();
-      store.dispatch(`${MODULE_NAME}/registerComponentInStore`, uuid);
+        const moduleStore = customStore || {
+          ...storeBoilerplateGenerators(resources),
+        };
+        const {__name: moduleName} = resources;
+        store.registerModule(moduleName, moduleStore);
 
-      return new Rest(uuid, resource, config);
-    },
-  };
-}
+        return Object.keys(resources)
+          .filter((k) => k[0] !== '_')
+          .map((resource) => new Rest(uuid, resource, config));
+      },
+    };
+  },
+  ...helpers,
+  storeBoilerplateGenerators,
+};
