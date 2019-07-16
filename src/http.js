@@ -1,11 +1,7 @@
 import axios from 'axios';
 import HTTP from './methods';
 import Subscriber from './subscriber';
-import MODULE_NAME from './moduleName';
 
-const REGISTER = `${MODULE_NAME}/registerRequest`;
-const UPDATE = `${MODULE_NAME}/updateRequest`;
-const UNREGISTER = `${MODULE_NAME}/unregisterRequest`;
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /*
@@ -30,17 +26,25 @@ const globalQueue = {
 };
 
 export default class Rest extends HTTP {
-  constructor(uuid, resource, config) {
+  constructor(resource, config) {
     super(resource, config);
-    this.uuid = uuid;
     this.requestCounter = 0;
     this.store = config.store;
+    this.logEndpoints = Boolean(config.logEndpoints);
+    this.logInstance = Boolean(config.logInstance);
+    this.vrrModuleName = config.vrrModuleName;
   }
 
   // Dispatcher methods (overrides HTTP dispatch method)
-  dispatch(action, {endpoint, handler, callback: callBack, apiModel, apiModule, deletedId}, ...args) {
-    const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
+  dispatch(action, {endpoint, handler, callback, apiModel, apiModule, deletedId, callerInstance}, ...args) {
+    const mutation = [apiModule, `${action}${capitalizeFirst(apiModel)}`].filter(Boolean).join('/');
+
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
+
+    const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
+    const COMPONENTS = `${this.vrrModuleName}/registeredComponents`;
+    const REGISTER = `${this.vrrModuleName}/registerRequest`;
+    const UPDATE = `${this.vrrModuleName}/updateRequest`;
 
     /*
      * Status types:
@@ -53,7 +57,17 @@ export default class Rest extends HTTP {
      */
 
     const request = this.register(actionType, {apiModel, apiModule, endpoint}, ...args);
-    this.store.dispatch(REGISTER, request);
+
+    const {logEndpoints, logInstance} = this;
+    this.store.dispatch(REGISTER, {
+      logEndpoints,
+      logInstance,
+      request,
+    });
+
+    if (this.logInstance && !this.store.getters[COMPONENTS]) {
+      this.store.dispatch(REGISTER_COMPONENT, this.logInstance);
+    }
 
     // prepare for slow request
     const slowRequest = setTimeout(() => {
@@ -108,9 +122,9 @@ export default class Rest extends HTTP {
          * pattern if you want to keep the store "logic free".
          */
 
-        if (callBack) {
+        if (callback) {
           // Used in some controllers when data from server needs to be processed before being set in store
-          callBack(data, this.store);
+          callback(data, this.store);
         } else {
           this.store.dispatch(mutation, data);
         }
@@ -174,12 +188,14 @@ export default class Rest extends HTTP {
         console.error(err);
       });
 
-    const {uuid, store} = this;
+    const {store} = this;
     const executor = function executor(resolve, reject) {
-      new Subscriber(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
+      new Subscriber(endpoint, callerInstance, store).onSuccess(resolve).onFail(reject);
     };
 
-    return new Promise(executor);
+    console.log('Returning promise!');
+
+    return new Promise(executor).catch(e => console.log('>>>>>>>>>>>>>>ERR', e));
   }
 
   handleQueue(request, action, endpoint, ...args) {
@@ -239,11 +255,11 @@ export default class Rest extends HTTP {
       id,
       params,
       status: 'registered',
-      uuid: this.uuid,
     };
   }
 
   unregister(request) {
+    const UNREGISTER = `${this.vrrModuleName}/unregisterRequest`;
     this.store.dispatch(UNREGISTER, request);
   }
 
@@ -253,3 +269,6 @@ export default class Rest extends HTTP {
     req.completed = Date.now();
   }
 }
+
+
+
