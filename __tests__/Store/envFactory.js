@@ -1,48 +1,41 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import vrr from '../../src';
-import storeBoilerplateGenerator from './Utils/storeBoilerplateGenerators';
+
+const {
+  storeBoilerplateGenerator,
+  createVueRestResource,
+  asyncResourceValue,
+  asyncResourceGetter,
+  registerResource,
+  resourceListGetter,
+} = vrr;
 
 Vue.use(Vuex);
 
 
-const storeDefinition = {
-  actions: {},
 
-  getters: {},
-
-  modules: {},
-
-  mutations: {},
-
-  namespaced: true,
-
-  // only for global stuff, otherwise use modules
-  state: {},
-
-  strict: false,
-};
-
-export default (resources = []) => {
+export default (customRestConfig = {}) => {
+  const storeDefinition = {
+    actions: {},
+    getters: {},
+    modules: {},
+    mutations: {},
+    namespaced: true,
+    // only for global stuff, otherwise use modules
+    state: {},
+    strict: false,
+  };
   const store = new Vuex.Store(storeDefinition);
-
-  resources.forEach(resource => {
-    const resourceStore = storeBoilerplateGenerator(resource);
-    const nameSpace = resource['__name'];
-    store.registerModule(nameSpace, {
-      ...resourceStore,
-      namespaced: true,
-    });
-  });
-
   const RestConfig = {
     baseUrl: 'http://localhost:8984', // Development URL
     defaultParams: {},
     httpHeaders: {},
+    vrrModuleName: 'VRR_Tests',
     store,
+    ...customRestConfig
   };
-
-  const {asyncResourceValue, asyncResourceGetter, registerResource, resourceListGetter} = vrr(RestConfig);
+  const VRR = createVueRestResource(RestConfig);
 
   return {
     asyncResourceValue,
@@ -50,5 +43,7 @@ export default (resources = []) => {
     registerResource,
     resourceListGetter,
     store,
+    storeBoilerplateGenerator,
+    ...VRR,
   };
 };
