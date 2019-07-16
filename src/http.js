@@ -189,13 +189,10 @@ export default class Rest extends HTTP {
       });
 
     const {store} = this;
-    const executor = function executor(resolve, reject) {
+
+    return new Promise((resolve, reject) => {
       new Subscriber(endpoint, callerInstance, store).onSuccess(resolve).onFail(reject);
-    };
-
-    console.log('Returning promise!');
-
-    return new Promise(executor).catch(e => console.log('>>>>>>>>>>>>>>ERR', e));
+    });
   }
 
   handleQueue(request, action, endpoint, ...args) {
@@ -269,6 +266,3 @@ export default class Rest extends HTTP {
     req.completed = Date.now();
   }
 }
-
-
-
