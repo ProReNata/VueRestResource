@@ -12,12 +12,13 @@ const mergeOptions = (original) => {
     vrrModuleName: MODULE_NAME,
   };
 
-  return Object.keys(original).reduce((obj, key) => {
-    return {
+  return Object.keys(original).reduce(
+    (obj, key) => ({
       ...obj,
       [key]: original[key],
-    };
-  }, defaults);
+    }),
+    defaults,
+  );
 };
 
 export default {
@@ -43,19 +44,17 @@ export default {
 
           const {__name: moduleName} = resource;
           store.registerModule(moduleName, moduleStore);
-
-
-
         }
 
         return Object.keys(resource)
           .filter((k) => k[0] !== '_')
-          .reduce((Api, model) => {
-            return {
+          .reduce(
+            (Api, model) => ({
               ...Api,
               [model]: new Rest(resource[model], config),
-            };
-          }, {});
+            }),
+            {},
+          );
       },
     };
   },
