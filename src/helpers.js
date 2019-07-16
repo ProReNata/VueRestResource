@@ -64,7 +64,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
       const action = get(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
-      setTimeout(() => restResources[i][action](resourceValue), 1);
+      setTimeout(() => restResources[i][action](instance, resourceValue, this), 1);
 
       // resource not loaded yet,
       // the computed function will be called again when store is updated
@@ -139,6 +139,8 @@ export default {
             return;
           }
 
+          const callerInstance = this;
+
           const updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
           const outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
           const resourceMatches = (outdated && updated === outdated) || (updatedValue && !oldValue);
@@ -148,7 +150,7 @@ export default {
               const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
 
               setTimeout(() => {
-                resource.list({
+                resource.list(callerInstance, {
                   [resourceKey]: updated,
                 });
               }, 1);
@@ -180,7 +182,8 @@ export default {
 
     return {
       [computedPropertyName]() {
-        const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
+        const callerInstance = this;
+        const computed = pathToInitialValues.split('.').reduce(pathIteratee, callerInstance);
 
         if (computed === noValueFound) {
           return emptyArray;
@@ -213,7 +216,7 @@ export default {
 
         // do server request
         setTimeout(() => {
-          resource.list(isArray ? {id: castArray(computed).join(',')} : computed);
+          resource.list(callerInstance, isArray ? {id: castArray(computed).join(',')} : computed);
         }, 1);
 
         return emptyArray;

@@ -35,12 +35,13 @@ export default class {
     };
   }
 
-  get(id, data = {}, cb) {
+  get(callerInstance, id, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.get,
+      callerInstance,
     };
 
     return this.dispatch('get', resources, {
@@ -52,12 +53,13 @@ export default class {
     });
   }
 
-  list(data = {}, cb) {
+  list(callerInstance, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
       endpoint: this.endpoint,
       handler: this.handler.list,
+      callerInstance,
     };
 
     const resp = this.dispatch('list', resources, {
@@ -71,12 +73,13 @@ export default class {
     return resp;
   }
 
-  create(data = {}, cb) {
+  create(callerInstance, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
       endpoint: this.endpoint,
       handler: this.handler.create,
+      callerInstance,
     };
 
     return this.dispatch('post', resources, data, {
@@ -84,12 +87,13 @@ export default class {
     });
   }
 
-  update(id, data = {}, cb) {
+  update(callerInstance, id, data = {}, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.update,
+      callerInstance,
     };
 
     return this.dispatch('put', resources, data, {
@@ -97,13 +101,14 @@ export default class {
     });
   }
 
-  delete(id, cb) {
+  delete(callerInstance, id, cb) {
     const resources = {
       ...this.actionObjectDefault,
       callback: cb,
       deletedId: id,
       endpoint: `${this.endpoint + id}/`,
       handler: this.handler.delete || (() => id),
+      callerInstance,
     };
 
     return this.dispatch('delete', resources, {
@@ -111,12 +116,14 @@ export default class {
     });
   }
 
-  remoteAction(id, data = {}) {
+  remoteAction(callerInstance, id, data = {}) {
     const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
 
     if (!resources.handler) {
       resources.handler = noop;
     }
+
+    resources.callerInstance = callerInstance;
 
     return this.dispatch(this.resource.httpMethod, resources, data, {
       headers: {
