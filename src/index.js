@@ -1,4 +1,3 @@
-import createUUID from 'uuid/v4';
 import HTTP from './methods';
 import Rest from './http';
 import helpers from './helpers';
@@ -6,29 +5,57 @@ import requestsStore from './requestsStore';
 import storeBoilerplateGenerators from './Utils/storeBoilerplateGenerators';
 import MODULE_NAME from './moduleName';
 
+const mergeOptions = (original) => {
+  const defaults = {
+    logEndpoints: true,
+    logInstance: true,
+    vrrModuleName: MODULE_NAME,
+  };
+
+  return Object.keys(original).reduce((obj, key) => {
+    return {
+      ...obj,
+      [key]: original[key],
+    };
+  }, defaults);
+};
+
 export default {
   createVueRestResource(config) {
-    const {store, vrrModuleName = MODULE_NAME} = config;
+    const options = mergeOptions(config);
+
+    const {store, vrrModuleName = MODULE_NAME} = options;
     store.registerModule(vrrModuleName, requestsStore);
 
     return {
       HTTP: class extends HTTP {
         constructor(resource) {
-          super(resource, config);
+          super(resource, options);
         }
       },
 
-      registerResource(resources, customStore) {
+      registerResource(resource, customStore) {
+        // if null, we turn it off on purpose
+        if (customStore !== null) {
+          const moduleStore = customStore || {
+            ...storeBoilerplateGenerators(resource),
+          };
 
-        const moduleStore = customStore || {
-          ...storeBoilerplateGenerators(resources),
-        };
-        const {__name: moduleName} = resources;
-        store.registerModule(moduleName, moduleStore);
+          const {__name: moduleName} = resource;
+          store.registerModule(moduleName, moduleStore);
 
-        return Object.keys(resources)
+
+
+        }
+
+        return Object.keys(resource)
           .filter((k) => k[0] !== '_')
-          .map((resource) => new Rest(uuid, resource, config));
+          .reduce((Api, model) => {
+            return {
+              ...Api,
+              [model]: new Rest(resource[model], config),
+            };
+          }, {});
       },
     };
   },
