@@ -178,6 +178,7 @@ describe('Methods', () => {
   /*
   describe('Endpoint logging', () => {
     it('', (done) => {});
+    // TODO: test with disabled logging for endpoints and instances
   });
 
   describe('Logging settings', () => {
