@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import envFactory from './Store/envFactory';
 
-// import {registerResource, asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} from './HTTP';
 import Hints from './Modules/Hints/Resource/resource';
 const seenHintsData = require('./DevServer/Endpoints/hints/seenhints.json');
 const hintsData = require('./DevServer/Endpoints/hints/hints.json');
