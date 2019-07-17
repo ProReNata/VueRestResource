@@ -25,10 +25,11 @@ const globalQueue = {
   queuedRequests: {}, // endpoints as key values
 };
 
+let requestCounter = 0;
+
 export default class Rest extends HTTP {
   constructor(resource, config) {
     super(resource, config);
-    this.requestCounter = 0;
     this.store = config.store;
 
     this.logEndpoints = Boolean(config.logEndpoints);
@@ -43,7 +44,6 @@ export default class Rest extends HTTP {
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
     const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
-    const COMPONENTS = `${this.vrrModuleName}/registeredComponents`;
     const REGISTER = `${this.vrrModuleName}/registerRequest`;
     const UPDATE = `${this.vrrModuleName}/updateRequest`;
     const {logEndpoints, logInstance} = this;
@@ -63,6 +63,15 @@ export default class Rest extends HTTP {
       {apiModel, apiModule, endpoint, callerInstance, logEndpoints, logInstance},
       ...args,
     );
+
+    request.cancel = () => {
+      this.store.dispatch(UPDATE, {
+        ...request,
+        discard: true,
+        status: 'canceled',
+        completed: Date.now(),
+      });
+    };
 
     if (this.logInstance) {
       this.store.dispatch(REGISTER_COMPONENT, callerInstance);
@@ -134,7 +143,6 @@ export default class Rest extends HTTP {
 
         const updated = {
           ...request,
-          cancel: this.cancel.bind(this, request),
           completed: Date.now(),
           response: data,
           status: 'success',
@@ -193,8 +201,14 @@ export default class Rest extends HTTP {
 
     const {store} = this;
 
+    console.log('Returning Promise');
     return new Promise((resolve, reject) => {
-      new Subscriber(endpoint, callerInstance, store).onSuccess(resolve).onFail(reject);
+      new Subscriber(endpoint, request.id, store, UPDATE)
+        .onSuccess((...args) => {
+          console.log('On SuCCESS', ...args);
+          resolve(...args);
+        })
+        .onFail(reject);
     });
   }
 
@@ -243,8 +257,8 @@ export default class Rest extends HTTP {
   }
 
   register(action, moduleInfo, ...args) {
-    this.requestCounter += 1;
-    const id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
+    requestCounter += 1;
+    const id = [moduleInfo.apiModule, moduleInfo.apiModel, requestCounter].join('_');
     const httpData = args.find((obj) => obj.params);
     const params = httpData && httpData.params;
 
@@ -261,11 +275,5 @@ export default class Rest extends HTTP {
   unregister(request) {
     const UNREGISTER = `${this.vrrModuleName}/unregisterRequest`;
     this.store.dispatch(UNREGISTER, request);
-  }
-
-  cancel(req) {
-    req.discard = true;
-    req.status = 'canceled';
-    req.completed = Date.now();
   }
 }
