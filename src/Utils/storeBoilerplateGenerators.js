@@ -1,8 +1,8 @@
-import propertyAction from 'HTTP/Utils/propertyAction';
-import filterDuplicatesById from 'HTTP/Utils/filterDuplicatesById';
-import mergeById from 'HTTP/Utils/mergeById';
+import propertyAction from './propertyAction';
+import filterDuplicatesById from './filterDuplicatesById';
+import mergeById from './mergeById';
 
-export default (resource) => {
+export default (resource, namespaced = true) => {
   const modules = Object.keys(resource)
     .filter((k) => k[0] !== '_')
     .map((key) => resource[key].apiModel);
@@ -59,5 +59,6 @@ export default (resource) => {
     getters,
     mutations,
     state,
+    namespaced,
   };
 };

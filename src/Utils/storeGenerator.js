@@ -1,6 +1,6 @@
-import mergeById from 'HTTP/Utils/mergeById';
-import filterDuplicatesById from 'HTTP/Utils/filterDuplicatesById';
-import propertyAction from 'HTTP/Utils/propertyAction';
+import mergeById from './mergeById';
+import filterDuplicatesById from './filterDuplicatesById';
+import propertyAction from './propertyAction';
 
 const defaultActions = Object.freeze(['list', 'get', 'post', 'delete']);
 
