@@ -46,6 +46,7 @@ export default class Rest extends HTTP {
     const COMPONENTS = `${this.vrrModuleName}/registeredComponents`;
     const REGISTER = `${this.vrrModuleName}/registerRequest`;
     const UPDATE = `${this.vrrModuleName}/updateRequest`;
+    const {logEndpoints, logInstance} = this;
 
     /*
      * Status types:
@@ -57,19 +58,18 @@ export default class Rest extends HTTP {
      *   - pending
      */
 
-    const request = this.register(actionType, {apiModel, apiModule, endpoint}, ...args);
-
-    const {logEndpoints, logInstance} = this;
+    const request = this.register(
+      actionType,
+      {apiModel, apiModule, endpoint, callerInstance, logEndpoints, logInstance},
+      ...args,
+    );
 
     if (this.logInstance) {
       this.store.dispatch(REGISTER_COMPONENT, callerInstance);
     }
 
     this.store.dispatch(REGISTER, {
-      callerInstance,
-      logEndpoints,
-      logInstance,
-      request,
+      ...request,
     });
 
     // prepare for slow request
