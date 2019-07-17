@@ -48,6 +48,8 @@ export default class Rest extends HTTP {
     const UPDATE = `${this.vrrModuleName}/updateRequest`;
     const {logEndpoints, logInstance} = this;
 
+    let discard = false;
+
     /*
      * Status types:
      *   - registered (before axios is called)
@@ -65,9 +67,9 @@ export default class Rest extends HTTP {
     );
 
     request.cancel = () => {
+      discard = true;
       this.store.dispatch(UPDATE, {
         ...request,
-        discard: true,
         status: 'canceled',
         completed: Date.now(),
       });
@@ -114,12 +116,7 @@ export default class Rest extends HTTP {
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
 
-        if (timeout) {
-          return undefined;
-        }
-
-        // in case the request should be considered canceled
-        if (request.discard) {
+        if (timeout || discard) {
           return undefined;
         }
 
@@ -149,7 +146,9 @@ export default class Rest extends HTTP {
         };
 
         this.store.dispatch(UPDATE, updated);
-        this.unregister(request);
+
+        // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
+        setTimeout(() => this.unregister(request), 1);
 
         const aciveRequest = globalQueue.activeRequests[endpoint];
 
@@ -196,19 +195,15 @@ export default class Rest extends HTTP {
           }
         }
 
-        console.error(err);
+        // TODO / QUESTION: maybe we should also unregister the request?
+        // this.unregister(request);
+        console.error('VRR error', err);
       });
 
     const {store} = this;
 
-    console.log('Returning Promise');
     return new Promise((resolve, reject) => {
-      new Subscriber(endpoint, request.id, store, UPDATE)
-        .onSuccess((...args) => {
-          console.log('On SuCCESS', ...args);
-          resolve(...args);
-        })
-        .onFail(reject);
+      new Subscriber(endpoint, request.id, store, UPDATE).onSuccess(resolve).onFail(reject);
     });
   }
 
