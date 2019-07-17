@@ -1,7 +1,7 @@
 import HTTP from './methods';
 import Rest from './http';
 import helpers from './helpers';
-import requestsStore from './requestsStore';
+import requestsStoreFactory from './requestsStore';
 import storeBoilerplateGenerators from './Utils/storeBoilerplateGenerators';
 import MODULE_NAME from './moduleName';
 
@@ -26,7 +26,7 @@ export default {
     const options = mergeOptions(config);
 
     const {store, vrrModuleName = MODULE_NAME} = options;
-    store.registerModule(vrrModuleName, requestsStore);
+    store.registerModule(vrrModuleName, requestsStoreFactory());
 
     return {
       HTTP: class extends HTTP {
@@ -51,7 +51,7 @@ export default {
           .reduce(
             (Api, model) => ({
               ...Api,
-              [model]: new Rest(resource[model], config),
+              [model]: new Rest(resource[model], options),
             }),
             {},
           );
