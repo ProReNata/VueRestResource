@@ -30,6 +30,7 @@ export default class Rest extends HTTP {
     super(resource, config);
     this.requestCounter = 0;
     this.store = config.store;
+
     this.logEndpoints = Boolean(config.logEndpoints);
     this.logInstance = Boolean(config.logInstance);
     this.vrrModuleName = config.vrrModuleName;
@@ -59,15 +60,17 @@ export default class Rest extends HTTP {
     const request = this.register(actionType, {apiModel, apiModule, endpoint}, ...args);
 
     const {logEndpoints, logInstance} = this;
+
+    if (this.logInstance) {
+      this.store.dispatch(REGISTER_COMPONENT, callerInstance);
+    }
+
     this.store.dispatch(REGISTER, {
+      callerInstance,
       logEndpoints,
       logInstance,
       request,
     });
-
-    if (this.logInstance && !this.store.getters[COMPONENTS]) {
-      this.store.dispatch(REGISTER_COMPONENT, this.logInstance);
-    }
 
     // prepare for slow request
     const slowRequest = setTimeout(() => {
