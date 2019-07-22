@@ -25,12 +25,15 @@
 VueRestResource is a Rest HTTP resource management for Vue.js and Vuex projects. This library integrates 
 Vuex and the server data in a powerful way. 
 
-The goal of this library is to reduce boilerplate, simplify synchronise server and client data (in Vuex),
-take decisions so the workflow is more predictable.
+The goal of this library is to reduce boilerplate, simplify the synchronisation between server and client data (in Vuex),
+take some decisions so the workflow is more predictable.
 
----
 
-## How to use:
+## Example:
+
+(see [demo here](https://codesandbox.io/s/vue-rest-resource-demo-ptsnl))
+
+## Configuration:
 
 ```
 import VRR from 'VueRestResource';
@@ -42,23 +45,44 @@ const RestConfig = {
   store: store // Vuex store
 };
 
-export const {HTTP, registerResource} = VRR(RestConfig);
+const vrrAPI = vrr.createVueRestResource(RestConfig);
+export default vrrAPI;
 ```
 
 This will configure the resource and from here you can use:
  - the `HTTP` class to do direct Axios/Ajax requests with _Promises_ 
  - the `registerResource` factory function taking the resource object as argument
- 
- >**Note:** VueRestResource will register a module _Requests_ in the store. The store has to be _namespaced_. 
+
+
+---
+
+VueRestResource will register a module _"VRR"_ in the store (configurable) so we can keep track of open requests.
+
+You need to supply to VRR information on how to mount the endpoints and get data from the server. 
+For that we need `apiModule` and `apiModel`. That information is used to organise the Vuex module store and keep track of things.
+
 
 
 **The resource object**:
 
-The store mutations method names have to follow the pattern:  
+A resource object looks like 
 
-    const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
+```
+  Patient: {
+    apiModel: 'modelName',
+    apiModule: 'moduleName', // can be empty string
+  },
+```
 
-and thus the resource object could be:
+With that information VRR will create the store mutations method names, that follow the pattern:  
+
+     const mutation = [apiModule, `${action}${capitalizeFirst(apiModel)}`]
+        .filter(Boolean)
+        .join('/');
+        
+so, the module name can be a empty string for simple endpoints with only one level depth.
+
+The whole resource object could be:
 
 ```
 const MODULE = 'Patients';
@@ -68,7 +92,7 @@ export default {
   Patient: {
     apiModel: 'patient',
     apiModule: MODULE,
-    handler: {},
+    handler: {}, // custom handlers (optional)
   },
   PatientFinderById: {
     apiModel: 'patientfinderbyid',
@@ -81,51 +105,29 @@ export default {
 ```
 
 The `apiModule` and `apiModel` will be used to form the server endpoint, together with the `baseUrl` from the options (if given)
-and with the `id` (if given).
+and with the `id` (if given). The endpoint where VRR will look for data is:
+
+    endpoint = `${[this.baseUrl, this.apiModule, this.apiModel]
+      .filter(Boolean)
+      .join('/')
+      .toLowerCase()}/`;
 
 
-## Glossary
+### Glossary
 
-### apiModule
 
-This is the name of the Store Module, which is used to namespace everything and should be in a folder with the same name.
+#### apiModule
+
+This will be the name of the store Module, which is used to namespace everything and should be in a folder with the same name.
 
 The resource file is used to generate the state, mutators etc.  
 To use the store you still need to generate the resource file into a store module.
 
-e.g. a module named Users
-
-```
-Store/Modules/Users/resource.js
-
-const MODULE = 'Users';
-
-export default {
-  __name: MODULE,
-  Posts: {
-    apiModel: 'posts',
-    apiModule: MODULE,
-    handler: {},
-  },
-  Comments: {
-    apiModel: 'comments',
-    apiModule: MODULE,
-    handler: {},
-  },
-  Score: {
-    apiModel: 'score',
-    apiModule: MODULE,
-    handler: {},
-  },
-};
-
-```
-
-### apiModel
+#### apiModel
 
 This is the name of an object in your module. e.g. the posts of a user.
 
-## Methods
+## Methods (computed properties)
 
 ### registerResource
 
@@ -135,69 +137,66 @@ Use this method to create a Resource.
 It takes in 1 parameter, resource which needs to be a store object in the following format. 
  
 ```
-Blocks: {
-  apiModel: 'blocks',
-  apiModule: MODULE,
-  handler: {}, // optional
-},
+{
+  Blocks: {
+    apiModel: 'blocks',
+    apiModule: MODULE,
+    handler: {}, // optional
+  },
+}
 ```
-The apiModule is the name of the store module.  
-The apiModel is the name of the object in this module.  
-The handler object is where you can pass functions to change the data just before it is added to the store. 
+As named before:
+
+ - the apiModule is the name of the store module.  
+ - the apiModel is the name of the object in this module.  
+ - the handler object is where you can pass functions to change the data just before it is added to the store. 
 It will create a memory for this resource.
 
-You should first import the module using the path to your store.  
-`import module from 'Store/Modules/module`
-
-Then you can use the module to get the object.  
-`const moduleResource = registerResource(module.objectName);`  
-
-You need to pass in this resource when calling the other methods.
-
-The `registerResource` function will return a Resource Class with the following methods:
 
 #### get
 
-`Resource.get(id)`
+`Resource.get(vueComponentInstance, id)`
 
-Param 1: _Number_, the id of the model you want to get
+Param 1: _Object instance_, the pointer to the Vue instance consuming the API
+Param 2: _Number_, the id of the model you want to get
 
-Fetches it from the server.
-Puts the resource data with id in the store.
+The `.get` method fetches a specific object from the server and puts the resource data with id in the store.
 
 #### Create
 
-`Resource.create(obj)`
+`Resource.create(vueComponentInstance, obj)`
 
-Param 1: _Object_, the object/model you want to save (without id).
+Param 1: _Object instance_, the pointer to the Vue instance consuming the API
+Param 2: _Object_, the object/model you want to save (without id).
 
-Updates the server.
-Updates the store.
+The `.create` method updates the server with new data and puts the resource data with id in the store.
 
 #### Update
-`Resource.update(id, obj)`
+`Resource.update(vueComponentInstance, id, obj)`
 
-Param 1: _Number_, the id of the model you want to update.
-Param 2: _Object_, the object/model you want to update.
+Param 1: _Object instance_, the pointer to the Vue instance consuming the API
+Param 2: _Number_, the id of the model you want to update.
+Param 3: _Object_, the object/model you want to update.
 
-Updates the server.
-Updates the store.
+The `.update` method updates the server with new data and puts the resource data with id in the store.
+
 
 #### List
-`Resource.List()`
+`Resource.List(vueComponentInstance)`
 
-Puts the resources into the store.
+Param 1: _Object instance_, the pointer to the Vue instance consuming the API
 
+The `.list` method fetches a collection of data from the server and puts the resource data with id in the store.
 
-### asyncResourceValue
 
 ### asyncResourceGetter
 
 This method is similar to Vuex's `mapGetters`.   
 
-The idea is to get resources from the server whose you have the `id` for. 
-If you have a `id` of a model/object and that id changes, the VRR will check the store for it. 
-If it doesn't find it it will get it from the server for you and update the store. So you can use the computed property this function returns as the pointer to the value you want.
+The idea is to get resources from the server whose you have the `id` for, reactively. 
+If you have a `id` of a model/object and that id changes, the VRR will first check the store for it and 
+if it doesn't find it it will get it from the server for you and update the store. 
+So you can use the computed property this function returns as the pointer to the value you want.
 
 In other words:
 
@@ -231,8 +230,6 @@ computed: {
   ...asyncResourceGetter('currentUserCity', [UserResource, CityResource], id, [(userData) => userData.cityId, (cityData) => data])
 },
 ```
-
-### HTTP
 
 ### resourceListGetter
 
