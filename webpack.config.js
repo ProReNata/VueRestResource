@@ -38,12 +38,14 @@ const getGlobal = function() {
 
 /**
  * Whether eslint should use the friendly formatter.
+ *
  * @type {boolean}
  */
 const USE_FRIENDLY_FORMATTER = false;
 
 /**
  * The name of the output distribution file.
+ *
  * @type {string}
  */
 const FILENAME = 'vue-rest-resource';
@@ -52,42 +54,49 @@ const LIBRARY = 'VueRestResource';
 
 /**
  * The number of logical CPUs in the build system.
+ *
  * @type {number}
  */
 const CPU_COUNT = os.cpus().length;
 
 /**
  * How many logical system CPUS to use for Uglify process.
+ *
  * @type {number}
  */
 const LOGICAL_CPU_USE = CPU_COUNT > 1 ? CPU_COUNT - 1 : 1;
 
 /**
  * The NODE_ENV environment variable.
- * @type {!Object}
+ *
+ * @type {!object}
  */
 const {NODE_ENV} = process.env;
 
 /**
  * The distribution directory of Byxelkrok.
+ *
  * @type {string}
  */
 const BUILD_DIR = path.resolve(__dirname, './dist/');
 
 /**
  * The production string.
+ *
  * @type {string}
  */
 const PRODUCTION = 'production';
 
 /**
  * The development string.
+ *
  * @type {string}
  */
 const DEVELOPMENT = 'development';
 
 /**
  * The default include paths.
+ *
  * @type {string}
  */
 const DEFAULT_INCLUDE = [path.resolve(__dirname, 'src'), path.resolve(__dirname, '__tests__')];
@@ -101,17 +110,19 @@ const DEFAULT_INCLUDE = [path.resolve(__dirname, 'src'), path.resolve(__dirname,
  * - report: Run the webpack reporter.
  * See {@link http://webpack.js.org/guides/environment-variables}.
  *
- * @param {!Object} [env={}] - The env object.
+ * @param {!object} [env={}] - The env object.
  */
 module.exports = (env = {}) => {
   /**
-   * The JSON content of `package.json`
-   * @type {!Object}
+   * The JSON content of `package.json`.
+   *
+   * @type {!object}
    */
   const PACKAGE = require('./package.json');
 
   /**
-   * The reference created bu git describe --dirty`
+   * The reference created bu git describe --dirty`.
+   *
    * @type {string}
    * @see {@link https://git-scm.com/docs/git-describe}
    */
@@ -122,30 +133,35 @@ module.exports = (env = {}) => {
 
   /**
    * The date as of now.
+   *
    * @type {string}
    */
   const NOW = new Date().toISOString();
 
   /**
    * Indicates if source maps should be built.
+   *
    * @type {boolean}
    */
   const BUILD_SOURCEMAPS = true;
 
   /**
    * Indicates if linting should be performed.
+   *
    * @type {boolean}
    */
   const PERFORM_LINTING = !!env.lint;
 
   /**
    * Indicates if linting errors should fail the build.
+   *
    * @type {boolean}
    */
   const FAIL_ON_LINT_ERRORS = !!env.lintFail;
 
   /**
    * Indicates if build is via CLI.
+   *
    * @type {boolean}
    */
   const CLI_BUILD = !!env.cli;
@@ -161,16 +177,16 @@ module.exports = (env = {}) => {
   /**
    * This option controls if and how source maps are generated.
    *
-   * nosources-source-map - A SourceMap is created without the sourcesContent in it.
+   * Nosources-source-map - A SourceMap is created without the sourcesContent in it.
    * It can be used to map stack traces on the client without exposing all of the
    * source code. You can deploy the Source Map file to the webserver.
    *
-   * eval-source-map - Each module is executed with eval() and a SourceMap is added as
+   * Eval-source-map - Each module is executed with eval() and a SourceMap is added as
    * a DataUrl to the eval(). Initially it is slow, but it provides fast rebuild speed
    * and yields real files. Line numbers are correctly mapped since it gets mapped to
    * the original code. It yields the best quality SourceMaps for development.
    *
-   * source-map - A full SourceMap is emitted as a separate file. It adds a reference
+   * Source-map - A full SourceMap is emitted as a separate file. It adds a reference
    * comment to the bundle so development tools know where to find it.
    *
    * @type {string}
@@ -179,18 +195,19 @@ module.exports = (env = {}) => {
   const devTool = 'source-map';
 
   /**
-   * Plugins are the backbone of webpack. webpack itself is built on the same plugin system
+   * Plugins are the backbone of webpack. Webpack itself is built on the same plugin system
    * that you use in your webpack configuration!
    *
    * A webpack plugin is a JavaScript object that has an apply property. This apply property
    * is called by the webpack compiler, giving access to the entire compilation lifecycle.
    *
-   * @type {array.<!Object>}
+   * @type {Array.<!object>}
    */
   const plugins = [
     /**
      * Use the shorthand version.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/plugins/environment-plugin/}
      */
     new webpack.EnvironmentPlugin({
@@ -200,7 +217,8 @@ module.exports = (env = {}) => {
 
     /**
      * Smaller lodash builds. We are not opting in to path feature.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://github.com/lodash/lodash-webpack-plugin}
      */
     new LodashModuleReplacementPlugin({
@@ -209,7 +227,8 @@ module.exports = (env = {}) => {
 
     /**
      * Adds a banner to the top of each generated chunk.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/plugins/banner-`plugin/}
      */
     new webpack.BannerPlugin({
@@ -233,7 +252,8 @@ module.exports = (env = {}) => {
 
   /**
    * Shared (.js & .vue) eslint-loader options.
-   * @type {!Object}
+   *
+   * @type {!object}
    * @see {@link https://github.com/MoOx/eslint-loader}
    */
   const eslintLoader = {
@@ -250,7 +270,8 @@ module.exports = (env = {}) => {
 
   /**
    * Shared (.js & .vue) babel-loader options.
-   * @type {!Object}
+   *
+   * @type {!object}
    * @see {@link https://github.com/babel/babel-loader}
    */
   const babelLoader = {
@@ -265,11 +286,11 @@ module.exports = (env = {}) => {
    * boundaries, so that each module has a coherent design and a clear purpose within the overall
    * application.
    *
-   * webpack supports modules written in a variety of languages and preprocessors, via loaders.
+   * Webpack supports modules written in a variety of languages and preprocessors, via loaders.
    * Loaders describe to webpack how to process non-JavaScript modules and include these dependencies
    * into your bundles.
    *
-   * @type {array.<!Object>}
+   * @type {Array.<!object>}
    * @see {@link https://webpack.js.org/configuration/module/#module-rules}
    */
   const moduleRules = [
@@ -285,7 +306,8 @@ module.exports = (env = {}) => {
       : null,
 
     /**
-     * Extract sourceMappingURL comments from modules and offer it to webpack
+     * Extract sourceMappingURL comments from modules and offer it to webpack.
+     *
      * @see {@link https://github.com/webpack-contrib/source-map-loader}
      */
     {
@@ -296,7 +318,8 @@ module.exports = (env = {}) => {
 
     /**
      * This package allows transpiling JavaScript files using Babel and webpack.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/loaders/babel-loader/}
      */
     {
@@ -313,7 +336,8 @@ module.exports = (env = {}) => {
 
     /**
      * Define the entry points for the application.
-     * @type {array.<string>}
+     *
+     * @type {Array.<string>}
      * @see {@link https://webpack.js.org/concepts/entry-points/}
      */
     entry: [path.join(__dirname, 'src/index.js')],
@@ -345,7 +369,8 @@ module.exports = (env = {}) => {
     /**
      * Configuring the output configuration options tells webpack how to write the compiled
      * files to disk.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/configuration/output/}
      */
     output: {
@@ -359,7 +384,8 @@ module.exports = (env = {}) => {
     /**
      * These options allows you to control how webpack notifies you of assets and
      * entrypoints that exceed a specific file limit.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/configuration/performance/}
      */
     performance: {
@@ -375,13 +401,15 @@ module.exports = (env = {}) => {
 
     /**
      * These options change how modules are resolved.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/configuration/resolve/}
      */
     resolve: {
       /**
        * Create aliases to import or require certain modules more easily.
-       * @type {!Object}
+       *
+       * @type {!object}
        * @see {@link https://webpack.js.org/configuration/resolve/#resolve-alias}
        */
       alias: {
@@ -392,7 +420,8 @@ module.exports = (env = {}) => {
     },
 
     /**
-     * webpack can compile for multiple environments or targets.
+     * Webpack can compile for multiple environments or targets.
+     *
      * @type {string}
      * @see {@link https://webpack.js.org/configuration/target/}
      */
@@ -400,7 +429,8 @@ module.exports = (env = {}) => {
 
     /**
      * A set of options used to customize watch mod.
-     * @type {!Object}
+     *
+     * @type {!object}
      * @see {@link https://webpack.js.org/configuration/watch/#watchoptions}
      */
     watchOptions: {

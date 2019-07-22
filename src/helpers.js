@@ -108,11 +108,11 @@ export default {
    * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {Object[] | Object} restResources - The model to use.
-   * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
-   * @param {Function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
+   * @param {object[]|object} restResources - The model to use.
+   * @param {string | number} initialId -  The computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+   * @param {Function} resolverFunctions - Callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
    *
-   * @returns {Object} - Places a computed property with the values in your state.
+   * @returns {object} - Places a computed property with the values in your state.
    */
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
@@ -182,10 +182,10 @@ export default {
    * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {Object[] | Object} resource - The model to use.
-   * @param {string[] | Object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+   * @param {object[]|object} resource - The model to use.
+   * @param {string[]|object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
    *
-   * @returns {Object} - Places a computed property with the values in your state.
+   * @returns {object} - Places a computed property with the values in your state.
    */
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     const emptyArray = [];
