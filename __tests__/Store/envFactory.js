@@ -21,7 +21,6 @@ export default (customRestConfig = {}) => {
     getters: {},
     modules: {},
     mutations: {},
-    namespaced: true,
     // only for global stuff, otherwise use modules
     state: {},
     strict: false,
