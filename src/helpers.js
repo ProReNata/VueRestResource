@@ -1,6 +1,18 @@
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 
+const getStorePath = (resource) => {
+  const {apiModule, apiModel} = resource;
+
+  return [apiModule, apiModel].filter(Boolean).join('/');
+};
+
+const getStateForResource = (instance, resource) => {
+  const storePath = getStorePath(resource);
+
+  return instance.$store.getters[storePath] || [];
+};
+
 const noValueFound = {};
 
 const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, resource) {
@@ -8,8 +20,7 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
     return null;
   }
 
-  const {apiModule, apiModel} = resource;
-  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+  const state = getStateForResource(instance, resource);
 
   if (Array.isArray(state)) {
     const findStatePredicate = function findStatePredicate(obj) {
@@ -31,8 +42,7 @@ const getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instanc
     return null;
   }
 
-  const {apiModule, apiModel} = resource;
-  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+  const state = getStateForResource(instance, resource);
 
   if (Array.isArray(state)) {
     const findStatePredicate = function findStatePredicate(obj) {
