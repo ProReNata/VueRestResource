@@ -38,11 +38,13 @@ export default {
       registerResource(resource, customStore) {
         // if null, we turn it off on purpose
         if (customStore !== null) {
+          const {__name: moduleName} = resource;
+
           const moduleStore = customStore || {
             ...storeBoilerplateGenerators(resource),
+            namespaced: moduleName !== '',
           };
 
-          const {__name: moduleName} = resource;
           store.registerModule(moduleName, moduleStore);
         }
 

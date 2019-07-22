@@ -2,7 +2,7 @@ import propertyAction from './propertyAction';
 import filterDuplicatesById from './filterDuplicatesById';
 import mergeById from './mergeById';
 
-export default (resource, namespaced = true) => {
+export default (resource) => {
   const modules = Object.keys(resource)
     .filter((k) => k[0] !== '_')
     .map((key) => resource[key].apiModel);
@@ -59,6 +59,5 @@ export default (resource, namespaced = true) => {
     getters,
     mutations,
     state,
-    namespaced,
   };
 };
