@@ -1,13 +1,12 @@
 import Vue from 'vue';
 import envFactory from './Store/envFactory';
 
-// import {registerResource, asyncResourceGetter, asyncResourceValue, updateResourceListWatcher, resourceListGetter} from './HTTP';
 import Hints from './Modules/Hints/Resource/resource';
 const seenHintsData = require('./DevServer/Endpoints/hints/seenhints.json');
 const hintsData = require('./DevServer/Endpoints/hints/hints.json');
 const computedPropertyName = 'TEST_COMPUTED_PROPERTY_NAME';
 
-const getJsonObjectById = (obj, idToMatch, key = 'id') => {
+const getJSONObjectById = (obj, idToMatch, key = 'id') => {
   return JSON.stringify(obj.objects.find((item) => item[key] === idToMatch));
 };
 const getRelatedObjectById = (obj, relatedObj, idToMatch, foreignKey = 'id') => {
@@ -29,19 +28,19 @@ describe('Helpers', () => {
 
   describe('asyncResourceGetter', () => {
     it('Matches computed property key name', () => {
-      const {asyncResourceGetter} = envFactory([Hints]);
+      const {asyncResourceGetter} = envFactory();
       const helper = asyncResourceGetter(computedPropertyName);
       expect(helper.hasOwnProperty(computedPropertyName)).toBeTruthy();
     });
 
     it('Vue: Set computed property and is Reactive', (done) => {
-      const {asyncResourceGetter, registerResource, store} = envFactory([Hints]);
+      const {asyncResourceGetter, registerResource, store} = envFactory();
 
       const startIndex = 1;
       const changedIndex = 2;
-      const checkData = getJsonObjectById(seenHintsData, changedIndex);
+      const checkData = getJSONObjectById(seenHintsData, changedIndex);
 
-      const seenHintsResource = registerResource(Hints.SeenHints);
+      const seenHintsResource = registerResource(Hints).SeenHints;
 
       new Vue({
         store,
@@ -69,10 +68,11 @@ describe('Helpers', () => {
     });
 
     it('Vue: Set Nested computed property and is Reactive', (done) => {
-      const {asyncResourceGetter, registerResource, store} = envFactory([Hints]);
+      const {asyncResourceGetter, registerResource, store} = envFactory();
 
-      const SeenHintsResource = registerResource(Hints.SeenHints);
-      const HintsResource = registerResource(Hints.Hints);
+      const hintsResources = registerResource(Hints);
+      const SeenHintsResource = hintsResources.SeenHints;
+      const HintsResource = hintsResources.Hints;
       const startIndex = 2;
       const changedIndex = 43;
       const checkData = getRelatedObjectById(seenHintsData, hintsData, startIndex, 'hint');
@@ -110,6 +110,7 @@ describe('Helpers', () => {
     });
   });
 
+
   describe('resourceListGetter', () => {
     it('Matches computed property key name', () => {
       const {resourceListGetter} = envFactory();
@@ -119,8 +120,8 @@ describe('Helpers', () => {
     });
 
     it('Vue: Set computed property and is Reactive', (done) => {
-      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
-      const HintsResource = registerResource(Hints.Hints);
+      const {resourceListGetter, registerResource, store} = envFactory();
+      const HintsResource = registerResource(Hints).Hints;
       const startIndex = [13, 23];
       const changedIndex = [23, 33];
       const checkData = listJsonObjectById(hintsData, changedIndex);
@@ -151,8 +152,8 @@ describe('Helpers', () => {
     });
 
     it('Vue: Should handle delayed async values in the pathToInitialValues', (done) => {
-      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
-      const HintsResource = registerResource(Hints.Hints);
+      const {resourceListGetter, registerResource, store} = envFactory();
+      const HintsResource = registerResource(Hints).Hints;
       const startIndex = [13, 23];
       const checkData = listJsonObjectById(hintsData, startIndex);
 
@@ -196,8 +197,8 @@ describe('Helpers', () => {
     });
 
     it('Vue: Should get all seen hints by the User', (done) => {
-      const {resourceListGetter, registerResource, store} = envFactory([Hints]);
-      const SeenHintsResource = registerResource(Hints.SeenHints);
+      const {resourceListGetter, registerResource, store} = envFactory();
+      const SeenHintsResource = registerResource(Hints).SeenHints;
       const userId = 1376;
       const checkData = getRelatedObjectsById(seenHintsData, userId, 'user');
 
@@ -224,4 +225,5 @@ describe('Helpers', () => {
       });
     });
   });
+
 });

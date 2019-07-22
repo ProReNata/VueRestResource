@@ -1,6 +1,6 @@
-import propertyAction from 'HTTP/Utils/propertyAction';
-import filterDuplicatesById from 'HTTP/Utils/filterDuplicatesById';
-import mergeById from 'HTTP/Utils/mergeById';
+import propertyAction from './propertyAction';
+import filterDuplicatesById from './filterDuplicatesById';
+import mergeById from './mergeById';
 
 export default (resource) => {
   const modules = Object.keys(resource)

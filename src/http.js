@@ -1,11 +1,7 @@
 import axios from 'axios';
 import HTTP from './methods';
 import Subscriber from './subscriber';
-import MODULE_NAME from './moduleName';
 
-const REGISTER = `${MODULE_NAME}/registerRequest`;
-const UPDATE = `${MODULE_NAME}/updateRequest`;
-const UNREGISTER = `${MODULE_NAME}/unregisterRequest`;
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /*
@@ -29,18 +25,30 @@ const globalQueue = {
   queuedRequests: {}, // endpoints as key values
 };
 
+let requestCounter = 0;
+
 export default class Rest extends HTTP {
-  constructor(uuid, resource, config) {
+  constructor(resource, config) {
     super(resource, config);
-    this.uuid = uuid;
-    this.requestCounter = 0;
     this.store = config.store;
+
+    this.logEndpoints = Boolean(config.logEndpoints);
+    this.logInstance = Boolean(config.logInstance);
+    this.vrrModuleName = config.vrrModuleName;
   }
 
   // Dispatcher methods (overrides HTTP dispatch method)
-  dispatch(action, {endpoint, handler, callback: callBack, apiModel, apiModule, deletedId}, ...args) {
-    const mutation = `${apiModule}/${action}${capitalizeFirst(apiModel)}`;
+  dispatch(action, {endpoint, handler, callback, apiModel, apiModule, deletedId, callerInstance}, ...args) {
+    const mutation = [apiModule, `${action}${capitalizeFirst(apiModel)}`].filter(Boolean).join('/');
+
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
+
+    const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
+    const REGISTER = `${this.vrrModuleName}/registerRequest`;
+    const UPDATE = `${this.vrrModuleName}/updateRequest`;
+    const {logEndpoints, logInstance} = this;
+
+    let discard = false;
 
     /*
      * Status types:
@@ -52,8 +60,28 @@ export default class Rest extends HTTP {
      *   - pending
      */
 
-    const request = this.register(actionType, {apiModel, apiModule, endpoint}, ...args);
-    this.store.dispatch(REGISTER, request);
+    const request = this.register(
+      actionType,
+      {apiModel, apiModule, endpoint, callerInstance, logEndpoints, logInstance},
+      ...args,
+    );
+
+    request.cancel = () => {
+      discard = true;
+      this.store.dispatch(UPDATE, {
+        ...request,
+        status: 'canceled',
+        completed: Date.now(),
+      });
+    };
+
+    if (this.logInstance) {
+      this.store.dispatch(REGISTER_COMPONENT, callerInstance);
+    }
+
+    this.store.dispatch(REGISTER, {
+      ...request,
+    });
 
     // prepare for slow request
     const slowRequest = setTimeout(() => {
@@ -88,12 +116,7 @@ export default class Rest extends HTTP {
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
 
-        if (timeout) {
-          return undefined;
-        }
-
-        // in case the request should be considered canceled
-        if (request.discard) {
+        if (timeout || discard) {
           return undefined;
         }
 
@@ -108,23 +131,24 @@ export default class Rest extends HTTP {
          * pattern if you want to keep the store "logic free".
          */
 
-        if (callBack) {
+        if (callback) {
           // Used in some controllers when data from server needs to be processed before being set in store
-          callBack(data, this.store);
+          callback(data, this.store);
         } else {
           this.store.dispatch(mutation, data);
         }
 
         const updated = {
           ...request,
-          cancel: this.cancel.bind(this, request),
           completed: Date.now(),
           response: data,
           status: 'success',
         };
 
         this.store.dispatch(UPDATE, updated);
-        this.unregister(request);
+
+        // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
+        setTimeout(() => this.unregister(request), 1);
 
         const aciveRequest = globalQueue.activeRequests[endpoint];
 
@@ -171,15 +195,16 @@ export default class Rest extends HTTP {
           }
         }
 
-        console.error(err);
+        // TODO / QUESTION: maybe we should also unregister the request?
+        // this.unregister(request);
+        console.error('VRR error', err);
       });
 
-    const {uuid, store} = this;
-    const executor = function executor(resolve, reject) {
-      new Subscriber(endpoint, uuid, store).onSuccess(resolve).onFail(reject);
-    };
+    const {store} = this;
 
-    return new Promise(executor);
+    return new Promise((resolve, reject) => {
+      new Subscriber(endpoint, request.id, store, UPDATE).onSuccess(resolve).onFail(reject);
+    });
   }
 
   handleQueue(request, action, endpoint, ...args) {
@@ -227,8 +252,8 @@ export default class Rest extends HTTP {
   }
 
   register(action, moduleInfo, ...args) {
-    this.requestCounter += 1;
-    const id = [moduleInfo.apiModule, moduleInfo.apiModel, this.requestCounter].join('_');
+    requestCounter += 1;
+    const id = [moduleInfo.apiModule, moduleInfo.apiModel, requestCounter].join('_');
     const httpData = args.find((obj) => obj.params);
     const params = httpData && httpData.params;
 
@@ -239,17 +264,11 @@ export default class Rest extends HTTP {
       id,
       params,
       status: 'registered',
-      uuid: this.uuid,
     };
   }
 
   unregister(request) {
+    const UNREGISTER = `${this.vrrModuleName}/unregisterRequest`;
     this.store.dispatch(UNREGISTER, request);
-  }
-
-  cancel(req) {
-    req.discard = true;
-    req.status = 'canceled';
-    req.completed = Date.now();
   }
 }

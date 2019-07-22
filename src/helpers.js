@@ -1,6 +1,18 @@
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 
+const getStorePath = (resource) => {
+  const {apiModule, apiModel} = resource;
+
+  return [apiModule, apiModel].filter(Boolean).join('/');
+};
+
+const getStateForResource = (instance, resource) => {
+  const storePath = getStorePath(resource);
+
+  return instance.$store.getters[storePath] || [];
+};
+
 const noValueFound = {};
 
 const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, resource) {
@@ -8,8 +20,7 @@ const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, 
     return null;
   }
 
-  const {apiModule, apiModel} = resource;
-  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+  const state = getStateForResource(instance, resource);
 
   if (Array.isArray(state)) {
     const findStatePredicate = function findStatePredicate(obj) {
@@ -31,8 +42,7 @@ const getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instanc
     return null;
   }
 
-  const {apiModule, apiModel} = resource;
-  const state = instance.$store.getters[`${apiModule}/${apiModel}`] || [];
+  const state = getStateForResource(instance, resource);
 
   if (Array.isArray(state)) {
     const findStatePredicate = function findStatePredicate(obj) {
@@ -64,7 +74,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
       const action = get(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
-      setTimeout(() => restResources[i][action](resourceValue), 1);
+      setTimeout(() => restResources[i][action](instance, resourceValue, this), 1);
 
       // resource not loaded yet,
       // the computed function will be called again when store is updated
@@ -98,11 +108,11 @@ export default {
    * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {Object[] | Object} restResources - The model to use.
-   * @param {string | number} initialId -  the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
-   * @param {Function} resolverFunctions - callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
+   * @param {object[]|object} restResources - The model to use.
+   * @param {string | number} initialId -  The computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+   * @param {Function} resolverFunctions - Callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
    *
-   * @returns {Object} - Places a computed property with the values in your state.
+   * @returns {object} - Places a computed property with the values in your state.
    */
   asyncResourceGetter(computedPropertyName, restResources, initialId, resolverFunctions = (data) => data) {
     return {
@@ -139,6 +149,8 @@ export default {
             return;
           }
 
+          const callerInstance = this;
+
           const updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
           const outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
           const resourceMatches = (outdated && updated === outdated) || (updatedValue && !oldValue);
@@ -148,7 +160,7 @@ export default {
               const resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
 
               setTimeout(() => {
-                resource.list({
+                resource.list(callerInstance, {
                   [resourceKey]: updated,
                 });
               }, 1);
@@ -170,17 +182,18 @@ export default {
    * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
    *
    * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {Object[] | Object} resource - The model to use.
-   * @param {string[] | Object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+   * @param {object[]|object} resource - The model to use.
+   * @param {string[]|object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
    *
-   * @returns {Object} - Places a computed property with the values in your state.
+   * @returns {object} - Places a computed property with the values in your state.
    */
   resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
     const emptyArray = [];
 
     return {
       [computedPropertyName]() {
-        const computed = pathToInitialValues.split('.').reduce(pathIteratee, this);
+        const callerInstance = this;
+        const computed = pathToInitialValues.split('.').reduce(pathIteratee, callerInstance);
 
         if (computed === noValueFound) {
           return emptyArray;
@@ -213,7 +226,7 @@ export default {
 
         // do server request
         setTimeout(() => {
-          resource.list(isArray ? {id: castArray(computed).join(',')} : computed);
+          resource.list(callerInstance, isArray ? {id: castArray(computed).join(',')} : computed);
         }, 1);
 
         return emptyArray;

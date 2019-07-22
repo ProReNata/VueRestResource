@@ -2,17 +2,24 @@ import noop from 'lodash/noop';
 
 const actions = {
   init: noop,
-  registerComponentInStore(store, uuid) {
-    store.commit('registerComponent', uuid);
+  registerComponentInStore(store, instance) {
+    if (store.getters.registeredComponents.get(instance)) {
+      return;
+    }
+
+    instance.$once('hook:beforeDestroy', () => {
+      store.commit('unregisterComponent', instance);
+    });
+    store.commit('registerComponent', instance);
   },
   registerRequest(store, req) {
     store.commit('registerRequest', req);
   },
-  unregisterComponentInStore(store, uuid) {
-    store.commit('unregisterComponent', uuid);
+  unregisterComponentInStore(store, instance) {
+    store.commit('unregisterComponent', instance);
   },
-  unregisterRequest(store, ref) {
-    store.commit('unregisterRequest', ref);
+  unregisterRequest(store, req) {
+    store.commit('unregisterRequest', req);
   },
   updateRequest(store, req) {
     store.commit('updateRequest', req);
@@ -20,69 +27,113 @@ const actions = {
 };
 
 const mutations = {
-  registerComponent(state, uuid) {
-    if (state.registeredComponents[uuid]) {
-      throw new Error('component already registered');
+  registerComponent(state, instance) {
+    state.registeredComponents.set(instance, []);
+  },
+  registerRequest(state, request) {
+    const {logEndpoints, logInstance, endpoint, callerInstance} = request;
+
+    // register by component instance
+    if (logInstance) {
+      const instanceRequests = state.registeredComponents.get(callerInstance) || [];
+      const requestList = instanceRequests.concat({...request});
+      state.registeredComponents.set(callerInstance, requestList);
     }
 
-    state.registeredComponents[uuid] = [];
-  },
-  registerRequest(state, req) {
-    state.registeredComponents[req.uuid].push({...req});
-
     // register by endpoint
-    const current = state.activeRequestsToEndpoint[req.endpoint] || [];
-    state.activeRequestsToEndpoint = {
-      ...state.activeRequestsToEndpoint,
-      [req.endpoint]: current.concat(req),
-    };
+    if (logEndpoints) {
+      const current = state.activeRequestsToEndpoint[endpoint] || [];
+      state.activeRequestsToEndpoint = {
+        ...state.activeRequestsToEndpoint,
+        [endpoint]: current.concat(request),
+      };
+    }
   },
-  unregisterComponent(state, uuid) {
-    if (!state.registeredComponents[uuid]) {
+  unregisterComponent(state, instance) {
+    if (!state.registeredComponents.get(instance)) {
       throw new Error('component not registered');
     }
 
-    state.registeredComponents[uuid] = null;
-    delete state.registeredComponents[uuid];
+    state.registeredComponents.set(instance, null); // maybe redundant but the idea is to help clearing memory
+    state.registeredComponents.delete(instance);
+
+    if (state.lastUpdatedComponent === instance) {
+      state.lastUpdatedComponent = null;
+    }
   },
   unregisterRequest(state, request) {
-    const {id, endpoint} = request;
+    const {id, endpoint, callerInstance} = request;
 
     // unregister endpoint
     const activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
       return req.id !== id;
     };
 
-    const others = state.activeRequestsToEndpoint[endpoint].filter(activeRequestsToEndpointPredicate);
+    const activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
+
+    const others = activeRequests.filter(activeRequestsToEndpointPredicate);
     state.activeRequestsToEndpoint = {
       ...state.activeRequestsToEndpoint,
       [endpoint]: others,
     };
+
+    // update component endpoint list
+    const instanceRequests = state.registeredComponents.get(callerInstance);
+
+    if (instanceRequests) {
+      const removeIdIterator = function removeIdIterator(req) {
+        return req.id !== id;
+      };
+
+      const requestList = instanceRequests.filter(removeIdIterator);
+      state.registeredComponents.set(callerInstance, requestList);
+    }
   },
-  updateRequest(state, req) {
+  updateRequest(state, request) {
+    const {id, logInstance, logEndpoints, endpoint, callerInstance} = request;
+
+    state.lastUpdatedComponent = callerInstance;
+
+    const requestUpdateIterator = function requestUpdateIterator(req) {
+      const updatedRequest = id === req.id ? request : req;
+
+      return updatedRequest;
+    };
+
     // Since we cannot use listener for complex/nested objects
     // we use a shallow state key that triggers listeners in components
     // and they can check if the change is related to them or ignore the call
-    state.lastUpdatedComponent = req.uuid;
-    const componentRequests = state.registeredComponents[req.uuid];
-    const componentRequestsPredicate = function componentRequestsPredicate(r) {
-      return r.id === req.id && r.uuid === req.uuid;
-    };
 
-    const index = componentRequests.findIndex(componentRequestsPredicate);
+    // update the component instance list
+    const instanceRequests = state.registeredComponents.get(callerInstance);
 
-    if (index === -1) {
-      console.info('store mutations > updateRequest: Request not found in store');
+    if (logInstance) {
+      if (instanceRequests) {
+        // sometimes we have removed the component before the request is updated
+        // in such cases we should not re-add the instance to the list
+
+        const requestList = (instanceRequests || []).map(requestUpdateIterator);
+        state.registeredComponents.set(callerInstance, requestList);
+      }
     }
 
-    const componentRequestsIteratee = function componentRequestsIteratee(entry, i) {
-      return index === i ? req : entry;
-    };
+    // update the endpoint list
+    if (logEndpoints) {
+      const current = state.activeRequestsToEndpoint[endpoint];
 
-    state.registeredComponents = {
-      ...state.registeredComponents,
-      [req.uuid]: componentRequests.map(componentRequestsIteratee),
-    };
+      if (!current) {
+        console.info('VRR store mutations > updateRequest: Request not found in store');
+
+        return;
+      }
+
+      const requestList = current.map(requestUpdateIterator);
+
+      state.activeRequestsToEndpoint = {
+        ...state.activeRequestsToEndpoint,
+        [endpoint]: requestList,
+      };
+    }
   },
 };
 
@@ -98,7 +149,7 @@ const getters = {
   },
 };
 
-export default {
+export default () => ({
   actions,
   getters,
   mutations,
@@ -106,6 +157,6 @@ export default {
   state: {
     activeRequestsToEndpoint: {},
     lastUpdatedComponent: null,
-    registeredComponents: {},
+    registeredComponents: new Map(),
   },
-};
+});

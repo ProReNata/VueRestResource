@@ -2,16 +2,17 @@ const activeListeners = {
   mutation: {},
 };
 
-const registeredStores = {};
-const subscriber = function subscriber(mutation) {
+const registeredStores = new Map();
+
+const subscriber = function subscriber(vrrStoreUpdatePath, mutation) {
   const {type} = mutation; // endpoint
 
-  if (type !== 'Requests/updateRequest') {
+  if (type !== vrrStoreUpdatePath) {
     return;
   }
 
-  const {uuid, status, endpoint, response} = mutation.payload;
-  const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][uuid];
+  const {id, status, endpoint} = mutation.payload;
+  const listeners = activeListeners.mutation[endpoint] && activeListeners.mutation[endpoint][id];
 
   if (!listeners) {
     return;
@@ -20,12 +21,12 @@ const subscriber = function subscriber(mutation) {
   if (status === 'success') {
     const successIteratee = function successIteratee({callbacks}) {
       if (callbacks.onSuccess) {
-        callbacks.onSuccess(response.id);
+        callbacks.onSuccess(id);
       }
     };
 
     listeners.forEach(successIteratee);
-  } else if (status === 'timeout' || status === 'failed') {
+  } else if (status === 'timeout' || status === 'failed' || status === 'canceled') {
     const timeoutIteratee = function timeoutIteratee({callbacks}) {
       if (callbacks.onFail) {
         callbacks.onFail(mutation.payload);
@@ -44,21 +45,19 @@ const subscriber = function subscriber(mutation) {
   }
 };
 
-const connectStore = function connectStore(store, stores) {
-  if (stores[store]) {
-    return;
-  }
-
-  stores[store] = store.subscribe(subscriber);
-};
-
 export default class Subscriber {
-  constructor(endpoint, uuid, store) {
+  constructor(endpoint, uuid, store, vrrStoreUpdatePath) {
     this.endpoint = endpoint;
     this.uuid = uuid;
     this.callbacks = {};
     this.store = store;
-    connectStore(store, registeredStores);
+
+    if (!registeredStores.get(store)) {
+      const unsubscriber = store.subscribe(subscriber.bind(null, vrrStoreUpdatePath));
+      registeredStores.set(store, unsubscriber);
+      // NOTE: if needed we can call "unsubscriber", but probably we never un-mount VRR
+    }
+
     this.registerListener();
 
     return this;

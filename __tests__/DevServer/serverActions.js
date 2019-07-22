@@ -53,7 +53,7 @@ module.exports = {
         response = data;
       }
 
-      res.send(err ? {} : response);
+      setTimeout(() => res.send(err ? {} : response), 100);
     });
   },
 
