@@ -74,7 +74,7 @@ const getResourceValue = function getResourceValue(instance, restResources, asyn
       // we need a setTimeout here so the values/getters this method calls don't get logged by computed properties
       // and so don't get registered as dependencies to react on
       const action = get(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
-      setTimeout(() => restResources[i][action](instance, resourceValue, this), 1);
+      setTimeout(() => restResources[i][action](instance, resourceValue), 1);
 
       // resource not loaded yet,
       // the computed function will be called again when store is updated
