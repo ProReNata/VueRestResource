@@ -42,10 +42,10 @@ const mutations = {
 
     // register by endpoint
     if (logEndpoints) {
-      const current = state.activeRequestsToEndpoint[endpoint] || [];
+      const currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
       state.activeRequestsToEndpoint = {
         ...state.activeRequestsToEndpoint,
-        [endpoint]: current.concat(request),
+        [endpoint]: currentOpenRequestsToEndpoint.concat(request),
       };
     }
   },
