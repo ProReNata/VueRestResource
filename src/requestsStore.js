@@ -4,6 +4,7 @@ const actions = {
   init: noop,
   registerComponentInStore(store, instance) {
     if (store.getters.registeredComponents.get(instance)) {
+      // its already there, lets not override it
       return;
     }
 
@@ -35,7 +36,12 @@ const mutations = {
 
     // register by component instance
     if (logInstance) {
-      const instanceRequests = state.registeredComponents.get(callerInstance) || [];
+      const instanceRequests = state.registeredComponents.get(callerInstance);
+
+      if (!instanceRequests) {
+        console.info('VRR: the instance is not registered yet');
+      }
+
       const requestList = instanceRequests.concat({...request});
       state.registeredComponents.set(callerInstance, requestList);
     }
@@ -122,7 +128,7 @@ const mutations = {
       const current = state.activeRequestsToEndpoint[endpoint];
 
       if (!current) {
-        console.info('VRR store mutations > updateRequest: Request not found in store');
+        console.info('VRR: store mutations > updateRequest: Request not found in store');
 
         return;
       }
