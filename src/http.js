@@ -44,8 +44,8 @@ export default class Rest extends HTTP {
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
     const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
-    const REGISTER = `${this.vrrModuleName}/registerRequest`;
-    const UPDATE = `${this.vrrModuleName}/updateRequest`;
+    const REGISTER_REQUEST = `${this.vrrModuleName}/registerRequest`;
+    const UPDATE_REQUEST = `${this.vrrModuleName}/updateRequest`;
     const {logEndpoints, logInstance} = this;
 
     let discard = false;
@@ -68,7 +68,7 @@ export default class Rest extends HTTP {
 
     request.cancel = () => {
       discard = true;
-      this.store.dispatch(UPDATE, {
+      this.store.dispatch(UPDATE_REQUEST, {
         ...request,
         status: 'canceled',
         completed: Date.now(),
@@ -79,13 +79,13 @@ export default class Rest extends HTTP {
       this.store.dispatch(REGISTER_COMPONENT, callerInstance);
     }
 
-    this.store.dispatch(REGISTER, {
+    this.store.dispatch(REGISTER_REQUEST, {
       ...request,
     });
 
     // prepare for slow request
     const slowRequest = setTimeout(() => {
-      this.store.dispatch(UPDATE, {
+      this.store.dispatch(UPDATE_REQUEST, {
         ...request,
         status: 'slow',
       });
@@ -95,7 +95,7 @@ export default class Rest extends HTTP {
     let timeout = false;
     const requestTimeout = setTimeout(() => {
       timeout = true;
-      this.store.dispatch(UPDATE, {
+      this.store.dispatch(UPDATE_REQUEST, {
         ...request,
         completed: Date.now(),
         status: 'timeout',
@@ -106,7 +106,7 @@ export default class Rest extends HTTP {
     /* @todo: add a global warning component when requests fail */
 
     // tell the store a request was fired
-    this.store.dispatch(UPDATE, {
+    this.store.dispatch(UPDATE_REQUEST, {
       ...request,
       status: 'pending',
     });
@@ -145,7 +145,7 @@ export default class Rest extends HTTP {
           status: 'success',
         };
 
-        this.store.dispatch(UPDATE, updated);
+        this.store.dispatch(UPDATE_REQUEST, updated);
 
         // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
         setTimeout(() => this.unregister(request), 1);
@@ -177,7 +177,7 @@ export default class Rest extends HTTP {
           status: 'failed',
         };
 
-        this.store.dispatch(UPDATE, updated);
+        this.store.dispatch(UPDATE_REQUEST, updated);
 
         if (globalQueue.queuedRequests[endpoint]) {
           // call next in queue
@@ -203,7 +203,7 @@ export default class Rest extends HTTP {
     const {store} = this;
 
     return new Promise((resolve, reject) => {
-      new Subscriber(endpoint, request.id, store, UPDATE).onSuccess(resolve).onFail(reject);
+      new Subscriber(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(reject);
     });
   }
 
