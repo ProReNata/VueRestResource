@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-07-23T11:07:02.649Z",
+  "date": "2019-07-24T11:59:16.847Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "e51d76637a275e915d62",
+  "hash": "af5cd318076cb10a18b4",
   "license": "MIT",
-  "version": "1.0.2"
+  "version": "1.0.6"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2522,8 +2522,8 @@ function (_HTTP) {
       var actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
       var REGISTER_COMPONENT = "".concat(this.vrrModuleName, "/registerComponentInStore");
-      var REGISTER = "".concat(this.vrrModuleName, "/registerRequest");
-      var UPDATE = "".concat(this.vrrModuleName, "/updateRequest");
+      var REGISTER_REQUEST = "".concat(this.vrrModuleName, "/registerRequest");
+      var UPDATE_REQUEST = "".concat(this.vrrModuleName, "/updateRequest");
       var logEndpoints = this.logEndpoints,
           logInstance = this.logInstance;
       var discard = false;
@@ -2554,7 +2554,7 @@ function (_HTTP) {
         _newArrowCheck(this, _this3);
 
         discard = true;
-        this.store.dispatch(UPDATE, _objectSpread({}, request, {
+        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
           status: 'canceled',
           completed: Date.now()
         }));
@@ -2564,12 +2564,12 @@ function (_HTTP) {
         this.store.dispatch(REGISTER_COMPONENT, callerInstance);
       }
 
-      this.store.dispatch(REGISTER, _objectSpread({}, request)); // prepare for slow request
+      this.store.dispatch(REGISTER_REQUEST, _objectSpread({}, request)); // prepare for slow request
 
       var slowRequest = setTimeout(function () {
         _newArrowCheck(this, _this3);
 
-        this.store.dispatch(UPDATE, _objectSpread({}, request, {
+        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
           status: 'slow'
         }));
       }.bind(this), this.slowTimeout); // prepare for request timeout
@@ -2579,7 +2579,7 @@ function (_HTTP) {
         _newArrowCheck(this, _this3);
 
         timeout = true;
-        this.store.dispatch(UPDATE, _objectSpread({}, request, {
+        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
           completed: Date.now(),
           status: 'timeout'
         }));
@@ -2588,7 +2588,7 @@ function (_HTTP) {
       /* @todo: add a global warning component when requests fail */
       // tell the store a request was fired
 
-      this.store.dispatch(UPDATE, _objectSpread({}, request, {
+      this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
         status: 'pending'
       }));
       ajax.then(function (res) {
@@ -2629,7 +2629,7 @@ function (_HTTP) {
           status: 'success'
         });
 
-        this.store.dispatch(UPDATE, updated); // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
+        this.store.dispatch(UPDATE_REQUEST, updated); // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
 
         setTimeout(function () {
           _newArrowCheck(this, _this4);
@@ -2663,7 +2663,7 @@ function (_HTTP) {
           status: 'failed'
         });
 
-        this.store.dispatch(UPDATE, updated);
+        this.store.dispatch(UPDATE_REQUEST, updated);
 
         if (globalQueue.queuedRequests[endpoint]) {
           // call next in queue
@@ -2691,7 +2691,7 @@ function (_HTTP) {
       return new Promise(function (resolve, reject) {
         _newArrowCheck(this, _this3);
 
-        new _subscriber.default(endpoint, request.id, store, UPDATE).onSuccess(resolve).onFail(reject);
+        new _subscriber.default(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(reject);
       }.bind(this));
     }
   }, {
@@ -3578,6 +3578,7 @@ var actions = {
     var _this = this;
 
     if (store.getters.registeredComponents.get(instance)) {
+      // its already there, lets not override it
       return;
     }
 
@@ -3612,15 +3613,20 @@ var mutations = {
         callerInstance = request.callerInstance; // register by component instance
 
     if (logInstance) {
-      var instanceRequests = state.registeredComponents.get(callerInstance) || [];
+      var instanceRequests = state.registeredComponents.get(callerInstance);
+
+      if (!instanceRequests) {
+        console.info('VRR: the instance is not registered yet');
+      }
+
       var requestList = instanceRequests.concat(_objectSpread({}, request));
       state.registeredComponents.set(callerInstance, requestList);
     } // register by endpoint
 
 
     if (logEndpoints) {
-      var current = state.activeRequestsToEndpoint[endpoint] || [];
-      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, current.concat(request)));
+      var currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
+      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(request)));
     }
   },
   unregisterComponent: function unregisterComponent(state, instance) {
@@ -3693,7 +3699,7 @@ var mutations = {
       var current = state.activeRequestsToEndpoint[endpoint];
 
       if (!current) {
-        console.info('VRR store mutations > updateRequest: Request not found in store');
+        console.info('VRR: store mutations > updateRequest: Request not found in store');
         return;
       }
 
