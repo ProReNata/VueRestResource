@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-07-24T11:59:16.847Z",
+  "date": "2019-08-12T14:30:34.009Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "af5cd318076cb10a18b4",
+  "hash": "ad2f25d72614b0787ee3",
   "license": "MIT",
-  "version": "1.0.6"
+  "version": "1.0.7"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -19,7 +19,7 @@
 		exports["VueRestResource"] = factory();
 	else
 		root["VueRestResource"] = factory();
-})((function () {
+})((function() {
   'use strict';
 
   if (typeof self !== 'undefined') {
