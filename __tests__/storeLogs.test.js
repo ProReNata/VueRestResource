@@ -34,6 +34,7 @@ describe('Methods', () => {
           HintsResource.list(this);
 
           setTimeout(() => {
+            const registeredComponents = store.getters['VRR_Tests/registeredComponents'];
             const instanceRequests = registeredComponents.get(this);
             expect(Array.isArray(instanceRequests)).toBe(true);
             expect(instanceRequests.length).toBe(1);
