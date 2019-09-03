@@ -12,9 +12,11 @@ export default () => {
         return;
       }
 
-      instance.$once('hook:beforeDestroy', () => {
-        store.commit('unregisterComponent', instance);
-      });
+      if (instance && instance.$once) {
+        instance.$once('hook:beforeDestroy', () => {
+          store.commit('unregisterComponent', instance);
+        });
+      }
 
       const nextIndex = indexCounter + 1;
       indexCounter = nextIndex;

@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-08-12T14:30:34.009Z",
+  "date": "2019-09-03T09:12:05.938Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "ad2f25d72614b0787ee3",
+  "hash": "f40a1dfd13c019c49122",
   "license": "MIT",
-  "version": "1.0.7"
+  "version": "1.0.9"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -3560,7 +3560,7 @@ exports.default = void 0;
 
 var _noop = _interopRequireDefault(__webpack_require__(12));
 
-var _this2 = void 0;
+var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3572,158 +3572,182 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
-var actions = {
-  init: _noop.default,
-  registerComponentInStore: function registerComponentInStore(store, instance) {
-    var _this = this;
+var _default = function () {
+  _newArrowCheck(this, _this);
 
-    if (store.getters.registeredComponents.get(instance)) {
-      // its already there, lets not override it
-      return;
-    }
+  var indexCounter = 0;
+  var componentRegister = new Map();
+  var actions = {
+    init: _noop.default,
+    registerComponentInStore: function registerComponentInStore(store, instance) {
+      var _this2 = this;
 
-    instance.$once('hook:beforeDestroy', function () {
-      _newArrowCheck(this, _this);
-
-      store.commit('unregisterComponent', instance);
-    }.bind(this));
-    store.commit('registerComponent', instance);
-  },
-  registerRequest: function registerRequest(store, req) {
-    store.commit('registerRequest', req);
-  },
-  unregisterComponentInStore: function unregisterComponentInStore(store, instance) {
-    store.commit('unregisterComponent', instance);
-  },
-  unregisterRequest: function unregisterRequest(store, req) {
-    store.commit('unregisterRequest', req);
-  },
-  updateRequest: function updateRequest(store, req) {
-    store.commit('updateRequest', req);
-  }
-};
-var mutations = {
-  registerComponent: function registerComponent(state, instance) {
-    state.registeredComponents.set(instance, []);
-  },
-  registerRequest: function registerRequest(state, request) {
-    var logEndpoints = request.logEndpoints,
-        logInstance = request.logInstance,
-        endpoint = request.endpoint,
-        callerInstance = request.callerInstance; // register by component instance
-
-    if (logInstance) {
-      var instanceRequests = state.registeredComponents.get(callerInstance);
-
-      if (!instanceRequests) {
-        console.info('VRR: the instance is not registered yet');
-      }
-
-      var requestList = instanceRequests.concat(_objectSpread({}, request));
-      state.registeredComponents.set(callerInstance, requestList);
-    } // register by endpoint
-
-
-    if (logEndpoints) {
-      var currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
-      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(request)));
-    }
-  },
-  unregisterComponent: function unregisterComponent(state, instance) {
-    if (!state.registeredComponents.get(instance)) {
-      throw new Error('component not registered');
-    }
-
-    state.registeredComponents.set(instance, null); // maybe redundant but the idea is to help clearing memory
-
-    state.registeredComponents.delete(instance);
-
-    if (state.lastUpdatedComponent === instance) {
-      state.lastUpdatedComponent = null;
-    }
-  },
-  unregisterRequest: function unregisterRequest(state, request) {
-    var id = request.id,
-        endpoint = request.endpoint,
-        callerInstance = request.callerInstance; // unregister endpoint
-
-    var activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
-      return req.id !== id;
-    };
-
-    var activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
-    var others = activeRequests.filter(activeRequestsToEndpointPredicate);
-    state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component endpoint list
-
-    var instanceRequests = state.registeredComponents.get(callerInstance);
-
-    if (instanceRequests) {
-      var removeIdIterator = function removeIdIterator(req) {
-        return req.id !== id;
-      };
-
-      var requestList = instanceRequests.filter(removeIdIterator);
-      state.registeredComponents.set(callerInstance, requestList);
-    }
-  },
-  updateRequest: function updateRequest(state, request) {
-    var id = request.id,
-        logInstance = request.logInstance,
-        logEndpoints = request.logEndpoints,
-        endpoint = request.endpoint,
-        callerInstance = request.callerInstance;
-    state.lastUpdatedComponent = callerInstance;
-
-    var requestUpdateIterator = function requestUpdateIterator(req) {
-      var updatedRequest = id === req.id ? request : req;
-      return updatedRequest;
-    }; // Since we cannot use listener for complex/nested objects
-    // we use a shallow state key that triggers listeners in components
-    // and they can check if the change is related to them or ignore the call
-    // update the component instance list
-
-
-    var instanceRequests = state.registeredComponents.get(callerInstance);
-
-    if (logInstance) {
-      if (instanceRequests) {
-        // sometimes we have removed the component before the request is updated
-        // in such cases we should not re-add the instance to the list
-        var requestList = (instanceRequests || []).map(requestUpdateIterator);
-        state.registeredComponents.set(callerInstance, requestList);
-      }
-    } // update the endpoint list
-
-
-    if (logEndpoints) {
-      var current = state.activeRequestsToEndpoint[endpoint];
-
-      if (!current) {
-        console.info('VRR: store mutations > updateRequest: Request not found in store');
+      if (componentRegister.get(instance)) {
+        // its already there, lets not override it
         return;
       }
 
-      var _requestList = current.map(requestUpdateIterator);
+      if (instance && instance.$once) {
+        instance.$once('hook:beforeDestroy', function () {
+          _newArrowCheck(this, _this2);
 
-      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, _requestList));
+          store.commit('unregisterComponent', instance);
+        }.bind(this));
+      }
+
+      var nextIndex = indexCounter + 1;
+      indexCounter = nextIndex;
+      var instanceId = nextIndex;
+      store.commit('registerComponent', {
+        instance: instance,
+        instanceId: instanceId
+      });
+    },
+    registerRequest: function registerRequest(store, req) {
+      store.commit('registerRequest', req);
+    },
+    unregisterComponentInStore: function unregisterComponentInStore(store, instance) {
+      store.commit('unregisterComponent', instance);
+    },
+    unregisterRequest: function unregisterRequest(store, req) {
+      store.commit('unregisterRequest', req);
+    },
+    updateRequest: function updateRequest(store, req) {
+      store.commit('updateRequest', req);
     }
-  }
-};
-var getters = {
-  activeRequestsToEndpoint: function activeRequestsToEndpoint(state) {
-    return state.activeRequestsToEndpoint;
-  },
-  lastUpdatedComponent: function lastUpdatedComponent(state) {
-    return state.lastUpdatedComponent;
-  },
-  registeredComponents: function registeredComponents(state) {
-    return state.registeredComponents;
-  }
-};
+  };
+  var mutations = {
+    registerComponent: function registerComponent(state, _ref) {
+      var instance = _ref.instance,
+          instanceId = _ref.instanceId;
+      componentRegister.set(instance, instanceId);
+      state.registeredComponents = _objectSpread({}, state.registeredComponents, _defineProperty({}, instanceId, []));
+    },
+    registerRequest: function registerRequest(state, request) {
+      var logEndpoints = request.logEndpoints,
+          logInstance = request.logInstance,
+          endpoint = request.endpoint,
+          callerInstance = request.callerInstance; // register by component instance
 
-var _default = function () {
-  _newArrowCheck(this, _this2);
+      if (logInstance) {
+        var instanceId = componentRegister.get(callerInstance);
+        var instanceRequests = state.registeredComponents[instanceId];
 
+        if (!instanceRequests) {
+          console.info('VRR: the instance is not registered yet');
+        }
+
+        state.registeredComponents[instanceId] = instanceRequests.concat(_objectSpread({}, request));
+      } // register by endpoint
+
+
+      if (logEndpoints) {
+        var currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
+        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(request)));
+      }
+    },
+    unregisterComponent: function unregisterComponent(state, instance) {
+      if (!componentRegister.get(instance)) {
+        throw new Error('component not registered');
+      }
+
+      var instanceId = componentRegister.get(instance);
+      componentRegister.set(instance, null); // maybe redundant but the idea is to help clearing memory
+
+      componentRegister.delete(instance);
+      state.registeredComponents[instanceId] = null;
+      delete state.registeredComponents[instanceId];
+
+      if (state.lastUpdatedComponent === instance) {
+        state.lastUpdatedComponent = null;
+      }
+    },
+    unregisterRequest: function unregisterRequest(state, request) {
+      var id = request.id,
+          endpoint = request.endpoint,
+          callerInstance = request.callerInstance; // unregister endpoint
+
+      var activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
+        return req.id !== id;
+      };
+
+      var activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
+      var others = activeRequests.filter(activeRequestsToEndpointPredicate);
+      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component endpoint list
+
+      var instanceId = componentRegister.get(callerInstance);
+      var instanceRequests = state.registeredComponents[instanceId];
+
+      if (instanceRequests) {
+        var removeIdIterator = function removeIdIterator(req) {
+          return req.id !== id;
+        };
+
+        state.registeredComponents[instanceId] = instanceRequests.filter(removeIdIterator);
+      }
+    },
+    updateRequest: function updateRequest(state, request) {
+      var id = request.id,
+          logInstance = request.logInstance,
+          logEndpoints = request.logEndpoints,
+          endpoint = request.endpoint,
+          callerInstance = request.callerInstance;
+      state.lastUpdatedComponent = callerInstance;
+
+      var requestUpdateIterator = function requestUpdateIterator(req) {
+        var updatedRequest = id === req.id ? request : req;
+        return updatedRequest;
+      }; // Since we cannot use listener for complex/nested objects
+      // we use a shallow state key that triggers listeners in components
+      // and they can check if the change is related to them or ignore the call
+      // update the component instance list
+
+
+      var instanceId = componentRegister.get(callerInstance);
+      var instanceRequests = state.registeredComponents[instanceId];
+
+      if (logInstance) {
+        if (instanceRequests) {
+          // sometimes we have removed the component before the request is updated
+          // in such cases we should not re-add the instance to the list
+          state.registeredComponents[instanceId] = (instanceRequests || []).map(requestUpdateIterator);
+        }
+      } // update the endpoint list
+
+
+      if (logEndpoints) {
+        var current = state.activeRequestsToEndpoint[endpoint];
+
+        if (!current) {
+          console.info('VRR: store mutations > updateRequest: Request not found in store');
+          return;
+        }
+
+        var requestList = current.map(requestUpdateIterator);
+        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, requestList));
+      }
+    }
+  };
+  var getters = {
+    activeRequestsToEndpoint: function activeRequestsToEndpoint(state) {
+      return state.activeRequestsToEndpoint;
+    },
+    lastUpdatedComponent: function lastUpdatedComponent(state) {
+      return state.lastUpdatedComponent;
+    },
+    registeredComponents: function registeredComponents(state) {
+      var _this3 = this;
+
+      var register = new Map();
+      var instanceRequests = state.registeredComponents;
+      componentRegister.forEach(function (instanceId, instance) {
+        _newArrowCheck(this, _this3);
+
+        register.set(instance, instanceRequests[instanceId]);
+      }.bind(this));
+      return register;
+    }
+  };
   return {
     actions: actions,
     getters: getters,
@@ -3732,7 +3756,7 @@ var _default = function () {
     state: {
       activeRequestsToEndpoint: {},
       lastUpdatedComponent: null,
-      registeredComponents: new Map()
+      registeredComponents: {}
     }
   };
 }.bind(void 0);
