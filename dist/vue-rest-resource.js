@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-09-03T09:16:01.094Z",
+  "date": "2019-09-08T18:55:38.969Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "f40a1dfd13c019c49122",
+  "hash": "0e26e785d72f5d280b30",
   "license": "MIT",
-  "version": "1.0.9"
+  "version": "1.0.10"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -19,7 +19,7 @@
 		exports["VueRestResource"] = factory();
 	else
 		root["VueRestResource"] = factory();
-})((function() {
+})((function () {
   'use strict';
 
   if (typeof self !== 'undefined') {
@@ -2591,6 +2591,29 @@ function (_HTTP) {
       this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
         status: 'pending'
       }));
+
+      var handleQueueOnBadRequest = function handleQueueOnBadRequest() {
+        _newArrowCheck(this, _this3);
+
+        if (globalQueue.queuedRequests[endpoint]) {
+          // call next in queue
+          var activeRequest = globalQueue.activeRequests[endpoint];
+
+          if (activeRequest && activeRequest.id === request.id) {
+            delete globalQueue.activeRequests[endpoint];
+            var next = globalQueue.queuedRequests[endpoint].shift();
+
+            if (next) {
+              var rqst = next.request,
+                  act = next.action,
+                  end = next.endpoint,
+                  rest = next.args;
+              this.handleQueue.apply(this, [rqst, act, end].concat(_toConsumableArray(rest)));
+            }
+          }
+        }
+      }.bind(this);
+
       ajax.then(function (res) {
         var _this4 = this;
 
@@ -2664,34 +2687,23 @@ function (_HTTP) {
         });
 
         this.store.dispatch(UPDATE_REQUEST, updated);
-
-        if (globalQueue.queuedRequests[endpoint]) {
-          // call next in queue
-          var activeRequest = globalQueue.activeRequests[endpoint];
-
-          if (activeRequest && activeRequest.id === request.id) {
-            delete globalQueue.activeRequests[endpoint];
-            var next = globalQueue.queuedRequests[endpoint].shift();
-
-            if (next) {
-              var rqst = next.request,
-                  act = next.action,
-                  end = next.endpoint,
-                  rest = next.args;
-              this.handleQueue.apply(this, [rqst, act, end].concat(_toConsumableArray(rest)));
-            }
-          }
-        } // TODO / QUESTION: maybe we should also unregister the request?
+        handleQueueOnBadRequest(); // TODO / QUESTION: maybe we should also unregister the request?
         // this.unregister(request);
-
 
         console.error('VRR error', err);
       }.bind(this));
       var store = this.store;
       return new Promise(function (resolve, reject) {
+        var _this5 = this;
+
         _newArrowCheck(this, _this3);
 
-        new _subscriber.default(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(reject);
+        new _subscriber.default(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(function (data) {
+          _newArrowCheck(this, _this5);
+
+          handleQueueOnBadRequest();
+          reject(data);
+        }.bind(this));
       }.bind(this));
     }
   }, {
@@ -2747,7 +2759,7 @@ function (_HTTP) {
   }, {
     key: "register",
     value: function register(action, moduleInfo) {
-      var _this5 = this;
+      var _this6 = this;
 
       requestCounter += 1;
       var id = [moduleInfo.apiModule, moduleInfo.apiModel, requestCounter].join('_');
@@ -2757,7 +2769,7 @@ function (_HTTP) {
       }
 
       var httpData = args.find(function (obj) {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this6);
 
         return obj.params;
       }.bind(this));
@@ -2964,7 +2976,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -3828,6 +3840,16 @@ var _default = function (resource) {
       var state = _ref4.state,
           commit = _ref4.commit;
       commit(name, (0, _mergeById.default)(state[name], data));
+    }), _defineProperty(_objectSpread2, (0, _propertyAction.default)('delete', name), function (_ref5, id) {
+      var _this3 = this;
+
+      var state = _ref5.state,
+          commit = _ref5.commit;
+      commit(name, state[name].filter(function (entry) {
+        _newArrowCheck(this, _this3);
+
+        return entry.id !== id;
+      }.bind(this)));
     }), _objectSpread2));
   }.bind(this), {});
   var mutations = modules.reduce(function (obj, name) {
