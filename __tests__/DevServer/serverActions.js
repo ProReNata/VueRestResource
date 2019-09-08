@@ -32,7 +32,7 @@ module.exports = {
     const [module, model, id] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
-    const hasQueryFilter = Object.keys(req.query).filter(key => key !== '_').length > 0;
+    const hasQueryFilter = Object.keys(req.query).filter((key) => key !== '_').length > 0;
     const hasID = id && id[0] !== '?';
 
     readFile(filePath, (err, data) => {
@@ -43,7 +43,7 @@ module.exports = {
           objects: data.objects.filter((obj) =>
             Object.keys(req.query).every((key) => {
               const values = String(req.query[key]).split(',');
-              return values.includes(String(obj[key]))
+              return values.includes(String(obj[key]));
             }),
           ),
         };
@@ -61,8 +61,6 @@ module.exports = {
     const [module, model, uid] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
-    console.log('saving new data', module, model, uid, req.body);
-
     readFile(filePath, (err, serverData) => {
       if (err) {
         console.log(err);
@@ -79,6 +77,39 @@ module.exports = {
       }
 
       const objects = mergeById(serverData.objects, payload);
+      const newData = {
+        ...serverData,
+        objects,
+      };
+
+      fs.writeFile(filePath, JSON.stringify(newData, null, 2), 'utf8', (error) => {
+        if (error) {
+          console.log(error);
+          res.send({});
+        } else {
+          res.send(req.body);
+        }
+      });
+    });
+  },
+  dataDeleter: (req, res) => {
+    const [module, model] = req.originalUrl.split('/').filter(Boolean);
+    const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
+
+    const idToDelete = req.originalUrl
+      .split('/')
+      .filter(Boolean)
+      .pop();
+
+    readFile(filePath, (err, serverData) => {
+      if (err) {
+        console.log(err);
+        res.send({});
+
+        return;
+      }
+
+      const objects = serverData.objects.filter(({id}) => String(id) !== idToDelete);
       const newData = {
         ...serverData,
         objects,
