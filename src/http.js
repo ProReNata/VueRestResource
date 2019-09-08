@@ -111,6 +111,24 @@ export default class Rest extends HTTP {
       status: 'pending',
     });
 
+    const handleQueueOnBadRequest = () => {
+      if (globalQueue.queuedRequests[endpoint]) {
+        // call next in queue
+        const activeRequest = globalQueue.activeRequests[endpoint];
+
+        if (activeRequest && activeRequest.id === request.id) {
+          delete globalQueue.activeRequests[endpoint];
+          const next = globalQueue.queuedRequests[endpoint].shift();
+
+          if (next) {
+            const {request: rqst, action: act, endpoint: end, args: rest} = next;
+
+            this.handleQueue(rqst, act, end, ...rest);
+          }
+        }
+      }
+    };
+
     ajax
       .then((res) => {
         clearTimeout(slowRequest);
@@ -179,21 +197,7 @@ export default class Rest extends HTTP {
 
         this.store.dispatch(UPDATE_REQUEST, updated);
 
-        if (globalQueue.queuedRequests[endpoint]) {
-          // call next in queue
-          const activeRequest = globalQueue.activeRequests[endpoint];
-
-          if (activeRequest && activeRequest.id === request.id) {
-            delete globalQueue.activeRequests[endpoint];
-            const next = globalQueue.queuedRequests[endpoint].shift();
-
-            if (next) {
-              const {request: rqst, action: act, endpoint: end, args: rest} = next;
-
-              this.handleQueue(rqst, act, end, ...rest);
-            }
-          }
-        }
+        handleQueueOnBadRequest();
 
         // TODO / QUESTION: maybe we should also unregister the request?
         // this.unregister(request);
@@ -203,7 +207,10 @@ export default class Rest extends HTTP {
     const {store} = this;
 
     return new Promise((resolve, reject) => {
-      new Subscriber(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(reject);
+      new Subscriber(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail((data) => {
+        handleQueueOnBadRequest();
+        reject(data);
+      });
     });
   }
 
