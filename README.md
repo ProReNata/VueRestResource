@@ -31,7 +31,7 @@ take some decisions so the workflow is more predictable.
 
 ## Example:
 
-(see [demo here](https://codesandbox.io/s/vue-rest-resource-demo-ptsnl))
+(see [demo here](https://codesandbox.io/s/vue-rest-resource-demo-p2efd))
 
 ```javascript
 computed: {
