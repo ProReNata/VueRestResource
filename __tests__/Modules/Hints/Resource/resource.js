@@ -5,7 +5,13 @@ export default {
   Hints: {
     apiModel: 'hints',
     apiModule: MODULE,
-    handler: {},
+    httpMethod: 'post',
+    remoteAction(callerInstance, id, data, resources, {baseUrl, apiModel, apiModule}) {
+      return {
+        ...resources,
+        endpoint: [baseUrl, apiModule, apiModel, id, 'acknowledged/'].join('/').toLowerCase(),
+      };
+    },
   },
   SeenHints: {
     apiModel: 'seenhints',
