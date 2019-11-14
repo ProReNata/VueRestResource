@@ -117,7 +117,7 @@ export default class {
   }
 
   remoteAction(callerInstance, id, data = {}) {
-    const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
+    const resources = this.resource.remoteAction(this, id, data, this.actionObjectDefault);
 
     if (!resources.handler) {
       resources.handler = noop;
