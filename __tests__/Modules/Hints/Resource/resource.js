@@ -6,7 +6,8 @@ export default {
     apiModel: 'hints',
     apiModule: MODULE,
     httpMethod: 'post',
-    remoteAction(callerInstance, id, data, resources, {baseUrl, apiModel, apiModule}) {
+    handler: function remoteAction(callerInstance, id, data, resources) {
+      const {baseUrl, apiModel, apiModule} = callerInstance;
       return {
         ...resources,
         endpoint: [baseUrl, apiModule, apiModel, id, 'acknowledged/'].join('/').toLowerCase(),
