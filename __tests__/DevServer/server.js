@@ -15,6 +15,7 @@ app.get(/favicon\.ico/, (req, res) => res.send(''));
 
 app.get('*', dataFetcher);
 app.put('*', jsonParser, dataSetter);
+app.post(/(?:\d+\/)\K.[^\/]+/, jsonParser, remoteAction);
 app.post('*', jsonParser, dataSetter);
 app.delete('*', jsonParser, dataDeleter);
 
