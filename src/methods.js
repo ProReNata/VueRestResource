@@ -1,11 +1,11 @@
 import axios from 'axios';
-import noop from 'lodash/noop';
 
 const defaultResourceHandlers = {
   create: (response) => response.data,
   get: (response) => response.data,
   list: (response) => response.data.objects,
   update: (response) => response.data,
+  remote: (response) => response.data,
 };
 
 export default class {
@@ -117,15 +117,15 @@ export default class {
   }
 
   remoteAction(callerInstance, id, data = {}) {
-    const resources = this.resource.remoteAction(id, data, this.actionObjectDefault, this);
+    const options = this.resource.remoteAction(this, id, data, this.actionObjectDefault);
 
-    if (!resources.handler) {
-      resources.handler = noop;
+    if (!options.handler) {
+      options.handler = defaultResourceHandlers.remote;
     }
 
-    resources.callerInstance = callerInstance;
+    options.callerInstance = callerInstance;
 
-    return this.dispatch(this.resource.httpMethod, resources, data, {
+    return this.dispatch(this.resource.httpMethod, options, data, {
       headers: {
         ...this.httpHeaders.headers,
         'Content-Type': 'application/json',

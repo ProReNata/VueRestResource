@@ -57,6 +57,37 @@ module.exports = {
     });
   },
 
+  remoteAction: (req, res) => {
+    const [module, model, uid, remoteAction] = req.originalUrl.split('/').filter(Boolean);
+    const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
+
+
+    readFile(filePath, (err, serverData) => {
+      if (err) {
+        console.log(err);
+        res.send({});
+
+        return;
+      }
+
+      const data = serverData.objects.find(obj => String(obj.id) === String(uid));
+      data[remoteAction] = !data[remoteAction];
+
+      const newData = {
+        ...serverData,
+      };
+
+      fs.writeFile(filePath, JSON.stringify(newData, null, 2), 'utf8', (error) => {
+        if (error) {
+          console.log(error);
+          res.send({});
+        } else {
+          res.send(data);
+        }
+      });
+    });
+  },
+
   dataSetter: (req, res) => {
     const [module, model, uid] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
