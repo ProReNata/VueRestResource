@@ -5,15 +5,18 @@
   "objects": [
     {
       "id": 13,
-      "name": "dragFieldsToTemplate"
+      "name": "dragFieldsToTemplate",
+      "acknowledged": false
     },
     {
       "id": 23,
-      "name": "sectionHandlerInfo23"
+      "name": "sectionHandlerInfo23",
+      "acknowledged": false
     },
     {
       "id": 33,
-      "name": "sectionHandlerInfo"
+      "name": "sectionHandlerInfo",
+      "acknowledged": false
     }
   ],
   "pages": 1,
