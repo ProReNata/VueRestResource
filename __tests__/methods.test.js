@@ -137,17 +137,25 @@ describe('Methods', () => {
       const initialHints = store.getters['Hints/hints'];
       expect(initialHints.length).toBe(0);
 
-      hintsResource
-        .remoteAction(null, ID_OF_HINT)
-        .then(() => {
-          const fetchedHints = store.getters['Hints/hints'];
-          expect(fetchedHints.length).toBe(1);
+      hintsResource.remoteAction(null, ID_OF_HINT).then(() => {
+        const fetchedHints = store.getters['Hints/hints'];
+        const [updatedHint] = fetchedHints;
 
+        expect(fetchedHints.length).toBe(1);
+        expect(updatedHint.acknowledged).toBe(true);
+        expect(updatedHint.id).toBe(ID_OF_HINT);
+
+        hintsResource.remoteAction(null, ID_OF_HINT).then(() => {
+          const fetchedHints = store.getters['Hints/hints'];
           const [updatedHint] = fetchedHints;
-          expect(updatedHint.acknowledged).toBe(true);
+
+          expect(fetchedHints.length).toBe(1);
+          expect(updatedHint.acknowledged).toBe(false);
           expect(updatedHint.id).toBe(ID_OF_HINT);
+
           done();
         });
+      });
     });
   });
 
