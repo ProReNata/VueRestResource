@@ -61,7 +61,6 @@ module.exports = {
     const [module, model, uid, remoteAction] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
-    console.log('REMOTE action', req.originalUrl, module, model, uid, remoteAction);
 
     readFile(filePath, (err, serverData) => {
       if (err) {
@@ -72,7 +71,6 @@ module.exports = {
       }
 
       const data = serverData.objects.find(obj => String(obj.id) === String(uid));
-      console.log(uid);
       data[remoteAction] = !data[remoteAction];
 
       const newData = {
