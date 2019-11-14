@@ -23,7 +23,10 @@ export default (resource) => {
         commit(name, mergeById(state[name], data));
       },
       [propertyAction('delete', name)]({state, commit}, id) {
-        commit(name, state[name].filter((entry) => entry.id !== id));
+        commit(
+          name,
+          state[name].filter((entry) => entry.id !== id),
+        );
       },
     }),
     {},
