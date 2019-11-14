@@ -117,15 +117,15 @@ export default class {
   }
 
   remoteAction(callerInstance, id, data = {}) {
-    const resources = this.resource.handler(this, id, data, this.actionObjectDefault);
+    const options = this.resource.remoteAction(this, id, data, this.actionObjectDefault);
 
-    if (!resources.handler) {
-      resources.handler = defaultResourceHandlers.remote;
+    if (!options.handler) {
+      options.handler = defaultResourceHandlers.remote;
     }
 
-    resources.callerInstance = callerInstance;
+    options.callerInstance = callerInstance;
 
-    return this.dispatch(this.resource.httpMethod, resources, data, {
+    return this.dispatch(this.resource.httpMethod, options, data, {
       headers: {
         ...this.httpHeaders.headers,
         'Content-Type': 'application/json',

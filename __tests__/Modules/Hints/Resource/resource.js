@@ -5,8 +5,12 @@ export default {
   Hints: {
     apiModel: 'hints',
     apiModule: MODULE,
+  },
+  Acknowledged: {
+    apiModel: 'hints',
+    apiModule: MODULE,
     httpMethod: 'post',
-    handler: function remoteAction(callerInstance, id, data, resources) {
+    remoteAction(callerInstance, id, data, resources) {
       const {baseUrl, apiModel, apiModule} = callerInstance;
       return {
         ...resources,

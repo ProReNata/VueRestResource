@@ -130,15 +130,16 @@ describe('Methods', () => {
   describe('API.remoteAction', () => {
     it('Should dispatch data with a chosen http method to the server', (done) => {
       const {registerResource, store} = envFactory();
-      const hintsResource = registerResource(Hints).Hints;
+      const hintsResource = registerResource(Hints).Acknowledged;
+      const storePath = 'Hints/hints';
 
       const ID_OF_HINT = 33;
 
-      const initialHints = store.getters['Hints/hints'];
+      const initialHints = store.getters[storePath];
       expect(initialHints.length).toBe(0);
 
       hintsResource.remoteAction(null, ID_OF_HINT).then(() => {
-        const fetchedHints = store.getters['Hints/hints'];
+        const fetchedHints = store.getters[storePath];
         const [updatedHint] = fetchedHints;
 
         expect(fetchedHints.length).toBe(1);
@@ -146,7 +147,7 @@ describe('Methods', () => {
         expect(updatedHint.id).toBe(ID_OF_HINT);
 
         hintsResource.remoteAction(null, ID_OF_HINT).then(() => {
-          const fetchedHints = store.getters['Hints/hints'];
+          const fetchedHints = store.getters[storePath];
           const [updatedHint] = fetchedHints;
 
           expect(fetchedHints.length).toBe(1);
