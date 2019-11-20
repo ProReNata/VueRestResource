@@ -48,6 +48,7 @@ export default () => {
     },
     registerRequest(state, request) {
       const {logEndpoints, logInstance, endpoint, callerInstance} = request;
+      delete request.callerInstance; // Avoid saving the instance, which includes a circular reference, in Vuex
 
       // register by component instance
       if (logInstance) {
@@ -115,6 +116,7 @@ export default () => {
     },
     updateRequest(state, request) {
       const {id, logInstance, logEndpoints, endpoint, callerInstance} = request;
+      delete request.callerInstance; // Avoid saving the instance, which includes a circular reference, in Vuex
 
       state.lastUpdatedComponent = callerInstance;
 
