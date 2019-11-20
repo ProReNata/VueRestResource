@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-11-14T19:12:25.157Z",
+  "date": "2019-11-20T16:34:40.316Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "caafffffeab5675e27e4",
+  "hash": "a1b9cbac74bab66c7c09",
   "license": "MIT",
-  "version": "1.0.10"
+  "version": "1.0.12"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2426,9 +2426,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -2482,6 +2482,18 @@ function (_HTTP) {
     _this2.logEndpoints = Boolean(config.logEndpoints);
     _this2.logInstance = Boolean(config.logInstance);
     _this2.vrrModuleName = config.vrrModuleName;
+
+    var _assertThisInitialize = _assertThisInitialized(_this2),
+        logEndpoints = _assertThisInitialize.logEndpoints,
+        logInstance = _assertThisInitialize.logInstance,
+        store = _assertThisInitialize.store;
+
+    _this2.updateStore = function updateStore(storeAction, payload) {
+      if (logEndpoints || logInstance) {
+        store.dispatch(storeAction, payload);
+      }
+    };
+
     return _this2;
   } // Dispatcher methods (overrides HTTP dispatch method)
 
@@ -2505,8 +2517,18 @@ function (_HTTP) {
       var REGISTER_REQUEST = "".concat(this.vrrModuleName, "/registerRequest");
       var UPDATE_REQUEST = "".concat(this.vrrModuleName, "/updateRequest");
       var logEndpoints = this.logEndpoints,
-          logInstance = this.logInstance;
+          logInstance = this.logInstance,
+          updateStore = this.updateStore;
+
+      if (logInstance) {
+        updateStore(REGISTER_COMPONENT, callerInstance);
+      }
+
       var discard = false;
+      var slowRequest;
+      var requestTimeout; // prepare for request timeout
+
+      var timeout = false;
       /*
        * Status types:
        *   - registered (before axios is called)
@@ -2534,41 +2556,39 @@ function (_HTTP) {
         _newArrowCheck(this, _this3);
 
         discard = true;
-        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
+        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
           status: 'canceled',
           completed: Date.now()
         }));
       }.bind(this);
 
-      if (this.logInstance) {
-        this.store.dispatch(REGISTER_COMPONENT, callerInstance);
+      updateStore(REGISTER_REQUEST, _objectSpread({}, request));
+
+      if (logEndpoints || logInstance) {
+        // prepare for slow request
+        slowRequest = setTimeout(function () {
+          _newArrowCheck(this, _this3);
+
+          updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+            status: 'slow'
+          }));
+        }.bind(this), this.slowTimeout);
+        requestTimeout = setTimeout(function () {
+          _newArrowCheck(this, _this3);
+
+          timeout = true;
+          updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+            completed: Date.now(),
+            status: 'timeout'
+          }));
+        }.bind(this), this.failedTimeout);
       }
 
-      this.store.dispatch(REGISTER_REQUEST, _objectSpread({}, request)); // prepare for slow request
-
-      var slowRequest = setTimeout(function () {
-        _newArrowCheck(this, _this3);
-
-        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
-          status: 'slow'
-        }));
-      }.bind(this), this.slowTimeout); // prepare for request timeout
-
-      var timeout = false;
-      var requestTimeout = setTimeout(function () {
-        _newArrowCheck(this, _this3);
-
-        timeout = true;
-        this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
-          completed: Date.now(),
-          status: 'timeout'
-        }));
-      }.bind(this), this.failedTimeout);
       var ajax = this.handleQueue.apply(this, [request, actionType, endpoint].concat(args));
       /* @todo: add a global warning component when requests fail */
       // tell the store a request was fired
 
-      this.store.dispatch(UPDATE_REQUEST, _objectSpread({}, request, {
+      updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
         status: 'pending'
       }));
 
@@ -2623,7 +2643,7 @@ function (_HTTP) {
           // Used in some controllers when data from server needs to be processed before being set in store
           callback(data, this.store);
         } else {
-          this.store.dispatch(mutation, data);
+          updateStore(mutation, data);
         }
 
         var updated = _objectSpread({}, request, {
@@ -2632,7 +2652,7 @@ function (_HTTP) {
           status: 'success'
         });
 
-        this.store.dispatch(UPDATE_REQUEST, updated); // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
+        updateStore(UPDATE_REQUEST, updated); // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
 
         setTimeout(function () {
           _newArrowCheck(this, _this4);
@@ -2666,7 +2686,7 @@ function (_HTTP) {
           status: 'failed'
         });
 
-        this.store.dispatch(UPDATE_REQUEST, updated);
+        updateStore(UPDATE_REQUEST, updated);
         handleQueueOnBadRequest(); // TODO / QUESTION: maybe we should also unregister the request?
         // this.unregister(request);
 
@@ -2766,7 +2786,7 @@ function (_HTTP) {
     key: "unregister",
     value: function unregister(request) {
       var UNREGISTER = "".concat(this.vrrModuleName, "/unregisterRequest");
-      this.store.dispatch(UNREGISTER, request);
+      this.updateStore(UNREGISTER, request);
     }
   }]);
 
@@ -3568,13 +3588,13 @@ var _default = function () {
   _newArrowCheck(this, _this);
 
   var indexCounter = 0;
-  var componentRegister = new Map();
+  var componentRegisterMap = new Map();
   var actions = {
     init: _noop.default,
     registerComponentInStore: function registerComponentInStore(store, instance) {
       var _this2 = this;
 
-      if (componentRegister.get(instance)) {
+      if (componentRegisterMap.get(instance)) {
         // its already there, lets not override it
         return;
       }
@@ -3612,17 +3632,19 @@ var _default = function () {
     registerComponent: function registerComponent(state, _ref) {
       var instance = _ref.instance,
           instanceId = _ref.instanceId;
-      componentRegister.set(instance, instanceId);
+      componentRegisterMap.set(instance, instanceId);
       state.registeredComponents = _objectSpread({}, state.registeredComponents, _defineProperty({}, instanceId, []));
     },
     registerRequest: function registerRequest(state, request) {
       var logEndpoints = request.logEndpoints,
           logInstance = request.logInstance,
           endpoint = request.endpoint,
-          callerInstance = request.callerInstance; // register by component instance
+          callerInstance = request.callerInstance;
+      delete request.callerInstance; // Avoid saving the instance, which includes a circular reference, in Vuex
+      // register by component instance
 
       if (logInstance) {
-        var instanceId = componentRegister.get(callerInstance);
+        var instanceId = componentRegisterMap.get(callerInstance);
         var instanceRequests = state.registeredComponents[instanceId];
 
         if (!instanceRequests) {
@@ -3635,23 +3657,23 @@ var _default = function () {
 
       if (logEndpoints) {
         var currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
-        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(request)));
+        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(_objectSpread({}, request))));
       }
     },
     unregisterComponent: function unregisterComponent(state, instance) {
-      if (!componentRegister.get(instance)) {
+      if (!componentRegisterMap.get(instance)) {
         throw new Error('component not registered');
       }
 
-      var instanceId = componentRegister.get(instance);
-      componentRegister.set(instance, null); // maybe redundant but the idea is to help clearing memory
+      var instanceId = componentRegisterMap.get(instance);
+      componentRegisterMap.set(instance, null); // maybe redundant but the idea is to help clearing memory
 
-      componentRegister.delete(instance);
+      componentRegisterMap.delete(instance);
       state.registeredComponents[instanceId] = null;
       delete state.registeredComponents[instanceId];
 
-      if (state.lastUpdatedComponent === instance) {
-        state.lastUpdatedComponent = null;
+      if (state.lastUpdatedComponentId === instanceId) {
+        state.lastUpdatedComponentId = null;
       }
     },
     unregisterRequest: function unregisterRequest(state, request) {
@@ -3667,7 +3689,7 @@ var _default = function () {
       var others = activeRequests.filter(activeRequestsToEndpointPredicate);
       state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component endpoint list
 
-      var instanceId = componentRegister.get(callerInstance);
+      var instanceId = componentRegisterMap.get(callerInstance);
       var instanceRequests = state.registeredComponents[instanceId];
 
       if (instanceRequests) {
@@ -3684,21 +3706,22 @@ var _default = function () {
           logEndpoints = request.logEndpoints,
           endpoint = request.endpoint,
           callerInstance = request.callerInstance;
-      state.lastUpdatedComponent = callerInstance;
+      delete request.callerInstance; // Avoid saving the instance, which includes a circular reference, in Vuex
 
-      var requestUpdateIterator = function requestUpdateIterator(req) {
+      function requestUpdateIterator(req) {
         var updatedRequest = id === req.id ? request : req;
         return updatedRequest;
-      }; // Since we cannot use listener for complex/nested objects
+      } // Since we cannot use listener for complex/nested objects
       // we use a shallow state key that triggers listeners in components
       // and they can check if the change is related to them or ignore the call
-      // update the component instance list
 
-
-      var instanceId = componentRegister.get(callerInstance);
-      var instanceRequests = state.registeredComponents[instanceId];
 
       if (logInstance) {
+        // update the component instance list
+        var instanceId = componentRegisterMap.get(callerInstance);
+        var instanceRequests = state.registeredComponents[instanceId];
+        state.lastUpdatedComponentId = instanceId;
+
         if (instanceRequests) {
           // sometimes we have removed the component before the request is updated
           // in such cases we should not re-add the instance to the list
@@ -3725,14 +3748,15 @@ var _default = function () {
       return state.activeRequestsToEndpoint;
     },
     lastUpdatedComponent: function lastUpdatedComponent(state) {
-      return state.lastUpdatedComponent;
+      var componentId = state.lastUpdatedComponentId;
+      return componentRegisterMap.get(componentId); // Component instance
     },
     registeredComponents: function registeredComponents(state) {
       var _this3 = this;
 
       var register = new Map();
       var instanceRequests = state.registeredComponents;
-      componentRegister.forEach(function (instanceId, instance) {
+      componentRegisterMap.forEach(function (instanceId, instance) {
         _newArrowCheck(this, _this3);
 
         register.set(instance, instanceRequests[instanceId]);
@@ -3747,7 +3771,7 @@ var _default = function () {
     namespaced: true,
     state: {
       activeRequestsToEndpoint: {},
-      lastUpdatedComponent: null,
+      lastUpdatedComponentId: null,
       registeredComponents: {}
     }
   };
