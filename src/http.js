@@ -35,6 +35,12 @@ export default class Rest extends HTTP {
     this.logEndpoints = Boolean(config.logEndpoints);
     this.logInstance = Boolean(config.logInstance);
     this.vrrModuleName = config.vrrModuleName;
+    const {logEndpoints, logInstance, store} = this;
+    this.updateStore = function updateStore(storeAction, payload) {
+      if (logEndpoints || logInstance) {
+        store.dispatch(storeAction, payload);
+      }
+    };
   }
 
   // Dispatcher methods (overrides HTTP dispatch method)
@@ -46,9 +52,17 @@ export default class Rest extends HTTP {
     const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
     const REGISTER_REQUEST = `${this.vrrModuleName}/registerRequest`;
     const UPDATE_REQUEST = `${this.vrrModuleName}/updateRequest`;
-    const {logEndpoints, logInstance} = this;
+    const {logEndpoints, logInstance, updateStore} = this;
+
+    if (logInstance) {
+      updateStore(REGISTER_COMPONENT, callerInstance);
+    }
 
     let discard = false;
+    let slowRequest;
+    let requestTimeout;
+    // prepare for request timeout
+    let timeout = false;
 
     /*
      * Status types:
@@ -68,45 +82,41 @@ export default class Rest extends HTTP {
 
     request.cancel = () => {
       discard = true;
-      this.store.dispatch(UPDATE_REQUEST, {
+      updateStore(UPDATE_REQUEST, {
         ...request,
         status: 'canceled',
         completed: Date.now(),
       });
     };
 
-    if (this.logInstance) {
-      this.store.dispatch(REGISTER_COMPONENT, callerInstance);
-    }
-
-    this.store.dispatch(REGISTER_REQUEST, {
+    updateStore(REGISTER_REQUEST, {
       ...request,
     });
 
-    // prepare for slow request
-    const slowRequest = setTimeout(() => {
-      this.store.dispatch(UPDATE_REQUEST, {
-        ...request,
-        status: 'slow',
-      });
-    }, this.slowTimeout);
+    if (logEndpoints || logInstance) {
+      // prepare for slow request
+      slowRequest = setTimeout(() => {
+        updateStore(UPDATE_REQUEST, {
+          ...request,
+          status: 'slow',
+        });
+      }, this.slowTimeout);
 
-    // prepare for request timeout
-    let timeout = false;
-    const requestTimeout = setTimeout(() => {
-      timeout = true;
-      this.store.dispatch(UPDATE_REQUEST, {
-        ...request,
-        completed: Date.now(),
-        status: 'timeout',
-      });
-    }, this.failedTimeout);
+      requestTimeout = setTimeout(() => {
+        timeout = true;
+        updateStore(UPDATE_REQUEST, {
+          ...request,
+          completed: Date.now(),
+          status: 'timeout',
+        });
+      }, this.failedTimeout);
+    }
 
     const ajax = this.handleQueue(request, actionType, endpoint, ...args);
     /* @todo: add a global warning component when requests fail */
 
     // tell the store a request was fired
-    this.store.dispatch(UPDATE_REQUEST, {
+    updateStore(UPDATE_REQUEST, {
       ...request,
       status: 'pending',
     });
@@ -153,7 +163,7 @@ export default class Rest extends HTTP {
           // Used in some controllers when data from server needs to be processed before being set in store
           callback(data, this.store);
         } else {
-          this.store.dispatch(mutation, data);
+          updateStore(mutation, data);
         }
 
         const updated = {
@@ -163,7 +173,7 @@ export default class Rest extends HTTP {
           status: 'success',
         };
 
-        this.store.dispatch(UPDATE_REQUEST, updated);
+        updateStore(UPDATE_REQUEST, updated);
 
         // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
         setTimeout(() => this.unregister(request), 1);
@@ -195,7 +205,7 @@ export default class Rest extends HTTP {
           status: 'failed',
         };
 
-        this.store.dispatch(UPDATE_REQUEST, updated);
+        updateStore(UPDATE_REQUEST, updated);
 
         handleQueueOnBadRequest();
 
@@ -276,6 +286,6 @@ export default class Rest extends HTTP {
 
   unregister(request) {
     const UNREGISTER = `${this.vrrModuleName}/unregisterRequest`;
-    this.store.dispatch(UNREGISTER, request);
+    this.updateStore(UNREGISTER, request);
   }
 }
