@@ -2,12 +2,12 @@ import noop from 'lodash/noop';
 
 export default () => {
   let indexCounter = 0;
-  const componentRegister = new Map();
+  const componentRegisterMap = new Map();
 
   const actions = {
     init: noop,
     registerComponentInStore(store, instance) {
-      if (componentRegister.get(instance)) {
+      if (componentRegisterMap.get(instance)) {
         // its already there, lets not override it
         return;
       }
@@ -39,7 +39,7 @@ export default () => {
 
   const mutations = {
     registerComponent(state, {instance, instanceId}) {
-      componentRegister.set(instance, instanceId);
+      componentRegisterMap.set(instance, instanceId);
 
       state.registeredComponents = {
         ...state.registeredComponents,
@@ -52,7 +52,7 @@ export default () => {
 
       // register by component instance
       if (logInstance) {
-        const instanceId = componentRegister.get(callerInstance);
+        const instanceId = componentRegisterMap.get(callerInstance);
         const instanceRequests = state.registeredComponents[instanceId];
 
         if (!instanceRequests) {
@@ -67,23 +67,23 @@ export default () => {
         const currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
         state.activeRequestsToEndpoint = {
           ...state.activeRequestsToEndpoint,
-          [endpoint]: currentOpenRequestsToEndpoint.concat(request),
+          [endpoint]: currentOpenRequestsToEndpoint.concat({...request}),
         };
       }
     },
     unregisterComponent(state, instance) {
-      if (!componentRegister.get(instance)) {
+      if (!componentRegisterMap.get(instance)) {
         throw new Error('component not registered');
       }
 
-      const instanceId = componentRegister.get(instance);
-      componentRegister.set(instance, null); // maybe redundant but the idea is to help clearing memory
-      componentRegister.delete(instance);
+      const instanceId = componentRegisterMap.get(instance);
+      componentRegisterMap.set(instance, null); // maybe redundant but the idea is to help clearing memory
+      componentRegisterMap.delete(instance);
       state.registeredComponents[instanceId] = null;
       delete state.registeredComponents[instanceId];
 
-      if (state.lastUpdatedComponent === instance) {
-        state.lastUpdatedComponent = null;
+      if (state.lastUpdatedComponentId === instanceId) {
+        state.lastUpdatedComponentId = null;
       }
     },
     unregisterRequest(state, request) {
@@ -103,7 +103,7 @@ export default () => {
       };
 
       // update component endpoint list
-      const instanceId = componentRegister.get(callerInstance);
+      const instanceId = componentRegisterMap.get(callerInstance);
       const instanceRequests = state.registeredComponents[instanceId];
 
       if (instanceRequests) {
@@ -118,23 +118,23 @@ export default () => {
       const {id, logInstance, logEndpoints, endpoint, callerInstance} = request;
       delete request.callerInstance; // Avoid saving the instance, which includes a circular reference, in Vuex
 
-      state.lastUpdatedComponent = callerInstance;
-
-      const requestUpdateIterator = function requestUpdateIterator(req) {
+      function requestUpdateIterator(req) {
         const updatedRequest = id === req.id ? request : req;
 
         return updatedRequest;
-      };
+      }
 
       // Since we cannot use listener for complex/nested objects
       // we use a shallow state key that triggers listeners in components
       // and they can check if the change is related to them or ignore the call
 
-      // update the component instance list
-      const instanceId = componentRegister.get(callerInstance);
-      const instanceRequests = state.registeredComponents[instanceId];
-
       if (logInstance) {
+        // update the component instance list
+        const instanceId = componentRegisterMap.get(callerInstance);
+        const instanceRequests = state.registeredComponents[instanceId];
+
+        state.lastUpdatedComponentId = instanceId;
+
         if (instanceRequests) {
           // sometimes we have removed the component before the request is updated
           // in such cases we should not re-add the instance to the list
@@ -168,12 +168,14 @@ export default () => {
       return state.activeRequestsToEndpoint;
     },
     lastUpdatedComponent(state) {
-      return state.lastUpdatedComponent;
+      const componentId = state.lastUpdatedComponentId;
+
+      return componentRegisterMap.get(componentId); // Component instance
     },
     registeredComponents(state) {
       const register = new Map();
       const instanceRequests = state.registeredComponents;
-      componentRegister.forEach((instanceId, instance) => {
+      componentRegisterMap.forEach((instanceId, instance) => {
         register.set(instance, instanceRequests[instanceId]);
       });
 
@@ -188,7 +190,7 @@ export default () => {
     namespaced: true,
     state: {
       activeRequestsToEndpoint: {},
-      lastUpdatedComponent: null,
+      lastUpdatedComponentId: null,
       registeredComponents: {},
     },
   };
