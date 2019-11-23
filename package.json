@@ -30,7 +30,7 @@
     "test-server": "node __tests__/DevServer/server.js",
     "test-watch": "nodemon node_modules/jasmine/bin/jasmine.js",
     "test-once": "node_modules/jasmine/bin/jasmine.js",
-    "build": "cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
+    "build": "npm run test && cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
     "lint": "eslint -f 'node_modules/eslint-friendly-formatter' --ext .js .",
     "lint-fix": "npm run lint -- --fix",
     "security": "npm audit",
