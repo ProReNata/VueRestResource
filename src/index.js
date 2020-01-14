@@ -10,6 +10,7 @@ const mergeOptions = (original) => {
     logEndpoints: true,
     logInstance: true,
     vrrModuleName: MODULE_NAME,
+    errorHandler: (err) => console.log('VRR error, logging to the console since no handler was provided.', err),
   };
 
   return Object.keys(original).reduce(
