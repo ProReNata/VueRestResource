@@ -178,9 +178,9 @@ export default class Rest extends HTTP {
         // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
         setTimeout(() => this.unregister(request), 1);
 
-        const aciveRequest = globalQueue.activeRequests[endpoint];
+        const activeRequest = globalQueue.activeRequests[endpoint];
 
-        if (aciveRequest && aciveRequest.id === request.id) {
+        if (activeRequest && activeRequest.id === request.id) {
           const queuedRquestsIteratee = function queuedRquestsIteratee(queued) {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
           };
@@ -230,14 +230,11 @@ export default class Rest extends HTTP {
       return axios[action](endpoint, ...args);
     }
 
-    // we need to design what patterns to look for that are common in all requests so
-    // we can know with certainty that 2 requests look for the same resource
-    // the "_" param is global, so now we just ignore handling queue in requests that have params
-    if (request.params && Object.keys(request.params).length > 1) {
-      return axios[action](endpoint, ...args);
-    }
+    const activeRequest = globalQueue.activeRequests[endpoint];
+    const hasDifferentParms =
+      !activeRequest || !Object.keys(request.params).every((param) => activeRequest.params[param] === request.params[param]);
 
-    if (!globalQueue.activeRequests[endpoint]) {
+    if (hasDifferentParms) {
       // first request, no queue
       globalQueue.activeRequests[endpoint] = request;
 
