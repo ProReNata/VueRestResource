@@ -7,6 +7,11 @@ import MODULE_NAME from './moduleName';
 
 export default function createVueRestResource(config) {
   const {store} = config;
+
+  if (!config.errorHandler) {
+    config.errorHandler = (err) => console.log('VRR error, logging to the console since no handler was provided.', err);
+  }
+
   store.registerModule(MODULE_NAME, requestsStore);
 
   return {

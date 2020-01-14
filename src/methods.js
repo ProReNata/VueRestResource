@@ -15,6 +15,7 @@ export default class {
       ...defaultResourceHandlers,
       ...resource.handler,
     };
+    this.errorHandler = config.errorHandler;
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
     this.failedTimeout = config.failedTimeout || 15000;
@@ -46,7 +47,7 @@ export default class {
         ...data,
         ...this.defaultParams,
       },
-    });
+    }).catch(this.errorHandler);
   }
 
   list(data = {}, cb) {
@@ -63,7 +64,7 @@ export default class {
         ...data,
         ...this.defaultParams,
       },
-    });
+    }).catch(this.errorHandler);
   }
 
   create(data = {}, cb) {
@@ -76,7 +77,7 @@ export default class {
 
     return this.dispatch('post', resources, data, {
       ...this.httpHeaders,
-    });
+    }).catch(this.errorHandler);
   }
 
   update(id, data = {}, cb) {
@@ -89,7 +90,7 @@ export default class {
 
     return this.dispatch('put', resources, data, {
       ...this.httpHeaders,
-    });
+    }).catch(this.errorHandler);
   }
 
   delete(id, cb) {
@@ -103,7 +104,7 @@ export default class {
 
     return this.dispatch('delete', resources, {
       ...this.httpHeaders,
-    });
+    }).catch(this.errorHandler);
   }
 
   remoteAction(id, data = {}) {
@@ -118,7 +119,7 @@ export default class {
         ...this.httpHeaders.headers,
         'Content-Type': 'application/json',
       },
-    });
+    }).catch(this.errorHandler);
   }
 
   // dispatch for de-coupled components
