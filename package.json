@@ -1,6 +1,6 @@
 {
   "name": "@prorenata/vue-rest-resource",
-  "version": "0.17.4",
+  "version": "0.17.5",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "homepage": "https://github.com/ProReNata/VueRestResource",
   "repository": {
@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "axios": "^0.19.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -91,7 +91,7 @@
     "source-map-loader": "^0.2.4",
     "terser-webpack-plugin": "^1.2.1",
     "webpack": "^4.29.0",
-    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.2.1",
     "webpack-merge": "^4.2.1"
   },

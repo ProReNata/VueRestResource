@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-06-05T14:14:54.510Z",
+  "date": "2020-01-19T08:19:05.651Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "0f4062555f1b848fddd4",
+  "hash": "9aa90181d12d2a2bbf1d",
   "license": "MIT",
-  "version": "0.17.4"
+  "version": "0.17.5"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -557,6 +557,7 @@ function () {
     _classCallCheck(this, _default);
 
     this.handler = _objectSpread({}, defaultResourceHandlers, resource.handler);
+    this.errorHandler = config.errorHandler;
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
     this.failedTimeout = config.failedTimeout || 15000;
@@ -589,7 +590,7 @@ function () {
       return this.dispatch('get', resources, {
         headers: this.httpHeaders,
         params: _objectSpread({}, data, this.defaultParams)
-      });
+      }).catch(this.errorHandler);
     }
   }, {
     key: "list",
@@ -605,7 +606,7 @@ function () {
 
       return this.dispatch('list', resources, _objectSpread({}, this.httpHeaders, {
         params: _objectSpread({}, data, this.defaultParams)
-      }));
+      })).catch(this.errorHandler);
     }
   }, {
     key: "create",
@@ -619,7 +620,7 @@ function () {
         handler: this.handler.create
       });
 
-      return this.dispatch('post', resources, data, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('post', resources, data, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "update",
@@ -633,7 +634,7 @@ function () {
         handler: this.handler.update
       });
 
-      return this.dispatch('put', resources, data, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('put', resources, data, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "delete",
@@ -651,7 +652,7 @@ function () {
         }.bind(this)
       });
 
-      return this.dispatch('delete', resources, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('delete', resources, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "remoteAction",
@@ -667,7 +668,7 @@ function () {
         headers: _objectSpread({}, this.httpHeaders.headers, {
           'Content-Type': 'application/json'
         })
-      });
+      }).catch(this.errorHandler);
     } // dispatch for de-coupled components
 
   }, {
@@ -1306,8 +1307,21 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
 function createVueRestResource(config) {
+  var _this = this;
+
   var store = config.store;
+
+  if (!config.errorHandler) {
+    config.errorHandler = function (err) {
+      _newArrowCheck(this, _this);
+
+      return console.log('VRR error, logging to the console since no handler was provided.', err);
+    }.bind(this);
+  }
+
   store.registerModule(_moduleName.default, _requestsStore.default);
   return _objectSpread({}, _helpers.default, {
     HTTP:
