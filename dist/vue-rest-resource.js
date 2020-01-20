@@ -1,11 +1,11 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2020-01-19T08:19:05.651Z",
+  "date": "2020-01-20T13:57:52.896Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "9aa90181d12d2a2bbf1d",
+  "hash": "1f566a8fa71945359103",
   "license": "MIT",
   "version": "0.17.5"
 }
@@ -19,7 +19,7 @@
 		exports["VueRestResource"] = factory();
 	else
 		root["VueRestResource"] = factory();
-})((function () {
+})((function() {
   'use strict';
 
   if (typeof self !== 'undefined') {
@@ -2680,8 +2680,6 @@ function (_methods) {
             }
           }
         }
-
-        console.error(err);
       }.bind(this));
       var uuid = this.uuid,
           store = this.store;

@@ -170,8 +170,6 @@ export default class Rest extends methods {
             }
           }
         }
-
-        console.error(err);
       });
 
     const {uuid, store} = this;
