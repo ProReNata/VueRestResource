@@ -7,14 +7,14 @@ describe('Methods', () => {
     const {store} = envFactory();
     const getters = Object.keys(store.getters);
 
-    const gexpectedGetters = [
+    const expectedGetters = [
       'VRR_Tests/activeRequestsToEndpoint',
       'VRR_Tests/lastUpdatedComponent',
       'VRR_Tests/registeredComponents',
     ];
 
     for (let key of getters) {
-      expect(gexpectedGetters.includes(key)).toBe(true);
+      expect(expectedGetters.includes(key)).toBe(true);
     }
 
     expect(Object.keys(getters).length).toBe(3);
