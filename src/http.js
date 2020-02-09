@@ -1,6 +1,7 @@
 import axios from 'axios';
 import HTTP from './methods';
 import Subscriber from './subscriber';
+import componentRegisterMap from './componentRegisterMap';
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -49,13 +50,21 @@ export default class Rest extends HTTP {
 
     const actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
-    const REGISTER_COMPONENT = `${this.vrrModuleName}/registerComponentInStore`;
     const REGISTER_REQUEST = `${this.vrrModuleName}/registerRequest`;
     const UPDATE_REQUEST = `${this.vrrModuleName}/updateRequest`;
+    const DELETE_INSTANCE = `${this.vrrModuleName}/deleteInstance`;
     const {logEndpoints, logInstance, updateStore} = this;
 
+    let instanceUUID = null;
+
     if (logInstance) {
-      updateStore(REGISTER_COMPONENT, callerInstance);
+      instanceUUID = componentRegisterMap.add(callerInstance);
+
+      if (callerInstance && callerInstance.$once) {
+        callerInstance.$once('hook:beforeDestroy', () => {
+          updateStore(DELETE_INSTANCE, instanceUUID);
+        });
+      }
     }
 
     let discard = false;
@@ -76,7 +85,7 @@ export default class Rest extends HTTP {
 
     const request = this.register(
       actionType,
-      {apiModel, apiModule, endpoint, callerInstance, logEndpoints, logInstance},
+      {apiModel, apiModule, endpoint, callerInstance: instanceUUID, logEndpoints, logInstance},
       ...args,
     );
 
@@ -93,24 +102,22 @@ export default class Rest extends HTTP {
       ...request,
     });
 
-    if (logEndpoints || logInstance) {
-      // prepare for slow request
-      slowRequest = setTimeout(() => {
-        updateStore(UPDATE_REQUEST, {
-          ...request,
-          status: 'slow',
-        });
-      }, this.slowTimeout);
+    // prepare for slow request
+    slowRequest = setTimeout(() => {
+      updateStore(UPDATE_REQUEST, {
+        ...request,
+        status: 'slow',
+      });
+    }, this.slowTimeout);
 
-      requestTimeout = setTimeout(() => {
-        timeout = true;
-        updateStore(UPDATE_REQUEST, {
-          ...request,
-          completed: Date.now(),
-          status: 'timeout',
-        });
-      }, this.failedTimeout);
-    }
+    requestTimeout = setTimeout(() => {
+      timeout = true;
+      updateStore(UPDATE_REQUEST, {
+        ...request,
+        completed: Date.now(),
+        status: 'timeout',
+      });
+    }, this.failedTimeout);
 
     const ajax = this.handleQueue(request, actionType, endpoint, ...args);
     /* @todo: add a global warning component when requests fail */
@@ -211,7 +218,6 @@ export default class Rest extends HTTP {
 
         // TODO / QUESTION: maybe we should also unregister the request?
         // this.unregister(request);
-        console.error('VRR error', err);
       });
 
     const {store} = this;
