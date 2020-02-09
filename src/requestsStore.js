@@ -1,33 +1,11 @@
 import noop from 'lodash/noop';
+import componentRegisterMap from './componentRegisterMap';
 
 export default () => {
-  let indexCounter = 0;
-  const componentRegisterMap = new Map();
-
   const actions = {
     init: noop,
-    registerComponentInStore(store, instance) {
-      if (componentRegisterMap.get(instance)) {
-        // its already there, lets not override it
-        return;
-      }
-
-      if (instance && instance.$once) {
-        instance.$once('hook:beforeDestroy', () => {
-          store.commit('unregisterComponent', instance);
-        });
-      }
-
-      const nextIndex = indexCounter + 1;
-      indexCounter = nextIndex;
-      const instanceId = nextIndex;
-      store.commit('registerComponent', {instance, instanceId});
-    },
     registerRequest(store, req) {
       store.commit('registerRequest', req);
-    },
-    unregisterComponentInStore(store, instance) {
-      store.commit('unregisterComponent', instance);
     },
     unregisterRequest(store, req) {
       store.commit('unregisterRequest', req);
@@ -35,16 +13,22 @@ export default () => {
     updateRequest(store, req) {
       store.commit('updateRequest', req);
     },
+    deleteInstance(store, req) {
+      store.commit('deleteInstance', req);
+    },
   };
 
   const mutations = {
-    registerComponent(state, {instance, instanceId}) {
-      componentRegisterMap.set(instance, instanceId);
-
-      state.registeredComponents = {
-        ...state.registeredComponents,
-        [instanceId]: [],
+    deleteInstance(state, instanceUUID) {
+      componentRegisterMap.delete(instanceUUID);
+      const tempState = {
+        ...state.activeRequestsFromComponent,
+        [instanceUUID]: null,
       };
+
+      delete tempState[instanceUUID];
+
+      state.activeRequestsFromComponent = tempState;
     },
     registerRequest(state, request) {
       const {logEndpoints, logInstance, endpoint, callerInstance} = request;
@@ -52,14 +36,8 @@ export default () => {
 
       // register by component instance
       if (logInstance) {
-        const instanceId = componentRegisterMap.get(callerInstance);
-        const instanceRequests = state.registeredComponents[instanceId];
-
-        if (!instanceRequests) {
-          console.info('VRR: the instance is not registered yet');
-        }
-
-        state.registeredComponents[instanceId] = instanceRequests.concat({...request});
+        const instanceRequests = state.activeRequestsFromComponent[callerInstance] || [];
+        state.activeRequestsFromComponent[callerInstance] = instanceRequests.concat({...request});
       }
 
       // register by endpoint
@@ -71,47 +49,24 @@ export default () => {
         };
       }
     },
-    unregisterComponent(state, instance) {
-      if (!componentRegisterMap.get(instance)) {
-        throw new Error('component not registered');
-      }
-
-      const instanceId = componentRegisterMap.get(instance);
-      componentRegisterMap.set(instance, null); // maybe redundant but the idea is to help clearing memory
-      componentRegisterMap.delete(instance);
-      state.registeredComponents[instanceId] = null;
-      delete state.registeredComponents[instanceId];
-
-      if (state.lastUpdatedComponentId === instanceId) {
-        state.lastUpdatedComponentId = null;
-      }
-    },
     unregisterRequest(state, request) {
       const {id, endpoint, callerInstance} = request;
-
-      // unregister endpoint
-      const activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
-        return req.id !== id;
-      };
-
       const activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
+      const others = activeRequests.filter((req) => req.id !== id);
 
-      const others = activeRequests.filter(activeRequestsToEndpointPredicate);
       state.activeRequestsToEndpoint = {
         ...state.activeRequestsToEndpoint,
         [endpoint]: others,
       };
 
-      // update component endpoint list
-      const instanceId = componentRegisterMap.get(callerInstance);
-      const instanceRequests = state.registeredComponents[instanceId];
+      // update component request list
+      const instanceRequests = state.activeRequestsFromComponent[callerInstance];
 
       if (instanceRequests) {
-        const removeIdIterator = function removeIdIterator(req) {
-          return req.id !== id;
+        state.activeRequestsFromComponent = {
+          ...state.activeRequestsFromComponent,
+          [callerInstance]: instanceRequests.filter((req) => req.id !== id),
         };
-
-        state.registeredComponents[instanceId] = instanceRequests.filter(removeIdIterator);
       }
     },
     updateRequest(state, request) {
@@ -130,16 +85,23 @@ export default () => {
 
       if (logInstance) {
         // update the component instance list
-        const instanceId = componentRegisterMap.get(callerInstance);
-        const instanceRequests = state.registeredComponents[instanceId];
+        const instanceRequests = state.activeRequestsFromComponent[callerInstance];
 
-        state.lastUpdatedComponentId = instanceId;
+        state.lastUpdatedComponentId = callerInstance;
 
         if (instanceRequests) {
           // sometimes we have removed the component before the request is updated
           // in such cases we should not re-add the instance to the list
 
-          state.registeredComponents[instanceId] = (instanceRequests || []).map(requestUpdateIterator);
+          state.activeRequestsFromComponent = {
+            ...state.activeRequestsFromComponent,
+            [callerInstance]: (instanceRequests || []).map(requestUpdateIterator),
+          };
+        } else {
+          state.activeRequestsFromComponent = {
+            ...state.activeRequestsFromComponent,
+            [callerInstance]: (instanceRequests || []).concat(request),
+          };
         }
       }
 
@@ -172,14 +134,8 @@ export default () => {
 
       return componentRegisterMap.get(componentId); // Component instance
     },
-    registeredComponents(state) {
-      const register = new Map();
-      const instanceRequests = state.registeredComponents;
-      componentRegisterMap.forEach((instanceId, instance) => {
-        register.set(instance, instanceRequests[instanceId]);
-      });
-
-      return register;
+    activeRequestsFromComponent(state) {
+      return state.activeRequestsFromComponent;
     },
   };
 
@@ -191,7 +147,7 @@ export default () => {
     state: {
       activeRequestsToEndpoint: {},
       lastUpdatedComponentId: null,
-      registeredComponents: {},
+      activeRequestsFromComponent: {},
     },
   };
 };
