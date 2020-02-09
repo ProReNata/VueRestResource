@@ -2,18 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import vrr from '../../src';
 
-const {
-  storeBoilerplateGenerator,
-  createVueRestResource,
-  asyncResourceValue,
-  asyncResourceGetter,
-  registerResource,
-  resourceListGetter,
-} = vrr;
+const {storeBoilerplateGenerator, createVueRestResource} = vrr;
 
 Vue.use(Vuex);
-
-
 
 export default (customRestConfig = {}) => {
   const storeDefinition = {
@@ -32,15 +23,14 @@ export default (customRestConfig = {}) => {
     httpHeaders: {},
     vrrModuleName: 'VRR_Tests',
     store,
-    ...customRestConfig
+    errorHandler(err) {
+      console.log('errorHandler', err);
+    },
+    ...customRestConfig,
   };
   const VRR = createVueRestResource(RestConfig);
 
   return {
-    asyncResourceValue,
-    asyncResourceGetter,
-    registerResource,
-    resourceListGetter,
     store,
     storeBoilerplateGenerator,
     ...VRR,

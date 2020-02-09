@@ -10,7 +10,7 @@ describe('Methods', () => {
     const expectedGetters = [
       'VRR_Tests/activeRequestsToEndpoint',
       'VRR_Tests/lastUpdatedComponent',
-      'VRR_Tests/registeredComponents',
+      'VRR_Tests/activeRequestsFromComponent',
     ];
 
     for (let key of getters) {
@@ -22,20 +22,22 @@ describe('Methods', () => {
 
   describe('Instance logging', () => {
     it('Should add a entrance to the Instance when a request is fired', (done) => {
-      const {store, registerResource} = envFactory();
+      const {store, registerResource, activeRequests} = envFactory();
       const HintsResource = registerResource(Hints).Hints;
 
       new Vue({
         store,
+        computed: {
+          ...activeRequests('activeRequestsFromComponent'),
+        },
         created() {
-          const registeredComponents = store.getters['VRR_Tests/registeredComponents'];
-          expect(registeredComponents.size).toBe(0);
+          const instanceRequests = this.activeRequestsFromComponent;
+          expect(instanceRequests.length).toBe(0);
 
           HintsResource.list(this);
 
           setTimeout(() => {
-            const registeredComponents = store.getters['VRR_Tests/registeredComponents'];
-            const instanceRequests = registeredComponents.get(this);
+            const instanceRequests = this.activeRequestsFromComponent;
             expect(Array.isArray(instanceRequests)).toBe(true);
             expect(instanceRequests.length).toBe(1);
             done();
@@ -45,23 +47,31 @@ describe('Methods', () => {
     });
 
     it('Should remove the reference to the component instance when the component is destroyed', (done) => {
-      const {store, registerResource} = envFactory();
+      const {store, registerResource, activeRequests} = envFactory();
       const HintsResource = registerResource(Hints).Hints;
 
       new Vue({
         store,
+        computed: {
+          ...activeRequests('activeRequestsFromComponent'),
+        },
         created() {
-          const registeredComponents = store.getters['VRR_Tests/registeredComponents'];
-          expect(registeredComponents.size).toBe(0);
+          const instanceRequests = this.activeRequestsFromComponent;
+          expect(instanceRequests.length).toBe(0);
 
           HintsResource.list(this);
-          this.$destroy();
 
           setTimeout(() => {
-            const instanceRequests = registeredComponents.get(this);
-            expect(typeof instanceRequests).toBe('undefined');
-            done();
-          }, 100);
+            const instanceRequests = this.activeRequestsFromComponent;
+            expect(instanceRequests.length).toBe(1);
+            this.$destroy();
+
+            setTimeout(() => {
+              const instanceRequests = this.activeRequestsFromComponent;
+              expect(instanceRequests.length).toBe(0);
+              done();
+            }, 100);
+          }, 50);
         },
       });
     });
@@ -87,16 +97,18 @@ describe('Methods', () => {
         },
       });
     });
-
   });
   describe('Updating and cleaning up', () => {
-
     it('Should update and remove requests as expected', (done) => {
-      const {store, registerResource} = envFactory();
+      const {store, registerResource, activeRequests} = envFactory();
       const HintsResource = registerResource(Hints).Hints;
 
       new Vue({
         store,
+        computed: {
+          ...activeRequests('activeRequestsFromComponent'),
+        },
+
         created() {
           let testMoments = 0;
           const registeredEndpointsBefore = store.getters['VRR_Tests/activeRequestsToEndpoint'];
@@ -108,7 +120,7 @@ describe('Methods', () => {
             expect(secondEndpointRequestStatus.status).toBe('success');
 
             // check the instance list
-            const [secondInstanceRequestStatus] = store.getters['VRR_Tests/registeredComponents'].get(this);
+            const [secondInstanceRequestStatus] = this.activeRequestsFromComponent;
             expect(secondInstanceRequestStatus.status).toBe('success');
 
             testMoments++;
@@ -119,14 +131,14 @@ describe('Methods', () => {
           expect(firstEndpointRequestStatus.status).toBe('pending');
 
           // check the instance list
-          const [firstInstanceRequestStatus] = store.getters['VRR_Tests/registeredComponents'].get(this);
+          const [firstInstanceRequestStatus] = this.activeRequestsFromComponent;
           expect(firstInstanceRequestStatus.status).toBe('pending');
 
           setTimeout(() => {
             const [secondEndpointRequestStatus] = store.getters['VRR_Tests/activeRequestsToEndpoint'][HintsResource.endpoint];
             expect(typeof secondEndpointRequestStatus).toBe('undefined');
 
-            const [secondInstanceRequestStatus] = store.getters['VRR_Tests/registeredComponents'].get(this);
+            const [secondInstanceRequestStatus] = this.activeRequestsFromComponent;
             expect(typeof secondInstanceRequestStatus).toBe('undefined');
 
             testMoments++;
@@ -139,7 +151,11 @@ describe('Methods', () => {
     });
 
     it('A request should be cancelable', (done) => {
-      const {store, registerResource} = envFactory();
+      const {store, registerResource} = envFactory({
+        errorHandler: (err) => {
+          throw new Error(err);
+        },
+      });
       const HintsResource = registerResource(Hints).Hints;
 
       new Vue({
