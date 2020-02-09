@@ -22,8 +22,15 @@ const listJsonObjectById = (obj, ids) => {
 
 describe('Helpers', () => {
   it('All helpers are present', () => {
-    const helpers = require('../src/helpers').default;
-    expect(Object.keys(helpers).length).toBe(4);
+    const instance = envFactory();
+    const expectedHelpers = [
+      'asyncResourceGetter',
+      'asyncResourceValue',
+      'activeRequests',
+      'updateResourceListWatcher',
+      'resourceListGetter',
+    ];
+    expect(expectedHelpers.every((method) => typeof instance[method] !== 'undefined')).toBe(true);
   });
 
   describe('asyncResourceGetter', () => {
@@ -109,7 +116,6 @@ describe('Helpers', () => {
       });
     });
   });
-
 
   describe('resourceListGetter', () => {
     it('Matches computed property key name', () => {
@@ -209,7 +215,7 @@ describe('Helpers', () => {
           queryObject() {
             return {
               user: userId,
-            }
+            };
           },
         },
         watch: {
@@ -225,5 +231,4 @@ describe('Helpers', () => {
       });
     });
   });
-
 });

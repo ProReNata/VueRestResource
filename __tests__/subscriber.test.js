@@ -1,11 +1,18 @@
 import envFactory from './Store/envFactory';
 import Hints from './Modules/Hints/Resource/resource';
+import Vue from 'vue';
 
 describe('Subscriber', () => {
   it('Should return the correct ID of the get object', (done) => {
-    const {registerResource, store} = envFactory();
+    const {registerResource, store, activeRequests} = envFactory();
     const hintsResource = registerResource(Hints).Hints;
-    const componentMock = {};
+    const componentMock = new Vue({
+      store,
+      computed: {
+        ...activeRequests('activeRequestsFromComponent'),
+      },
+    });
+
     let requestUUID;
 
     hintsResource.list(componentMock).then((id) => {
@@ -13,9 +20,9 @@ describe('Subscriber', () => {
       done();
     });
 
-    const activeRequests = store.getters['VRR_Tests/registeredComponents'].get(componentMock);
-    expect(activeRequests.length).toBe(1);
+    const instanceRequests = componentMock.activeRequestsFromComponent;
+    expect(instanceRequests.length).toBe(1);
 
-    requestUUID = activeRequests[0].id;
+    requestUUID = instanceRequests[0].id;
   });
 });
