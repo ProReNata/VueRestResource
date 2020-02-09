@@ -59,8 +59,9 @@ export default {
             {},
           );
       },
+      ...helpers(config),
     };
   },
-  ...helpers,
+
   storeBoilerplateGenerators,
 };
