@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2019-11-20T16:34:40.316Z",
+  "date": "2020-02-09T13:12:15.292Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "a1b9cbac74bab66c7c09",
+  "hash": "36e9485ab7c03e03e77c",
   "license": "MIT",
-  "version": "1.0.12"
+  "version": "1.1.0"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -119,7 +119,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -129,8 +129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-var bind = __webpack_require__(4);
-var isBuffer = __webpack_require__(17);
+var bind = __webpack_require__(5);
 
 /*global toString:true*/
 
@@ -146,6 +145,27 @@ var toString = Object.prototype.toString;
  */
 function isArray(val) {
   return toString.call(val) === '[object Array]';
+}
+
+/**
+ * Determine if a value is undefined
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if the value is undefined, otherwise false
+ */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+ * Determine if a value is a Buffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Buffer, otherwise false
+ */
+function isBuffer(val) {
+  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
+    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
 }
 
 /**
@@ -202,16 +222,6 @@ function isString(val) {
  */
 function isNumber(val) {
   return typeof val === 'number';
-}
-
-/**
- * Determine if a value is undefined
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if the value is undefined, otherwise false
- */
-function isUndefined(val) {
-  return typeof val === 'undefined';
 }
 
 /**
@@ -465,6 +475,59 @@ module.exports = {
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
+var componentRegisterMap = {};
+var indexCounter = 0;
+var _default = {
+  add: function add(instance) {
+    var _this = this;
+
+    var instanceId = Object.keys(componentRegisterMap).find(function (uuid) {
+      _newArrowCheck(this, _this);
+
+      return componentRegisterMap[uuid] === instance;
+    }.bind(this));
+
+    if (instanceId) {
+      // its already there, lets not override it
+      return instanceId;
+    }
+
+    indexCounter += 1;
+    componentRegisterMap[indexCounter] = instance;
+    return String(indexCounter);
+  },
+  delete: function _delete(instanceId) {
+    if (!componentRegisterMap[instanceId]) {
+      throw new Error('component not registered');
+    }
+
+    componentRegisterMap[instanceId] = null;
+    delete componentRegisterMap[instanceId];
+  },
+  get: function get(instanceId) {
+    if (!componentRegisterMap[instanceId]) {
+      throw new Error('component not registered');
+    }
+
+    return componentRegisterMap[instanceId];
+  }
+};
+exports.default = _default;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports) {
 
 /**
@@ -496,7 +559,7 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -507,7 +570,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _axios = _interopRequireDefault(__webpack_require__(3));
+var _axios = _interopRequireDefault(__webpack_require__(4));
 
 var _this = void 0;
 
@@ -515,7 +578,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -562,6 +625,7 @@ function () {
     _classCallCheck(this, _default);
 
     this.handler = _objectSpread({}, defaultResourceHandlers, {}, resource.handler || {});
+    this.errorHandler = config.errorHandler;
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
     this.failedTimeout = config.failedTimeout || 15000;
@@ -595,7 +659,7 @@ function () {
       return this.dispatch('get', resources, {
         headers: this.httpHeaders,
         params: _objectSpread({}, data, {}, this.defaultParams)
-      });
+      }).catch(this.errorHandler);
     }
   }, {
     key: "list",
@@ -612,7 +676,7 @@ function () {
 
       var resp = this.dispatch('list', resources, _objectSpread({}, this.httpHeaders, {
         params: _objectSpread({}, data, {}, this.defaultParams)
-      }));
+      })).catch(this.errorHandler);
       return resp;
     }
   }, {
@@ -628,7 +692,7 @@ function () {
         callerInstance: callerInstance
       });
 
-      return this.dispatch('post', resources, data, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('post', resources, data, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "update",
@@ -643,7 +707,7 @@ function () {
         callerInstance: callerInstance
       });
 
-      return this.dispatch('put', resources, data, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('put', resources, data, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "delete",
@@ -662,7 +726,7 @@ function () {
         callerInstance: callerInstance
       });
 
-      return this.dispatch('delete', resources, _objectSpread({}, this.httpHeaders));
+      return this.dispatch('delete', resources, _objectSpread({}, this.httpHeaders)).catch(this.errorHandler);
     }
   }, {
     key: "remoteAction",
@@ -679,7 +743,7 @@ function () {
         headers: _objectSpread({}, this.httpHeaders.headers, {
           'Content-Type': 'application/json'
         })
-      });
+      }).catch(this.errorHandler);
     } // dispatch for de-coupled components
 
   }, {
@@ -719,13 +783,13 @@ function () {
 exports.default = _default;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(16);
+module.exports = __webpack_require__(17);
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -743,7 +807,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -821,7 +885,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -833,7 +897,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -854,13 +918,12 @@ function setContentTypeIfUnset(headers, value) {
 
 function getDefaultAdapter() {
   var adapter;
-  // Only Node.JS has a process variable that is of [[Class]] process
-  if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(8);
-  } else if (typeof XMLHttpRequest !== 'undefined') {
+  if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(8);
+    adapter = __webpack_require__(9);
+  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(9);
   }
   return adapter;
 }
@@ -939,7 +1002,7 @@ module.exports = defaults;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(22)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -947,10 +1010,11 @@ module.exports = defaults;
 
 var utils = __webpack_require__(0);
 var settle = __webpack_require__(24);
-var buildURL = __webpack_require__(5);
-var parseHeaders = __webpack_require__(26);
-var isURLSameOrigin = __webpack_require__(27);
-var createError = __webpack_require__(9);
+var buildURL = __webpack_require__(6);
+var buildFullPath = __webpack_require__(26);
+var parseHeaders = __webpack_require__(29);
+var isURLSameOrigin = __webpack_require__(30);
+var createError = __webpack_require__(10);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -970,7 +1034,8 @@ module.exports = function xhrAdapter(config) {
       requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
     }
 
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+    var fullPath = buildFullPath(config.baseURL, config.url);
+    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
 
     // Set the request timeout in MS
     request.timeout = config.timeout;
@@ -1031,7 +1096,11 @@ module.exports = function xhrAdapter(config) {
 
     // Handle timeout
     request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+      var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
+      if (config.timeoutErrorMessage) {
+        timeoutErrorMessage = config.timeoutErrorMessage;
+      }
+      reject(createError(timeoutErrorMessage, config, 'ECONNABORTED',
         request));
 
       // Clean up request
@@ -1042,10 +1111,10 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(28);
+      var cookies = __webpack_require__(31);
 
       // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
         cookies.read(config.xsrfCookieName) :
         undefined;
 
@@ -1068,8 +1137,8 @@ module.exports = function xhrAdapter(config) {
     }
 
     // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
+    if (!utils.isUndefined(config.withCredentials)) {
+      request.withCredentials = !!config.withCredentials;
     }
 
     // Add responseType to request if needed
@@ -1120,7 +1189,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1145,7 +1214,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1166,13 +1235,23 @@ module.exports = function mergeConfig(config1, config2) {
   config2 = config2 || {};
   var config = {};
 
-  utils.forEach(['url', 'method', 'params', 'data'], function valueFromConfig2(prop) {
+  var valueFromConfig2Keys = ['url', 'method', 'params', 'data'];
+  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
+  var defaultToConfig2Keys = [
+    'baseURL', 'url', 'transformRequest', 'transformResponse', 'paramsSerializer',
+    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
+    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress',
+    'maxContentLength', 'validateStatus', 'maxRedirects', 'httpAgent',
+    'httpsAgent', 'cancelToken', 'socketPath'
+  ];
+
+  utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
     if (typeof config2[prop] !== 'undefined') {
       config[prop] = config2[prop];
     }
   });
 
-  utils.forEach(['headers', 'auth', 'proxy'], function mergeDeepProperties(prop) {
+  utils.forEach(mergeDeepPropertiesKeys, function mergeDeepProperties(prop) {
     if (utils.isObject(config2[prop])) {
       config[prop] = utils.deepMerge(config1[prop], config2[prop]);
     } else if (typeof config2[prop] !== 'undefined') {
@@ -1184,13 +1263,25 @@ module.exports = function mergeConfig(config1, config2) {
     }
   });
 
-  utils.forEach([
-    'baseURL', 'transformRequest', 'transformResponse', 'paramsSerializer',
-    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
-    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress', 'maxContentLength',
-    'validateStatus', 'maxRedirects', 'httpAgent', 'httpsAgent', 'cancelToken',
-    'socketPath'
-  ], function defaultToConfig2(prop) {
+  utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
+    if (typeof config2[prop] !== 'undefined') {
+      config[prop] = config2[prop];
+    } else if (typeof config1[prop] !== 'undefined') {
+      config[prop] = config1[prop];
+    }
+  });
+
+  var axiosKeys = valueFromConfig2Keys
+    .concat(mergeDeepPropertiesKeys)
+    .concat(defaultToConfig2Keys);
+
+  var otherKeys = Object
+    .keys(config2)
+    .filter(function filterAxiosKeys(key) {
+      return axiosKeys.indexOf(key) === -1;
+    });
+
+  utils.forEach(otherKeys, function otherKeysDefaultToConfig2(prop) {
     if (typeof config2[prop] !== 'undefined') {
       config[prop] = config2[prop];
     } else if (typeof config1[prop] !== 'undefined') {
@@ -1203,7 +1294,7 @@ module.exports = function mergeConfig(config1, config2) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1229,7 +1320,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /**
@@ -1256,7 +1347,7 @@ module.exports = identity;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /**
@@ -1280,14 +1371,14 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(15);
+module.exports = __webpack_require__(16);
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1298,23 +1389,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _methods = _interopRequireDefault(__webpack_require__(2));
+var _methods = _interopRequireDefault(__webpack_require__(3));
 
-var _http = _interopRequireDefault(__webpack_require__(33));
+var _http = _interopRequireDefault(__webpack_require__(34));
 
-var _helpers = _interopRequireDefault(__webpack_require__(35));
+var _helpers = _interopRequireDefault(__webpack_require__(36));
 
-var _requestsStore = _interopRequireDefault(__webpack_require__(45));
+var _requestsStore = _interopRequireDefault(__webpack_require__(46));
 
-var _storeBoilerplateGenerators = _interopRequireDefault(__webpack_require__(47));
+var _storeBoilerplateGenerators = _interopRequireDefault(__webpack_require__(48));
 
-var _moduleName = _interopRequireDefault(__webpack_require__(59));
+var _moduleName = _interopRequireDefault(__webpack_require__(60));
 
 var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1330,7 +1421,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -1344,7 +1435,12 @@ var mergeOptions = function mergeOptions(original) {
   var defaults = {
     logEndpoints: true,
     logInstance: true,
-    vrrModuleName: _moduleName.default
+    vrrModuleName: _moduleName.default,
+    errorHandler: function errorHandler(err) {
+      _newArrowCheck(this, _this2);
+
+      return console.log('VRR error, logging to the console since no handler was provided.', err);
+    }.bind(this)
   };
   return Object.keys(original).reduce(function (obj, key) {
     _newArrowCheck(this, _this2);
@@ -1353,14 +1449,14 @@ var mergeOptions = function mergeOptions(original) {
   }.bind(this), defaults);
 }.bind(void 0);
 
-var _default = _objectSpread({
+var _default = {
   createVueRestResource: function createVueRestResource(config) {
     var options = mergeOptions(config);
     var store = options.store,
         _options$vrrModuleNam = options.vrrModuleName,
         vrrModuleName = _options$vrrModuleNam === void 0 ? _moduleName.default : _options$vrrModuleNam;
     store.registerModule(vrrModuleName, (0, _requestsStore.default)());
-    return {
+    return _objectSpread({
       HTTP:
       /*#__PURE__*/
       function (_HTTP2) {
@@ -1398,26 +1494,24 @@ var _default = _objectSpread({
           return _objectSpread({}, Api, _defineProperty({}, model, new _http.default(resource[model], options)));
         }.bind(this), {});
       }
-    };
-  }
-}, _helpers.default, {
+    }, (0, _helpers.default)(config));
+  },
   storeBoilerplateGenerators: _storeBoilerplateGenerators.default
-});
-
+};
 exports.default = _default;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(4);
+var bind = __webpack_require__(5);
 var Axios = __webpack_require__(18);
-var mergeConfig = __webpack_require__(10);
-var defaults = __webpack_require__(7);
+var mergeConfig = __webpack_require__(11);
+var defaults = __webpack_require__(8);
 
 /**
  * Create an instance of Axios
@@ -1450,37 +1544,20 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(11);
-axios.CancelToken = __webpack_require__(31);
-axios.isCancel = __webpack_require__(6);
+axios.Cancel = __webpack_require__(12);
+axios.CancelToken = __webpack_require__(32);
+axios.isCancel = __webpack_require__(7);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(32);
+axios.spread = __webpack_require__(33);
 
 module.exports = axios;
 
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
 
 
 /***/ }),
@@ -1491,10 +1568,10 @@ module.exports = function isBuffer (obj) {
 
 
 var utils = __webpack_require__(0);
-var buildURL = __webpack_require__(5);
+var buildURL = __webpack_require__(6);
 var InterceptorManager = __webpack_require__(19);
 var dispatchRequest = __webpack_require__(20);
-var mergeConfig = __webpack_require__(10);
+var mergeConfig = __webpack_require__(11);
 
 /**
  * Create a new instance of Axios
@@ -1525,7 +1602,15 @@ Axios.prototype.request = function request(config) {
   }
 
   config = mergeConfig(this.defaults, config);
-  config.method = config.method ? config.method.toLowerCase() : 'get';
+
+  // Set config.method
+  if (config.method) {
+    config.method = config.method.toLowerCase();
+  } else if (this.defaults.method) {
+    config.method = this.defaults.method.toLowerCase();
+  } else {
+    config.method = 'get';
+  }
 
   // Hook up interceptors middleware
   var chain = [dispatchRequest, undefined];
@@ -1644,10 +1729,8 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(21);
-var isCancel = __webpack_require__(6);
-var defaults = __webpack_require__(7);
-var isAbsoluteURL = __webpack_require__(29);
-var combineURLs = __webpack_require__(30);
+var isCancel = __webpack_require__(7);
+var defaults = __webpack_require__(8);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -1667,11 +1750,6 @@ function throwIfCancellationRequested(config) {
 module.exports = function dispatchRequest(config) {
   throwIfCancellationRequested(config);
 
-  // Support baseURL config
-  if (config.baseURL && !isAbsoluteURL(config.url)) {
-    config.url = combineURLs(config.baseURL, config.url);
-  }
-
   // Ensure headers exist
   config.headers = config.headers || {};
 
@@ -1686,7 +1764,7 @@ module.exports = function dispatchRequest(config) {
   config.headers = utils.merge(
     config.headers.common || {},
     config.headers[config.method] || {},
-    config.headers || {}
+    config.headers
   );
 
   utils.forEach(
@@ -1971,7 +2049,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 "use strict";
 
 
-var createError = __webpack_require__(9);
+var createError = __webpack_require__(10);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -2052,6 +2130,75 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
+var isAbsoluteURL = __webpack_require__(27);
+var combineURLs = __webpack_require__(28);
+
+/**
+ * Creates a new URL by combining the baseURL with the requestedURL,
+ * only when the requestedURL is not already an absolute URL.
+ * If the requestURL is absolute, this function returns the requestedURL untouched.
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} requestedURL Absolute or relative URL to combine
+ * @returns {string} The combined full path
+ */
+module.exports = function buildFullPath(baseURL, requestedURL) {
+  if (baseURL && !isAbsoluteURL(requestedURL)) {
+    return combineURLs(baseURL, requestedURL);
+  }
+  return requestedURL;
+};
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Determines whether the specified URL is absolute
+ *
+ * @param {string} url The URL to test
+ * @returns {boolean} True if the specified URL is absolute, otherwise false
+ */
+module.exports = function isAbsoluteURL(url) {
+  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+  // by any combination of letters, digits, plus, period, or hyphen.
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Creates a new URL by combining the specified URLs
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} relativeURL The relative URL
+ * @returns {string} The combined URL
+ */
+module.exports = function combineURLs(baseURL, relativeURL) {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var utils = __webpack_require__(0);
 
 // Headers whose duplicates are ignored by node
@@ -2106,7 +2253,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2181,7 +2328,7 @@ module.exports = (
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2241,55 +2388,13 @@ module.exports = (
 
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-/**
- * Determines whether the specified URL is absolute
- *
- * @param {string} url The URL to test
- * @returns {boolean} True if the specified URL is absolute, otherwise false
- */
-module.exports = function isAbsoluteURL(url) {
-  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-  // by any combination of letters, digits, plus, period, or hyphen.
-  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-};
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Creates a new URL by combining the specified URLs
- *
- * @param {string} baseURL The base URL
- * @param {string} relativeURL The relative URL
- * @returns {string} The combined URL
- */
-module.exports = function combineURLs(baseURL, relativeURL) {
-  return relativeURL
-    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-    : baseURL;
-};
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Cancel = __webpack_require__(11);
+var Cancel = __webpack_require__(12);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -2347,7 +2452,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2381,7 +2486,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2392,17 +2497,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _axios = _interopRequireDefault(__webpack_require__(3));
+var _axios = _interopRequireDefault(__webpack_require__(4));
 
-var _methods = _interopRequireDefault(__webpack_require__(2));
+var _methods = _interopRequireDefault(__webpack_require__(3));
 
-var _subscriber = _interopRequireDefault(__webpack_require__(34));
+var _subscriber = _interopRequireDefault(__webpack_require__(35));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
 
 var _this = void 0;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2414,7 +2521,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -2513,20 +2620,27 @@ function (_HTTP) {
       var mutation = [apiModule, "".concat(action).concat(capitalizeFirst(apiModel))].filter(Boolean).join('/');
       var actionType = action === 'list' ? 'get' : action; // axios has no 'list'
 
-      var REGISTER_COMPONENT = "".concat(this.vrrModuleName, "/registerComponentInStore");
       var REGISTER_REQUEST = "".concat(this.vrrModuleName, "/registerRequest");
       var UPDATE_REQUEST = "".concat(this.vrrModuleName, "/updateRequest");
+      var DELETE_INSTANCE = "".concat(this.vrrModuleName, "/deleteInstance");
       var logEndpoints = this.logEndpoints,
           logInstance = this.logInstance,
           updateStore = this.updateStore;
+      var instanceUUID = null;
 
       if (logInstance) {
-        updateStore(REGISTER_COMPONENT, callerInstance);
+        instanceUUID = _componentRegisterMap.default.add(callerInstance);
+
+        if (callerInstance && callerInstance.$once) {
+          callerInstance.$once('hook:beforeDestroy', function () {
+            _newArrowCheck(this, _this3);
+
+            updateStore(DELETE_INSTANCE, instanceUUID);
+          }.bind(this));
+        }
       }
 
-      var discard = false;
-      var slowRequest;
-      var requestTimeout; // prepare for request timeout
+      var discard = false; // prepare for request timeout
 
       var timeout = false;
       /*
@@ -2547,7 +2661,7 @@ function (_HTTP) {
         apiModel: apiModel,
         apiModule: apiModule,
         endpoint: endpoint,
-        callerInstance: callerInstance,
+        callerInstance: instanceUUID,
         logEndpoints: logEndpoints,
         logInstance: logInstance
       }].concat(args));
@@ -2562,28 +2676,24 @@ function (_HTTP) {
         }));
       }.bind(this);
 
-      updateStore(REGISTER_REQUEST, _objectSpread({}, request));
+      updateStore(REGISTER_REQUEST, _objectSpread({}, request)); // prepare for slow request
 
-      if (logEndpoints || logInstance) {
-        // prepare for slow request
-        slowRequest = setTimeout(function () {
-          _newArrowCheck(this, _this3);
+      var slowRequest = setTimeout(function () {
+        _newArrowCheck(this, _this3);
 
-          updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
-            status: 'slow'
-          }));
-        }.bind(this), this.slowTimeout);
-        requestTimeout = setTimeout(function () {
-          _newArrowCheck(this, _this3);
+        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+          status: 'slow'
+        }));
+      }.bind(this), this.slowTimeout);
+      var requestTimeout = setTimeout(function () {
+        _newArrowCheck(this, _this3);
 
-          timeout = true;
-          updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
-            completed: Date.now(),
-            status: 'timeout'
-          }));
-        }.bind(this), this.failedTimeout);
-      }
-
+        timeout = true;
+        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+          completed: Date.now(),
+          status: 'timeout'
+        }));
+      }.bind(this), this.failedTimeout);
       var ajax = this.handleQueue.apply(this, [request, actionType, endpoint].concat(args));
       /* @todo: add a global warning component when requests fail */
       // tell the store a request was fired
@@ -2659,9 +2769,9 @@ function (_HTTP) {
 
           return this.unregister(request);
         }.bind(this), 1);
-        var aciveRequest = globalQueue.activeRequests[endpoint];
+        var activeRequest = globalQueue.activeRequests[endpoint];
 
-        if (aciveRequest && aciveRequest.id === request.id) {
+        if (activeRequest && activeRequest.id === request.id) {
           var queuedRquestsIteratee = function queuedRquestsIteratee(queued) {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
           };
@@ -2689,8 +2799,6 @@ function (_HTTP) {
         updateStore(UPDATE_REQUEST, updated);
         handleQueueOnBadRequest(); // TODO / QUESTION: maybe we should also unregister the request?
         // this.unregister(request);
-
-        console.error('VRR error', err);
       }.bind(this));
       var store = this.store;
       return new Promise(function (resolve, reject) {
@@ -2709,6 +2817,8 @@ function (_HTTP) {
   }, {
     key: "handleQueue",
     value: function handleQueue(request, action, endpoint) {
+      var _this6 = this;
+
       for (var _len2 = arguments.length, args = new Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
         args[_key2 - 3] = arguments[_key2];
       }
@@ -2716,16 +2826,16 @@ function (_HTTP) {
       if (action !== 'get') {
         // NB: check comment text about implementation of "update" requests inside queue of "get"s (on top of this file)
         return _axios.default[action].apply(_axios.default, [endpoint].concat(args));
-      } // we need to design what patterns to look for that are common in all requests so
-      // we can know with certainty that 2 requests look for the same resource
-      // the "_" param is global, so now we just ignore handling queue in requests that have params
-
-
-      if (request.params && Object.keys(request.params).length > 1) {
-        return _axios.default[action].apply(_axios.default, [endpoint].concat(args));
       }
 
-      if (!globalQueue.activeRequests[endpoint]) {
+      var activeRequest = globalQueue.activeRequests[endpoint];
+      var hasDifferentParms = !activeRequest || !Object.keys(request.params).every(function (param) {
+        _newArrowCheck(this, _this6);
+
+        return activeRequest.params[param] === request.params[param];
+      }.bind(this));
+
+      if (hasDifferentParms) {
         // first request, no queue
         globalQueue.activeRequests[endpoint] = request;
 
@@ -2759,7 +2869,7 @@ function (_HTTP) {
   }, {
     key: "register",
     value: function register(action, moduleInfo) {
-      var _this6 = this;
+      var _this7 = this;
 
       requestCounter += 1;
       var id = [moduleInfo.apiModule, moduleInfo.apiModel, requestCounter].join('_');
@@ -2769,7 +2879,7 @@ function (_HTTP) {
       }
 
       var httpData = args.find(function (obj) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this7);
 
         return obj.params;
       }.bind(this));
@@ -2796,7 +2906,7 @@ function (_HTTP) {
 exports.default = Rest;
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2951,7 +3061,7 @@ function () {
 exports.default = Subscriber;
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2962,9 +3072,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _castArray = _interopRequireDefault(__webpack_require__(36));
+var _castArray = _interopRequireDefault(__webpack_require__(37));
 
-var _get = _interopRequireDefault(__webpack_require__(37));
+var _get = _interopRequireDefault(__webpack_require__(38));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
 
 var _this = void 0;
 
@@ -2980,7 +3092,7 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
@@ -3013,7 +3125,8 @@ var getStoreResourceValue = function getStoreResourceValue(instance, asyncID, re
       return obj.id === asyncID;
     };
 
-    return state.find(findStatePredicate) || noValueFound;
+    var value = state.find(findStatePredicate);
+    return value || noValueFound;
   } // if (state[asyncKey] === asyncID) {
   //   return state;
   // }
@@ -3041,7 +3154,8 @@ var getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instance,
       }.bind(this));
     };
 
-    return state.filter(findStatePredicate) || noValueFound;
+    var value = state.filter(findStatePredicate);
+    return value || noValueFound;
   }
 
   return noValueFound;
@@ -3099,178 +3213,194 @@ var pathIteratee = function pathIteratee(obj, key, i) {
   return obj[key] || noValueFound;
 };
 
-var _default = {
-  /**
-   * Loads in the specific object in the store.
-   * Use this to bind a state to a computed property.
-   * If the Object is not found in the store, it fills the store with data from the server.
-   *
-   * Use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties.
-   * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
-   *
-   * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {object[]|object} restResources - The model to use.
-   * @param {string | number} initialId -  The computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
-   * @param {Function} resolverFunctions - Callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
-   *
-   * @returns {object} - Places a computed property with the values in your state.
-   */
-  asyncResourceGetter: function asyncResourceGetter(computedPropertyName, restResources, initialId) {
-    var _this4 = this;
+var _default = function (options) {
+  _newArrowCheck(this, _this);
 
-    var resolverFunctions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (data) {
-      _newArrowCheck(this, _this4);
+  return {
+    /**
+     * Loads in the specific object in the store.
+     * Use this to bind a state to a computed property.
+     * If the Object is not found in the store, it fills the store with data from the server.
+     *
+     * Use as `...asyncResourceGetter(name, Resource, id)` in the components computed properties.
+     * To get a nested object: `...asyncResourceGetter(name, [ResourceA, ResourceB], id, [(dataResourceA) => data.IdToPassToResourceB, (dataResourceB) => data])` in the components computed properties.
+     *
+     * @param {string} computedPropertyName - Name of the computed property that will be created.
+     * @param {object[]|object} restResources - The model to use.
+     * @param {string | number} initialId -  The computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
+     * @param {Function} resolverFunctions - Callback to transform the data from the store before providing it as the value of the computed property. If you don't need it just pass `(data) => data`.
+     *
+     * @returns {object} - Places a computed property with the values in your state.
+     */
+    asyncResourceGetter: function asyncResourceGetter(computedPropertyName, restResources, initialId) {
+      var _this4 = this;
 
-      return data;
-    }.bind(this);
-    return _defineProperty({}, computedPropertyName, function () {
-      var _this5 = this;
+      var resolverFunctions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (data) {
+        _newArrowCheck(this, _this4);
 
-      // get the needed values from object nested (or not) paths in `this`
-      var _map = [resolverFunctions, initialId].map(function (value) {
-        _newArrowCheck(this, _this5);
+        return data;
+      }.bind(this);
+      return _defineProperty({}, computedPropertyName, function () {
+        var _this5 = this;
 
-        if (typeof value !== 'string') {
-          return value;
+        // get the needed values from object nested (or not) paths in `this`
+        var _map = [resolverFunctions, initialId].map(function (value) {
+          _newArrowCheck(this, _this5);
+
+          if (typeof value !== 'string') {
+            return value;
+          }
+
+          return value.split('.').reduce(pathIteratee, this);
+        }.bind(this)),
+            _map2 = _slicedToArray(_map, 2),
+            asyncValueResolvers = _map2[0],
+            relatedAsyncID = _map2[1];
+
+        return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolvers), relatedAsyncID);
+      });
+    },
+    // use as `...asyncResourceValue` in the components computed properties
+    asyncResourceValue: {
+      asyncResourceValue: function asyncResourceValue() {
+        var restResources = this.restResources,
+            relatedAsyncID = this.relatedAsyncID,
+            asyncValueResolver = this.asyncValueResolver;
+        return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolver), relatedAsyncID);
+      }
+    },
+    activeRequests: function activeRequests() {
+      var computedPropertyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'activeRequests';
+      var emptyArray = [];
+      return _defineProperty({}, computedPropertyName, function () {
+        var instanceUUID = _componentRegisterMap.default.add(this);
+
+        var vrrModuleName = options.vrrModuleName;
+        var requests = this.$store.state[vrrModuleName].activeRequestsFromComponent;
+        return requests[instanceUUID] || emptyArray;
+      });
+    },
+    // PROBABLY WILL BE DEPRECATED / REWRITEN
+    updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources) {
+      var resourceRelatedKeys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'id';
+      var verificationKey = arguments.length > 4 ? arguments[4] : undefined;
+      return _defineProperty({}, watcherPropertyName, {
+        immediate: immediate,
+        handler: function handler(updatedValue, oldValue) {
+          var _this7 = this;
+
+          if (typeof updatedValue === 'undefined' && !immediate) {
+            return;
+          }
+
+          var callerInstance = this;
+          var updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
+          var outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
+          var resourceMatches = outdated && updated === outdated || updatedValue && !oldValue;
+
+          if (resourceMatches) {
+            var resourceIteratee = function resourceIteratee(resource, i) {
+              var _this6 = this;
+
+              var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
+              setTimeout(function () {
+                _newArrowCheck(this, _this6);
+
+                resource.list(callerInstance, _defineProperty({}, resourceKey, updated));
+              }.bind(this), 1);
+            };
+
+            (0, _castArray.default)(resources).map(function (resource) {
+              _newArrowCheck(this, _this7);
+
+              return this[resource];
+            }.bind(this)).forEach(resourceIteratee);
+          }
         }
+      });
+    },
 
-        return value.split('.').reduce(pathIteratee, this);
-      }.bind(this)),
-          _map2 = _slicedToArray(_map, 2),
-          asyncValueResolvers = _map2[0],
-          relatedAsyncID = _map2[1];
-
-      return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolvers), relatedAsyncID);
-    });
-  },
-  // use as `...asyncResourceValue` in the components computed properties
-  asyncResourceValue: {
-    asyncResourceValue: function asyncResourceValue() {
-      var restResources = this.restResources,
-          relatedAsyncID = this.relatedAsyncID,
-          asyncValueResolver = this.asyncValueResolver;
-      return getResourceValue(this, (0, _castArray.default)(restResources), (0, _castArray.default)(asyncValueResolver), relatedAsyncID);
-    }
-  },
-  // PROBABLY WILL BE DEPRECATED / REWRITEN
-  updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources) {
-    var resourceRelatedKeys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'id';
-    var verificationKey = arguments.length > 4 ? arguments[4] : undefined;
-    return _defineProperty({}, watcherPropertyName, {
-      immediate: immediate,
-      handler: function handler(updatedValue, oldValue) {
-        var _this7 = this;
-
-        if (typeof updatedValue === 'undefined' && !immediate) {
-          return;
-        }
+    /**
+     * Updates the store with a list based on a relation of keys.
+     *
+     * Use: resourceListGetter('students', Patients, {school: 20, class: 'A'}).
+     * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
+     *
+     * @param {string} computedPropertyName - Name of the computed property that will be created.
+     * @param {object[]|object} resource - The model to use.
+     * @param {string[]|object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
+     *
+     * @returns {object} - Places a computed property with the values in your state.
+     */
+    resourceListGetter: function resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
+      var emptyArray = [];
+      return _defineProperty({}, computedPropertyName, function () {
+        var _this8 = this;
 
         var callerInstance = this;
-        var updated = updatedValue && typeof verificationKey !== 'undefined' ? updatedValue[verificationKey] : updatedValue;
-        var outdated = oldValue && typeof verificationKey !== 'undefined' ? oldValue[verificationKey] : oldValue;
-        var resourceMatches = outdated && updated === outdated || updatedValue && !oldValue;
+        var computed = pathToInitialValues.split('.').reduce(pathIteratee, callerInstance);
 
-        if (resourceMatches) {
-          var resourceIteratee = function resourceIteratee(resource, i) {
-            var _this6 = this;
-
-            var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
-            setTimeout(function () {
-              _newArrowCheck(this, _this6);
-
-              resource.list(callerInstance, _defineProperty({}, resourceKey, updated));
-            }.bind(this), 1);
-          };
-
-          (0, _castArray.default)(resources).map(function (resource) {
-            _newArrowCheck(this, _this7);
-
-            return this[resource];
-          }.bind(this)).forEach(resourceIteratee);
+        if (computed === noValueFound) {
+          return emptyArray;
         }
-      }
-    });
-  },
 
-  /**
-   * Updates the store with a list based on a relation of keys.
-   *
-   * Use: resourceListGetter('students', Patients, {school: 20, class: 'A'}).
-   * Use: resourceListGetter('seenhints', SeenHints, [1, 2, 4]).
-   *
-   * @param {string} computedPropertyName - Name of the computed property that will be created.
-   * @param {object[]|object} resource - The model to use.
-   * @param {string[]|object[]} pathToInitialValues - The computed property name that has a array with IDs or a object to be used as a filter for the query.
-   *
-   * @returns {object} - Places a computed property with the values in your state.
-   */
-  resourceListGetter: function resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
-    var emptyArray = [];
-    return _defineProperty({}, computedPropertyName, function () {
-      var _this8 = this;
+        var isArray = Array.isArray(computed);
+        var isObject = computed instanceof Object && !isArray;
+        var allValuesInStore = false;
+        var resourceValues = [noValueFound];
 
-      var callerInstance = this;
-      var computed = pathToInitialValues.split('.').reduce(pathIteratee, callerInstance);
+        if (isObject) {
+          resourceValues = getStoreResourceValueByKeys(this, computed, resource);
+          allValuesInStore = resourceValues.some(function (value) {
+            _newArrowCheck(this, _this8);
 
-      if (computed === noValueFound) {
-        return emptyArray;
-      }
+            return value !== noValueFound;
+          }.bind(this));
+        }
 
-      var isArray = Array.isArray(computed);
-      var isObject = computed instanceof Object && !isArray;
-      var allValuesInStore = false;
-      var resourceValues = [noValueFound];
-
-      if (isObject) {
-        resourceValues = getStoreResourceValueByKeys(this, computed, resource);
-        allValuesInStore = resourceValues.some(function (value) {
-          _newArrowCheck(this, _this8);
-
-          return value !== noValueFound;
-        }.bind(this));
-      }
-
-      if (isArray) {
-        var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
-        resourceValues = ids.map(function (id) {
-          _newArrowCheck(this, _this8);
-
-          return getStoreResourceValue(this, id, resource);
-        }.bind(this));
-        allValuesInStore = resourceValues.every(function (value) {
-          _newArrowCheck(this, _this8);
-
-          return value !== noValueFound;
-        }.bind(this));
-      }
-
-      if (allValuesInStore) {
         if (isArray) {
-          return resourceValues;
+          var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
+          resourceValues = ids.map(function (id) {
+            _newArrowCheck(this, _this8);
+
+            return getStoreResourceValue(this, id, resource);
+          }.bind(this));
+          allValuesInStore = resourceValues.every(function (value) {
+            _newArrowCheck(this, _this8);
+
+            return value !== noValueFound;
+          }.bind(this));
         }
 
-        return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
-      } // do server request
+        if (allValuesInStore) {
+          if (isArray) {
+            return resourceValues;
+          }
+
+          return resourceValues[0] === noValueFound ? emptyArray : resourceValues;
+        } // do server request
 
 
-      setTimeout(function () {
-        _newArrowCheck(this, _this8);
+        setTimeout(function () {
+          _newArrowCheck(this, _this8);
 
-        resource.list(callerInstance, isArray ? {
-          id: (0, _castArray.default)(computed).join(',')
-        } : computed);
-      }.bind(this), 1);
-      return emptyArray;
-    });
-  }
-};
+          resource.list(callerInstance, isArray ? {
+            id: (0, _castArray.default)(computed).join(',')
+          } : computed);
+        }.bind(this), 1);
+        return emptyArray;
+      });
+    }
+  };
+}.bind(void 0);
+
 exports.default = _default;
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(1);
+var isArray = __webpack_require__(2);
 
 /**
  * Casts `value` as an array if it's not one.
@@ -3317,10 +3447,10 @@ module.exports = castArray;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGet = __webpack_require__(38);
+var baseGet = __webpack_require__(39);
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -3356,11 +3486,11 @@ module.exports = get;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var castPath = __webpack_require__(39),
-    toKey = __webpack_require__(44);
+var castPath = __webpack_require__(40),
+    toKey = __webpack_require__(45);
 
 /**
  * The base implementation of `_.get` without support for default values.
@@ -3386,13 +3516,13 @@ module.exports = baseGet;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(1),
-    isKey = __webpack_require__(40),
-    stringToPath = __webpack_require__(42),
-    toString = __webpack_require__(12);
+var isArray = __webpack_require__(2),
+    isKey = __webpack_require__(41),
+    stringToPath = __webpack_require__(43),
+    toString = __webpack_require__(13);
 
 /**
  * Casts `value` to a path array if it's not one.
@@ -3413,11 +3543,11 @@ module.exports = castPath;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(1),
-    isSymbol = __webpack_require__(41);
+var isArray = __webpack_require__(2),
+    isSymbol = __webpack_require__(42);
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -3448,7 +3578,7 @@ module.exports = isKey;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports) {
 
 /**
@@ -3472,10 +3602,10 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoizeCapped = __webpack_require__(43);
+var memoizeCapped = __webpack_require__(44);
 
 /** Used to match property names within property paths. */
 var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -3502,33 +3632,6 @@ var stringToPath = memoizeCapped(function(string) {
 });
 
 module.exports = stringToPath;
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports) {
-
-/**
- * This method returns the first argument it receives.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Util
- * @param {*} value Any value.
- * @returns {*} Returns `value`.
- * @example
- *
- * var object = { 'a': 1 };
- *
- * console.log(_.identity(object) === object);
- * // => true
- */
-function identity(value) {
-  return value;
-}
-
-module.exports = identity;
 
 
 /***/ }),
@@ -3560,6 +3663,33 @@ module.exports = identity;
 
 /***/ }),
 /* 45 */
+/***/ (function(module, exports) {
+
+/**
+ * This method returns the first argument it receives.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ *
+ * console.log(_.identity(object) === object);
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+module.exports = identity;
+
+
+/***/ }),
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3570,7 +3700,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _noop = _interopRequireDefault(__webpack_require__(46));
+var _noop = _interopRequireDefault(__webpack_require__(47));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
 
 var _this = void 0;
 
@@ -3578,7 +3710,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -3587,53 +3719,29 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 var _default = function () {
   _newArrowCheck(this, _this);
 
-  var indexCounter = 0;
-  var componentRegisterMap = new Map();
   var actions = {
     init: _noop.default,
-    registerComponentInStore: function registerComponentInStore(store, instance) {
-      var _this2 = this;
-
-      if (componentRegisterMap.get(instance)) {
-        // its already there, lets not override it
-        return;
-      }
-
-      if (instance && instance.$once) {
-        instance.$once('hook:beforeDestroy', function () {
-          _newArrowCheck(this, _this2);
-
-          store.commit('unregisterComponent', instance);
-        }.bind(this));
-      }
-
-      var nextIndex = indexCounter + 1;
-      indexCounter = nextIndex;
-      var instanceId = nextIndex;
-      store.commit('registerComponent', {
-        instance: instance,
-        instanceId: instanceId
-      });
-    },
     registerRequest: function registerRequest(store, req) {
       store.commit('registerRequest', req);
-    },
-    unregisterComponentInStore: function unregisterComponentInStore(store, instance) {
-      store.commit('unregisterComponent', instance);
     },
     unregisterRequest: function unregisterRequest(store, req) {
       store.commit('unregisterRequest', req);
     },
     updateRequest: function updateRequest(store, req) {
       store.commit('updateRequest', req);
+    },
+    deleteInstance: function deleteInstance(store, req) {
+      store.commit('deleteInstance', req);
     }
   };
   var mutations = {
-    registerComponent: function registerComponent(state, _ref) {
-      var instance = _ref.instance,
-          instanceId = _ref.instanceId;
-      componentRegisterMap.set(instance, instanceId);
-      state.registeredComponents = _objectSpread({}, state.registeredComponents, _defineProperty({}, instanceId, []));
+    deleteInstance: function deleteInstance(state, instanceUUID) {
+      _componentRegisterMap.default.delete(instanceUUID);
+
+      var tempState = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, instanceUUID, null));
+
+      delete tempState[instanceUUID];
+      state.activeRequestsFromComponent = tempState;
     },
     registerRequest: function registerRequest(state, request) {
       var logEndpoints = request.logEndpoints,
@@ -3644,14 +3752,8 @@ var _default = function () {
       // register by component instance
 
       if (logInstance) {
-        var instanceId = componentRegisterMap.get(callerInstance);
-        var instanceRequests = state.registeredComponents[instanceId];
-
-        if (!instanceRequests) {
-          console.info('VRR: the instance is not registered yet');
-        }
-
-        state.registeredComponents[instanceId] = instanceRequests.concat(_objectSpread({}, request));
+        var instanceRequests = state.activeRequestsFromComponent[callerInstance] || [];
+        state.activeRequestsFromComponent[callerInstance] = instanceRequests.concat(_objectSpread({}, request));
       } // register by endpoint
 
 
@@ -3660,44 +3762,28 @@ var _default = function () {
         state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(_objectSpread({}, request))));
       }
     },
-    unregisterComponent: function unregisterComponent(state, instance) {
-      if (!componentRegisterMap.get(instance)) {
-        throw new Error('component not registered');
-      }
-
-      var instanceId = componentRegisterMap.get(instance);
-      componentRegisterMap.set(instance, null); // maybe redundant but the idea is to help clearing memory
-
-      componentRegisterMap.delete(instance);
-      state.registeredComponents[instanceId] = null;
-      delete state.registeredComponents[instanceId];
-
-      if (state.lastUpdatedComponentId === instanceId) {
-        state.lastUpdatedComponentId = null;
-      }
-    },
     unregisterRequest: function unregisterRequest(state, request) {
+      var _this2 = this;
+
       var id = request.id,
           endpoint = request.endpoint,
-          callerInstance = request.callerInstance; // unregister endpoint
-
-      var activeRequestsToEndpointPredicate = function activeRequestsToEndpointPredicate(req) {
-        return req.id !== id;
-      };
-
+          callerInstance = request.callerInstance;
       var activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
-      var others = activeRequests.filter(activeRequestsToEndpointPredicate);
-      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component endpoint list
+      var others = activeRequests.filter(function (req) {
+        _newArrowCheck(this, _this2);
 
-      var instanceId = componentRegisterMap.get(callerInstance);
-      var instanceRequests = state.registeredComponents[instanceId];
+        return req.id !== id;
+      }.bind(this));
+      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component request list
+
+      var instanceRequests = state.activeRequestsFromComponent[callerInstance];
 
       if (instanceRequests) {
-        var removeIdIterator = function removeIdIterator(req) {
-          return req.id !== id;
-        };
+        state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, instanceRequests.filter(function (req) {
+          _newArrowCheck(this, _this2);
 
-        state.registeredComponents[instanceId] = instanceRequests.filter(removeIdIterator);
+          return req.id !== id;
+        }.bind(this))));
       }
     },
     updateRequest: function updateRequest(state, request) {
@@ -3718,14 +3804,15 @@ var _default = function () {
 
       if (logInstance) {
         // update the component instance list
-        var instanceId = componentRegisterMap.get(callerInstance);
-        var instanceRequests = state.registeredComponents[instanceId];
-        state.lastUpdatedComponentId = instanceId;
+        var instanceRequests = state.activeRequestsFromComponent[callerInstance];
+        state.lastUpdatedComponentId = callerInstance;
 
         if (instanceRequests) {
           // sometimes we have removed the component before the request is updated
           // in such cases we should not re-add the instance to the list
-          state.registeredComponents[instanceId] = (instanceRequests || []).map(requestUpdateIterator);
+          state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, (instanceRequests || []).map(requestUpdateIterator)));
+        } else {
+          state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, (instanceRequests || []).concat(request)));
         }
       } // update the endpoint list
 
@@ -3749,19 +3836,10 @@ var _default = function () {
     },
     lastUpdatedComponent: function lastUpdatedComponent(state) {
       var componentId = state.lastUpdatedComponentId;
-      return componentRegisterMap.get(componentId); // Component instance
+      return _componentRegisterMap.default.get(componentId); // Component instance
     },
-    registeredComponents: function registeredComponents(state) {
-      var _this3 = this;
-
-      var register = new Map();
-      var instanceRequests = state.registeredComponents;
-      componentRegisterMap.forEach(function (instanceId, instance) {
-        _newArrowCheck(this, _this3);
-
-        register.set(instance, instanceRequests[instanceId]);
-      }.bind(this));
-      return register;
+    activeRequestsFromComponent: function activeRequestsFromComponent(state) {
+      return state.activeRequestsFromComponent;
     }
   };
   return {
@@ -3772,7 +3850,7 @@ var _default = function () {
     state: {
       activeRequestsToEndpoint: {},
       lastUpdatedComponentId: null,
-      registeredComponents: {}
+      activeRequestsFromComponent: {}
     }
   };
 }.bind(void 0);
@@ -3780,7 +3858,7 @@ var _default = function () {
 exports.default = _default;
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 /**
@@ -3803,7 +3881,7 @@ module.exports = noop;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3814,11 +3892,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _propertyAction = _interopRequireDefault(__webpack_require__(48));
+var _propertyAction = _interopRequireDefault(__webpack_require__(49));
 
-var _filterDuplicatesById = _interopRequireDefault(__webpack_require__(56));
+var _filterDuplicatesById = _interopRequireDefault(__webpack_require__(57));
 
-var _mergeById = _interopRequireDefault(__webpack_require__(58));
+var _mergeById = _interopRequireDefault(__webpack_require__(59));
 
 var _this = void 0;
 
@@ -3826,7 +3904,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -3909,7 +3987,7 @@ var _default = function (resource) {
 exports.default = _default;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3920,7 +3998,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = propertyAction;
 
-var _upperFirst = _interopRequireDefault(__webpack_require__(49));
+var _upperFirst = _interopRequireDefault(__webpack_require__(50));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3929,10 +4007,10 @@ function propertyAction(action, property) {
 }
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var createCaseFirst = __webpack_require__(50);
+var createCaseFirst = __webpack_require__(51);
 
 /**
  * Converts the first character of `string` to upper case.
@@ -3957,13 +4035,13 @@ module.exports = upperFirst;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var castSlice = __webpack_require__(51),
-    hasUnicode = __webpack_require__(13),
-    stringToArray = __webpack_require__(53),
-    toString = __webpack_require__(12);
+var castSlice = __webpack_require__(52),
+    hasUnicode = __webpack_require__(14),
+    stringToArray = __webpack_require__(54),
+    toString = __webpack_require__(13);
 
 /**
  * Creates a function like `_.lowerFirst`.
@@ -3996,10 +4074,10 @@ module.exports = createCaseFirst;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseSlice = __webpack_require__(52);
+var baseSlice = __webpack_require__(53);
 
 /**
  * Casts `array` to a slice if it's needed.
@@ -4020,7 +4098,7 @@ module.exports = castSlice;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 /**
@@ -4057,12 +4135,12 @@ module.exports = baseSlice;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var asciiToArray = __webpack_require__(54),
-    hasUnicode = __webpack_require__(13),
-    unicodeToArray = __webpack_require__(55);
+var asciiToArray = __webpack_require__(55),
+    hasUnicode = __webpack_require__(14),
+    unicodeToArray = __webpack_require__(56);
 
 /**
  * Converts `string` to an array.
@@ -4078,24 +4156,6 @@ function stringToArray(string) {
 }
 
 module.exports = stringToArray;
-
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports) {
-
-/**
- * Converts an ASCII `string` to an array.
- *
- * @private
- * @param {string} string The string to convert.
- * @returns {Array} Returns the converted array.
- */
-function asciiToArray(string) {
-  return string.split('');
-}
-
-module.exports = asciiToArray;
 
 
 /***/ }),
@@ -4118,6 +4178,24 @@ module.exports = asciiToArray;
 
 /***/ }),
 /* 56 */
+/***/ (function(module, exports) {
+
+/**
+ * Converts an ASCII `string` to an array.
+ *
+ * @private
+ * @param {string} string The string to convert.
+ * @returns {Array} Returns the converted array.
+ */
+function asciiToArray(string) {
+  return string.split('');
+}
+
+module.exports = asciiToArray;
+
+
+/***/ }),
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4128,7 +4206,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _filterDuplicatesByProperty = _interopRequireDefault(__webpack_require__(57));
+var _filterDuplicatesByProperty = _interopRequireDefault(__webpack_require__(58));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4137,7 +4215,7 @@ var _default = (0, _filterDuplicatesByProperty.default)('id');
 exports.default = _default;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4165,7 +4243,7 @@ function filterDuplicatesByProperty(key) {
 }
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4207,7 +4285,7 @@ function mergeById(originalArray, newData) {
 }
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
