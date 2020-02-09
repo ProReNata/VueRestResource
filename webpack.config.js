@@ -15,7 +15,7 @@ const childProcess = require('child_process');
 const TerserPlugin = require('terser-webpack-plugin');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const eslintFriendlyFormatter = require('eslint-friendly-formatter');
-const stylish = require("eslint/lib/cli-engine/formatters/stylish"); // https://github.com/vuejs/eslint-plugin-vue/issues/916#issuecomment-507805017
+const stylish = require('eslint/lib/cli-engine/formatters/stylish'); // https://github.com/vuejs/eslint-plugin-vue/issues/916#issuecomment-507805017
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const getGlobal = function() {

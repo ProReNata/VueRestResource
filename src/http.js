@@ -68,8 +68,6 @@ export default class Rest extends HTTP {
     }
 
     let discard = false;
-    let slowRequest;
-    let requestTimeout;
     // prepare for request timeout
     let timeout = false;
 
@@ -103,14 +101,14 @@ export default class Rest extends HTTP {
     });
 
     // prepare for slow request
-    slowRequest = setTimeout(() => {
+    const slowRequest = setTimeout(() => {
       updateStore(UPDATE_REQUEST, {
         ...request,
         status: 'slow',
       });
     }, this.slowTimeout);
 
-    requestTimeout = setTimeout(() => {
+    const requestTimeout = setTimeout(() => {
       timeout = true;
       updateStore(UPDATE_REQUEST, {
         ...request,

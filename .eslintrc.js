@@ -40,6 +40,12 @@ module.exports = {
       },
     },
     {
+      files: ['index.js'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+    {
       files: ['http.js', 'methods.js'],
       rules: {
         'class-methods-use-this': 'off',
@@ -77,7 +83,11 @@ module.exports = {
   /**
    * @see {@link https://eslint.org/docs/user-guide/configuring#configuring-rules|rules
    */
-  rules: {},
+  rules: {
+    'default-param-last': 'off',
+    'no-constructor-return': 'off',
+    'no-callback-in-promise': 'off',
+  },
 
   /**
    * Webpack-literate module resolution plugin for eslint-plugin-import.
