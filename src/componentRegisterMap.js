@@ -49,7 +49,6 @@ export default {
     delete componentRegisterMap[instanceId];
   },
   get(instanceId) {
-
     if (instanceId === initialInstanceId) {
       return undefined;
     }
