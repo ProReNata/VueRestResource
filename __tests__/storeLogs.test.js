@@ -190,6 +190,37 @@ describe('Methods', () => {
         },
       });
     });
+
+    it('Should allow methods called without instance', (done) => {
+      const {store, registerResource} = envFactory({
+        errorHandler: (err) => {
+          throw new Error(err);
+        },
+      });
+      const HintsResource = registerResource(Hints).Hints;
+      let error;
+      const lastUpdatedComponent = store.getters['VRR_Tests/lastUpdatedComponent'];
+      let _lastUpdatedComponent;
+
+      new Vue({
+        store,
+        created() {
+          HintsResource.list()
+            .then(() => {
+              _lastUpdatedComponent = store.getters['VRR_Tests/lastUpdatedComponent'];
+            })
+            .catch((err) => {
+              error = err;
+            });
+
+          setTimeout(() => {
+            expect(typeof error).toBe('undefined');
+            expect(_lastUpdatedComponent).toBe(lastUpdatedComponent);
+            done();
+          }, 250);
+        },
+      });
+    });
   });
 
   /*
