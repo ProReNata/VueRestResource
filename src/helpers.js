@@ -1,6 +1,9 @@
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import componentRegisterMap from './componentRegisterMap';
+import constants from './constants';
+
+const {noValueFound} = constants;
 
 const getStorePath = (resource) => {
   const {apiModule, apiModel} = resource;
@@ -13,8 +16,6 @@ const getStateForResource = (instance, resource) => {
 
   return instance.$store.getters[storePath] || [];
 };
-
-const noValueFound = {};
 
 const getStoreResourceValue = function getStoreResourceValue(instance, asyncID, resource) {
   if (asyncID === null) {

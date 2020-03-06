@@ -1,5 +1,8 @@
 import noop from 'lodash/noop';
 import componentRegisterMap from './componentRegisterMap';
+import constants from './constants';
+
+const {initialInstanceId} = constants;
 
 export default () => {
   const actions = {
@@ -146,7 +149,7 @@ export default () => {
     namespaced: true,
     state: {
       activeRequestsToEndpoint: {},
-      lastUpdatedComponentId: null,
+      lastUpdatedComponentId: initialInstanceId,
       activeRequestsFromComponent: {},
     },
   };
