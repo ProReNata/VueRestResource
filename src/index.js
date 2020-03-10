@@ -26,7 +26,7 @@ export default {
   createVueRestResource(config) {
     const options = mergeOptions(config);
 
-    const {store, vrrModuleName = MODULE_NAME} = options;
+    const {store, vrrModuleName} = options;
     store.registerModule(vrrModuleName, requestsStoreFactory());
 
     return {
@@ -59,7 +59,7 @@ export default {
             {},
           );
       },
-      ...helpers(config),
+      ...helpers(options),
     };
   },
 
