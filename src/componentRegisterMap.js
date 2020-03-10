@@ -37,10 +37,6 @@ export default {
   delete(instanceId) {
     const idHasNoInstance = idsAssignedWithoutInstance.includes(instanceId);
 
-    if (!componentRegisterMap[instanceId] && !idHasNoInstance) {
-      throw new Error('component not registered');
-    }
-
     if (idHasNoInstance) {
       idsAssignedWithoutInstance.splice(idsAssignedWithoutInstance.indexOf(instanceId), 1);
     }
@@ -51,10 +47,6 @@ export default {
   get(instanceId) {
     if (instanceId === initialInstanceId) {
       return undefined;
-    }
-
-    if (!componentRegisterMap[instanceId] && !idsAssignedWithoutInstance.includes(instanceId)) {
-      throw new Error('component not registered');
     }
 
     return componentRegisterMap[instanceId];

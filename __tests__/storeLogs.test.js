@@ -65,6 +65,8 @@ describe('Methods', () => {
             const instanceRequests = this.activeRequestsFromComponent;
             expect(instanceRequests.length).toBe(1);
             this.$destroy();
+            // we trigger it twice because the library should be able to handle already removed components
+            store.dispatch('VRR_Tests/deleteInstance', this);
 
             setTimeout(() => {
               const instanceRequests = this.activeRequestsFromComponent;
