@@ -1,13 +1,13 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2020-03-06T09:34:16.590Z",
+  "date": "2020-03-10T07:17:09.967Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "992278a75a9c35dd5fcb",
+  "hash": "29b45d9fd601b9c27bb8",
   "license": "MIT",
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
 */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -529,10 +529,6 @@ var _default = {
   delete: function _delete(instanceId) {
     var idHasNoInstance = idsAssignedWithoutInstance.includes(instanceId);
 
-    if (!componentRegisterMap[instanceId] && !idHasNoInstance) {
-      throw new Error('component not registered');
-    }
-
     if (idHasNoInstance) {
       idsAssignedWithoutInstance.splice(idsAssignedWithoutInstance.indexOf(instanceId), 1);
     }
@@ -543,10 +539,6 @@ var _default = {
   get: function get(instanceId) {
     if (instanceId === initialInstanceId) {
       return undefined;
-    }
-
-    if (!componentRegisterMap[instanceId] && !idsAssignedWithoutInstance.includes(instanceId)) {
-      throw new Error('component not registered');
     }
 
     return componentRegisterMap[instanceId];
@@ -1505,8 +1497,7 @@ var _default = {
   createVueRestResource: function createVueRestResource(config) {
     var options = mergeOptions(config);
     var store = options.store,
-        _options$vrrModuleNam = options.vrrModuleName,
-        vrrModuleName = _options$vrrModuleNam === void 0 ? _moduleName.default : _options$vrrModuleNam;
+        vrrModuleName = options.vrrModuleName;
     store.registerModule(vrrModuleName, (0, _requestsStore.default)());
     return _objectSpread({
       HTTP:
@@ -1546,7 +1537,7 @@ var _default = {
           return _objectSpread({}, Api, _defineProperty({}, model, new _http.default(resource[model], options)));
         }.bind(this), {});
       }
-    }, (0, _helpers.default)(config));
+    }, (0, _helpers.default)(options));
   },
   storeBoilerplateGenerators: _storeBoilerplateGenerators.default
 };
