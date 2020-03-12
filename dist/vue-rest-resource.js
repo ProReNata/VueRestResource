@@ -1,11 +1,11 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2020-03-10T07:17:09.967Z",
+  "date": "2020-03-12T20:37:19.746Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "29b45d9fd601b9c27bb8",
+  "hash": "d0fc56e6c68ccbc76e59",
   "license": "MIT",
   "version": "1.1.2"
 }
@@ -2874,6 +2874,12 @@ function (_HTTP) {
       var activeRequest = globalQueue.activeRequests[endpoint];
       var hasDifferentParms = !activeRequest || !Object.keys(request.params).every(function (param) {
         _newArrowCheck(this, _this6);
+
+        if (param[0] === '_') {
+          // consider as meta data, not crucial
+          // we might make this configurable in the future
+          return true;
+        }
 
         return activeRequest.params[param] === request.params[param];
       }.bind(this));
