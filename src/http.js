@@ -127,21 +127,7 @@ export default class Rest extends HTTP {
     });
 
     const handleQueueOnBadRequest = () => {
-      if (globalQueue.queuedRequests[endpoint]) {
-        // call next in queue
-        const activeRequest = globalQueue.activeRequests[endpoint];
-
-        if (activeRequest && activeRequest.id === request.id) {
-          delete globalQueue.activeRequests[endpoint];
-          const next = globalQueue.queuedRequests[endpoint].shift();
-
-          if (next) {
-            const {request: rqst, action: act, endpoint: end, args: rest} = next;
-
-            this.handleQueue(rqst, act, end, ...rest);
-          }
-        }
-      }
+      delete globalQueue.queuedRequests[endpoint];
     };
 
     ajax
@@ -186,11 +172,11 @@ export default class Rest extends HTTP {
         const activeRequest = globalQueue.activeRequests[endpoint];
 
         if (activeRequest && activeRequest.id === request.id) {
-          const queuedRquestsIteratee = function queuedRquestsIteratee(queued) {
+          const queuedRequestsIteratee = function queuedRequestsIteratee(queued) {
             queued.request.Promise.resolve(response); // resolve pending requests with same response
           };
 
-          globalQueue.queuedRequests[endpoint].forEach(queuedRquestsIteratee);
+          globalQueue.queuedRequests[endpoint].forEach(queuedRequestsIteratee);
 
           globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
           delete globalQueue.activeRequests[endpoint]; // done, remove the active request pointer
@@ -213,9 +199,6 @@ export default class Rest extends HTTP {
         updateStore(UPDATE_REQUEST, updated);
 
         handleQueueOnBadRequest();
-
-        // TODO / QUESTION: maybe we should also unregister the request?
-        // this.unregister(request);
       });
 
     const {store} = this;
