@@ -220,7 +220,7 @@ export default class Rest extends HTTP {
     const activeRequest = globalQueue.activeRequests[endpoint];
     const hasDifferentParms =
       !activeRequest ||
-      !Object.keys(request.params).every((param) => {
+      !Object.keys(request.params || []).every((param) => {
         if (param[0] === '_') {
           // consider as meta data, not crucial
           // we might make this configurable in the future
