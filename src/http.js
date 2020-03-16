@@ -4,6 +4,11 @@ import Subscriber from './subscriber';
 import componentRegisterMap from './componentRegisterMap';
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+const getRequestSignature = (req) => {
+  const params = Object.keys(req.params || []).filter((param) => param[0] !== '_');
+
+  return `${req.endpoint}_${(params || []).join('&')}`;
+};
 
 /*
  * Global Queue has the purpose of preventing N requests being sent in a row to same endpoint.
@@ -24,6 +29,12 @@ const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const globalQueue = {
   activeRequests: {}, // endpoints as key values
   queuedRequests: {}, // endpoints as key values
+};
+
+const handleQueueOnBadRequest = (req) => {
+  const signature = getRequestSignature(req);
+  delete globalQueue.activeRequests[signature];
+  delete globalQueue.queuedRequests[signature];
 };
 
 let requestCounter = 0;
@@ -126,10 +137,6 @@ export default class Rest extends HTTP {
       status: 'pending',
     });
 
-    const handleQueueOnBadRequest = () => {
-      delete globalQueue.queuedRequests[endpoint];
-    };
-
     ajax
       .then((res) => {
         clearTimeout(slowRequest);
@@ -140,7 +147,7 @@ export default class Rest extends HTTP {
         }
 
         const response = !res && action === 'delete' ? deletedId : res;
-        const responseCopy = JSON.parse(JSON.stringify({data: response.data})); //
+        const responseCopy = JSON.parse(JSON.stringify({data: response.data}));
         const data = handler(responseCopy, this.store);
 
         /*
@@ -169,17 +176,19 @@ export default class Rest extends HTTP {
         // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
         setTimeout(() => this.unregister(request), 1);
 
-        const activeRequest = globalQueue.activeRequests[endpoint];
+        const signature = getRequestSignature(request);
+        const activeRequest = globalQueue.activeRequests[signature];
 
         if (activeRequest && activeRequest.id === request.id) {
-          const queuedRequestsIteratee = function queuedRequestsIteratee(queued) {
+          globalQueue.queuedRequests[signature].forEach((queued) => {
+            queued.request.status = updated.status;
+            queued.request.completed = updated.completed;
             queued.request.Promise.resolve(response); // resolve pending requests with same response
-          };
+            setTimeout(() => this.unregister(queued.request), 1);
+          });
 
-          globalQueue.queuedRequests[endpoint].forEach(queuedRequestsIteratee);
-
-          globalQueue.queuedRequests[endpoint] = []; // done, reset pending requests array
-          delete globalQueue.activeRequests[endpoint]; // done, remove the active request pointer
+          globalQueue.queuedRequests[signature] = []; // done, reset pending requests array
+          delete globalQueue.activeRequests[signature]; // done, remove the active request pointer
         }
 
         return undefined;
@@ -198,14 +207,14 @@ export default class Rest extends HTTP {
 
         updateStore(UPDATE_REQUEST, updated);
 
-        handleQueueOnBadRequest();
+        handleQueueOnBadRequest(request);
       });
 
     const {store} = this;
 
     return new Promise((resolve, reject) => {
       new Subscriber(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail((data) => {
-        handleQueueOnBadRequest();
+        handleQueueOnBadRequest(request);
         reject(data);
       });
     });
@@ -217,33 +226,23 @@ export default class Rest extends HTTP {
       return axios[action](endpoint, ...args);
     }
 
-    const activeRequest = globalQueue.activeRequests[endpoint];
-    const hasDifferentParms =
-      !activeRequest ||
-      !Object.keys(request.params || []).every((param) => {
-        if (param[0] === '_') {
-          // consider as meta data, not crucial
-          // we might make this configurable in the future
-          return true;
-        }
+    // check if there is a active request to the same endpoint
 
-        return activeRequest.params[param] === request.params[param];
-      });
+    const signature = getRequestSignature(request);
+    const activeRequest = globalQueue.activeRequests[signature];
 
-    if (hasDifferentParms) {
-      // first request, no queue
-      globalQueue.activeRequests[endpoint] = request;
-
-      if (!globalQueue.queuedRequests[endpoint]) {
-        globalQueue.queuedRequests[endpoint] = [];
-      }
+    if (!activeRequest) {
+      globalQueue.activeRequests[signature] = request;
 
       return axios[action](endpoint, ...args);
     }
 
+    if (!globalQueue.queuedRequests[signature]) {
+      globalQueue.queuedRequests[signature] = [];
+    }
+
     // pending request already registered, queue this request
-    const pending = globalQueue.queuedRequests[endpoint];
-    pending.push({
+    globalQueue.queuedRequests[signature].push({
       action,
       args,
       endpoint,
