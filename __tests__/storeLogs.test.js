@@ -159,12 +159,13 @@ describe('Methods', () => {
         },
       });
       const HintsResource = registerResource(Hints).Hints;
+      const canceledStatus = 'canceled';
+      let lastUpdatedStatus = '';
 
       new Vue({
         store,
         created() {
-          const expectedStatus = 'canceled';
-          let lastUpdatedStatus = '';
+
           const registeredEndpointsBefore = store.getters['VRR_Tests/activeRequestsToEndpoint'];
 
           expect(Object.keys(registeredEndpointsBefore).length).toBe(0);
@@ -184,7 +185,7 @@ describe('Methods', () => {
           request.cancel();
 
           setTimeout(() => {
-            expect(lastUpdatedStatus).toBe(expectedStatus);
+            expect(lastUpdatedStatus).toBe(canceledStatus);
             expect(store.getters['Hints/hints'].length === 0).toBe(true);
 
             done();
