@@ -27,6 +27,8 @@ const mergeById = (originalArray, newData) => {
   return shallowCopy;
 };
 
+let uuidTestCounter = 0;
+
 module.exports = {
   dataFetcher: (req, res) => {
     const [module, model, id] = req.originalUrl.split('/').filter(Boolean);
@@ -34,6 +36,18 @@ module.exports = {
 
     const hasQueryFilter = Object.keys(req.query).filter((key) => key !== '_').length > 0;
     const hasID = id && id[0] !== '?';
+
+    console.log('GET', module, model, id);
+
+    if ('uuidTestCounter' in req.query) {
+      /*
+      For testing purposes and specifically to test if we can queue requests so the frontend does not send multiple similar
+      request to the server, we implement a tracker property so we can analyse it in the tests
+       */
+      uuidTestCounter++;
+      setTimeout(() => res.send({uuidTestCounter}), 100);
+      return;
+    }
 
     readFile(filePath, (err, data) => {
       let response;
@@ -61,7 +75,6 @@ module.exports = {
     const [module, model, uid, remoteAction] = req.originalUrl.split('/').filter(Boolean);
     const filePath = path.join(__dirname, endpointsPath, module, `${model}.json`);
 
-
     readFile(filePath, (err, serverData) => {
       if (err) {
         console.log(err);
@@ -70,7 +83,7 @@ module.exports = {
         return;
       }
 
-      const data = serverData.objects.find(obj => String(obj.id) === String(uid));
+      const data = serverData.objects.find((obj) => String(obj.id) === String(uid));
       data[remoteAction] = !data[remoteAction];
 
       const newData = {
