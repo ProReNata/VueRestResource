@@ -37,7 +37,6 @@ module.exports = {
     const hasQueryFilter = Object.keys(req.query).filter((key) => key !== '_').length > 0;
     const hasID = id && id[0] !== '?';
 
-    console.log('GET', module, model, id);
 
     if ('uuidTestCounter' in req.query) {
       /*
