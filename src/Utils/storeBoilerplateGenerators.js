@@ -2,12 +2,18 @@ import propertyAction from './propertyAction';
 import filterDuplicatesById from './filterDuplicatesById';
 import mergeById from './mergeById';
 
-export default (resource) => {
-  const modules = Object.keys(resource)
-    .filter((k) => k[0] !== '_')
+/**
+ * Loops over each model and adds the actions needed for VRR.
+ * @param {object} resource - a Module object
+ * @returns {object} actions, mutations, getters and setters to be used in a store
+ */
+export default function putModelsInStore(resource) {
+  // Puts all models in an Array (Endpoints)
+  const models = Object.keys(resource)
+    .filter((k) => k[0] !== '_') // Filters out the Module '__name' in this object
     .map((key) => resource[key].apiModel);
 
-  const actions = modules.reduce(
+  const actions = models.reduce(
     (obj, name) => ({
       ...obj,
       [propertyAction('list', name)]({state, commit}, list) {
@@ -32,17 +38,17 @@ export default (resource) => {
     {},
   );
 
-  const mutations = modules.reduce(
+  const mutations = models.reduce(
     (obj, name) => ({
       ...obj,
-      [name](state, arr) {
-        state[name] = arr;
+      [name](state, value) {
+        state[name] = value;
       },
     }),
     {},
   );
 
-  const getters = modules.reduce(
+  const getters = models.reduce(
     (obj, name) => ({
       ...obj,
       [name](state) {
@@ -52,7 +58,7 @@ export default (resource) => {
     {},
   );
 
-  const state = modules.reduce(
+  const state = models.reduce(
     (obj, name) => ({
       ...obj,
       [name]: [],

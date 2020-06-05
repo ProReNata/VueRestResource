@@ -49,6 +49,6 @@ export default {
       return undefined;
     }
 
-    return componentRegisterMap[instanceId];
+    return componentRegisterMap[instanceId]; // TODO(perjor): What if the index is in the idsAssignedWithoutInstance array?. Returns undefined
   },
 };
