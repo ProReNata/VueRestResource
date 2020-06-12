@@ -31,7 +31,7 @@ take some decisions so the workflow is more predictable.
 
 ## Example:
 
-(see [demo here](https://codesandbox.io/s/vue-rest-resource-demo-p2efd))
+(see [demo here](https://codesandbox.io/s/vue-rest-resource-demo-d6c1k))
 
 ```javascript
 computed: {
@@ -40,9 +40,9 @@ computed: {
 
 ```
 
-This line is like a Vuex `mapGetter`, only it does some async magic and gets the data from the server for you. Its reactive to `myUserIdProp` and will get the data from Vuex in first hand. If Vuex does not have the data it will get it from the server, put it in Vuex for you, and give it back to the new computed property `currentUser` created my the `asyncResourceGetter`.
+This line is like a Vuex `mapGetter`, only it does some async magic and gets the data from the server for you. Its reactive to `myUserIdProp` and will get the data from Vuex in first hand. If Vuex does not have the data it will get it from the server, put it in Vuex for you, and give it back to the new computed property `currentUser` created by the `asyncResourceGetter`.
 
-The `UserResource` aergument is the VRR configuration for that resource. Check the [demo here](https://codesandbox.io/s/vue-rest-resource-demo-ptsnl) to see it working and how things integrates together.
+The `UserResource` argument is the VRR configuration for that resource. Check the [demo here](https://codesandbox.io/s/vue-rest-resource-demo-ptsnl) to see it working and how things integrates together.
 
 
 ## Configuration
@@ -221,7 +221,7 @@ computed: {
 #### Get a nested object
 Param 1: _String_, name of the computed property the Vue instance will receive  
 Param 2: _Array_, Array of the resource Objects, executed in order  
-Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the first object.
+Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the first object.  
 Param 4: _Array:Function_, Array of functions, executed in order and with the data received from the previous function. 
 If you don't need it just pass `(data) => data`.  
 e.g.
@@ -236,11 +236,11 @@ computed: {
 
 Use this to bind a state to a computed property, but only get the data that matches the array passed in.
 
-Will always fill in the store with server data when the object in not found.  
+Will always fill in the store with server data when the object is not found.  
 
 Param 1: _String_, name of the local state  
 Param 2: _Resource_, pass in the resource Object  
-Param 3: _String_, the computed property name that has a array with IDs or a object to be used as a filter for the query
+Param 3: _String_, the computed property name that has an array with IDs or a object to be used as a filter for the query
 
 e.g.
 
@@ -248,6 +248,21 @@ e.g.
 computed: {
   ...resourceListGetter('userPosts', Posts, 'user.posts'),
 },
+```
+
+### activeRequests
+Every time a request is made, we track this and also register the Vue component that asked for it.
+
+Now we can group requests to the same endpoint and only fire one, while firing a done response for each of them.
+
+We can also use the activeRequests as a computed property to check if VRR is done fetching everything, and to show a loading status.
+
+```js
+const {activeRequests} = vrr;  
+
+computed: {
+    ...activeRequests('activeRequests'),
+}
 ```
 
 ## Internals
