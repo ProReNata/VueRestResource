@@ -122,7 +122,7 @@ const moduleResource = vrrApi.registerResource(resource);
 export default moduleResource;
 ```
 
-TODO: Import all resources and register each of them in a loop
+TODO: Import all resources and register each of them in a loop. Possibly with a JSON file from the API
 
 ### Using a Resource
 
