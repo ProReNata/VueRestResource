@@ -11,6 +11,11 @@ const getStorePath = (resource) => {
   return [apiModule, apiModel].filter(Boolean).join('/');
 };
 
+/**
+ * 
+ * @param {*} instance Vue instance
+ * @param {Object} resource A Resource Object
+ */
 const getStateForResource = (instance, resource) => {
   const storePath = getStorePath(resource);
 
@@ -138,6 +143,7 @@ export default (options) => {
       };
     },
     // use as `...asyncResourceValue` in the components computed properties
+    // Deprecated -> Use asyncResourceGetter and pass in a custom computed property name
     asyncResourceValue: {
       asyncResourceValue() {
         const {restResources, relatedAsyncID, asyncValueResolver} = this;
