@@ -228,7 +228,7 @@ e.g.
 
 ```
 computed: {
-  ...asyncResourceGetter('currentUserCity', [UserResource, CityResource], id, [(userData) => userData.cityId, (cityData) => data])
+  ...asyncResourceGetter('currentUserCity', [UserResource, CityResource], userId, [(userData) => userData.cityId, (cityData) => data])
 },
 ```
 
