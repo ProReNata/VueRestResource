@@ -42,7 +42,7 @@ computed: {
 
 This line is like a Vuex `mapGetter`, only it does some async magic and gets the data from the server for you. Its reactive to `myUserIdProp` and will get the data from Vuex in first hand. If Vuex does not have the data it will get it from the server, put it in Vuex for you, and give it back to the new computed property `currentUser` created by the `asyncResourceGetter`.
 
-The `UserResource` argument is the VRR configuration for that resource. Check the [demo here](https://codesandbox.io/s/vue-rest-resource-demo-ptsnl) to see it working and how things integrates together.
+The `UserResource` argument is the VRR configuration for that resource. Check the [demo here](https://codesandbox.io/s/vue-rest-resource-demo-d6c1k) to see it working and how things integrates together.
 
 
 ## Configuration
