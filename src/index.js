@@ -25,7 +25,8 @@ const mergeConfigWithDefaults = (config) => {
 export default {
   /**
    * Returns an object with the root HTTP class, registerResource() and all the helper functions.
-   * @param {Object} customConfig 
+   *
+   * @param {object} customConfig
    */
   createVueRestResource(customConfig) {
     const config = mergeConfigWithDefaults(customConfig);
@@ -40,11 +41,11 @@ export default {
         }
       },
 
-      // 
+      //
       /**
        * Registers the Resource, returning a resource object.
        * Will generate the store boilerplate, unless you provide your own store or null.
-       * @param {Object} resource 
+       * @param {Object} resource
        * @param {Object|undefined|null} customStore - Leaving this empty will generate the store boilerplate, unless you provide your own store then it will add the store as a module and if you pass null, it will do nothing
        * @returns an object with each model being a Rest Class
        */

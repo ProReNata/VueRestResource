@@ -2,6 +2,7 @@ import axios from 'axios';
 import HTTP from './methods';
 import Subscriber from './subscriber';
 import componentRegisterMap from './componentRegisterMap';
+import {createLogger} from 'vuex';
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const getRequestSignature = (req) => {
@@ -203,6 +204,7 @@ export default class Rest extends HTTP {
           completed: Date.now(),
           response: err.response && err.response.data,
           status: 'failed',
+          internalError: err.toJSON(),
         };
 
         updateStore(UPDATE_REQUEST, updated);
