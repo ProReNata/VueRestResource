@@ -1,5 +1,5 @@
-import HTTP from './methods';
-import Rest from './http';
+import HTTP from './Http';
+import Rest from './Rest';
 import helpers from './helpers';
 import requestsStoreFactory from './requestsStore';
 import storeBoilerplateGenerators from './Utils/storeBoilerplateGenerators';

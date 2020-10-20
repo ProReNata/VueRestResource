@@ -84,6 +84,31 @@ This will return an object from which you can use:
 
 VueRestResource will register a module _"VRR"_ in the store (configurable) so we can keep track of open requests.
 
+### Setup Error logging
+
+You should replace the default error handler so you can catch it in a try catch when using VRR.
+
+```js
+errorHandler: (error) => {
+  throw new Error(JSON.stringify(error));
+};
+```
+
+> We stringify the object, because else the Error constructor will stringify it into [object Object]
+
+Then whenever making a request, you can react to the `error.message`. This contains VRR info as well as the original Axios error in `error.message.internalError`. Handle this error as explained in the [Axios](https://github.com/axios/axios#handling-errors) documentation.
+
+Example from VRR Test:
+
+```js
+try {
+  await seenHintsResource.get(null, id);
+} catch (err) {
+  const error = JSON.parse(err.message);
+  expect(error.internalError.response.status).toBe(403);
+}
+```
+
 ### Setup a Resource Object
 
 You need to supply to VRR information on how to mount the endpoints and get data from the server.
