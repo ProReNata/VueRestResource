@@ -12,9 +12,9 @@ const getStorePath = (resource) => {
 };
 
 /**
- * 
- * @param {*} instance Vue instance
- * @param {Object} resource A Resource Object
+ *
+ * @param {*} instance - Vue instance.
+ * @param {object} resource - A Resource Object.
  */
 const getStateForResource = (instance, resource) => {
   const storePath = getStorePath(resource);

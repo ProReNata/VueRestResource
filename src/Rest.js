@@ -2,7 +2,6 @@ import axios from 'axios';
 import Http from './Http';
 import Subscriber from './subscriber';
 import componentRegisterMap from './componentRegisterMap';
-import {createLogger} from 'vuex';
 
 const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 const getRequestSignature = (req) => {

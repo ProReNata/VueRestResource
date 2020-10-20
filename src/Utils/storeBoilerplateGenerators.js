@@ -4,8 +4,9 @@ import mergeById from './mergeById';
 
 /**
  * Loops over each model and adds the actions needed for VRR.
- * @param {object} resource - a Module object
- * @returns {object} actions, mutations, getters and setters to be used in a store
+ *
+ * @param {object} resource - A Module object.
+ * @returns {object} Actions, mutations, getters and setters to be used in a store.
  */
 export default function putModelsInStore(resource) {
   // Puts all models in an Array (Endpoints)
@@ -72,4 +73,4 @@ export default function putModelsInStore(resource) {
     mutations,
     state,
   };
-};
+}

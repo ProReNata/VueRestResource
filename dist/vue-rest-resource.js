@@ -1,11 +1,11 @@
 /*!
 {
   "copywrite": "Copyright (c) 2017-present, ProReNata AB",
-  "date": "2020-03-16T16:23:47.468Z",
+  "date": "2020-10-20T10:29:55.891Z",
   "describe": "",
   "description": "Rest resource management for Vue.js and Vuex projects",
   "file": "vue-rest-resource.js",
-  "hash": "6bfe81eaaa4ac3e8943f",
+  "hash": "a4762cbfe2fb2e711149",
   "license": "MIT",
   "version": "1.1.5"
 }
@@ -119,7 +119,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 28);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -129,7 +129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-var bind = __webpack_require__(6);
+var bind = __webpack_require__(16);
 
 /*global toString:true*/
 
@@ -475,21 +475,100 @@ module.exports = {
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+function _newArrowCheck(innerThis, boundThis) {
+  if (innerThis !== boundThis) {
+    throw new TypeError("Cannot instantiate an arrow function");
+  }
+}
+
+module.exports = _newArrowCheck;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+module.exports = _createClass;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _constants = _interopRequireDefault(__webpack_require__(2));
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+var _constants = _interopRequireDefault(__webpack_require__(7));
 
 var componentRegisterMap = {};
 var indexCounter = 0;
@@ -512,8 +591,7 @@ var _default = {
     }
 
     var instanceId = Object.keys(componentRegisterMap).find(function (uuid) {
-      _newArrowCheck(this, _this);
-
+      (0, _newArrowCheck2.default)(this, _this);
       return componentRegisterMap[uuid] === instance;
     }.bind(this));
 
@@ -541,13 +619,13 @@ var _default = {
       return undefined;
     }
 
-    return componentRegisterMap[instanceId];
+    return componentRegisterMap[instanceId]; // TODO(perjor): What if the index is in the idsAssignedWithoutInstance array?. Returns undefined
   }
 };
 exports.default = _default;
 
 /***/ }),
-/* 2 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -571,7 +649,7 @@ var _default = constants;
 exports.default = _default;
 
 /***/ }),
-/* 3 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /**
@@ -603,72 +681,152 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 4 */
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var setPrototypeOf = __webpack_require__(30);
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) setPrototypeOf(subClass, superClass);
+}
+
+module.exports = _inherits;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(11);
+
+var assertThisInitialized = __webpack_require__(12);
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return assertThisInitialized(self);
+}
+
+module.exports = _possibleConstructorReturn;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+module.exports = _assertThisInitialized;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+function _getPrototypeOf(o) {
+  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+module.exports = _getPrototypeOf;
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _axios = _interopRequireDefault(__webpack_require__(5));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(4));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(5));
+
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
+
+var _axios = _interopRequireDefault(__webpack_require__(15));
 
 var _this = void 0;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var defaultResourceHandlers = {
   create: function create(response) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return response.data;
   }.bind(void 0),
   get: function get(response) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return response.data;
   }.bind(void 0),
   list: function list(response) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return response.data.objects;
   }.bind(void 0),
   update: function update(response) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return response.data;
   }.bind(void 0),
   remote: function remote(response) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return response.data;
   }.bind(void 0)
 };
 
-var _default =
-/*#__PURE__*/
-function () {
-  function _default(resource, config) {
-    _classCallCheck(this, _default);
-
-    this.handler = _objectSpread({}, defaultResourceHandlers, {}, resource.handler || {});
+var Http = /*#__PURE__*/function () {
+  function Http(resource, config) {
+    (0, _classCallCheck2.default)(this, Http);
+    this.handler = _objectSpread(_objectSpread({}, defaultResourceHandlers), resource.handler || {});
     this.errorHandler = config.errorHandler;
     this.baseUrl = config.baseUrl;
     this.slowTimeout = config.slowTimeout || 2000;
@@ -687,13 +845,13 @@ function () {
     };
   }
 
-  _createClass(_default, [{
+  (0, _createClass2.default)(Http, [{
     key: "get",
     value: function get(callerInstance, id) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var cb = arguments.length > 3 ? arguments[3] : undefined;
 
-      var resources = _objectSpread({}, this.actionObjectDefault, {
+      var resources = _objectSpread(_objectSpread({}, this.actionObjectDefault), {}, {
         callback: cb,
         endpoint: "".concat(this.endpoint + id, "/"),
         handler: this.handler.get,
@@ -702,7 +860,7 @@ function () {
 
       return this.dispatch('get', resources, {
         headers: this.httpHeaders,
-        params: _objectSpread({}, data, {}, this.defaultParams)
+        params: _objectSpread(_objectSpread({}, data), this.defaultParams)
       }).catch(this.errorHandler);
     }
   }, {
@@ -711,15 +869,15 @@ function () {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var cb = arguments.length > 2 ? arguments[2] : undefined;
 
-      var resources = _objectSpread({}, this.actionObjectDefault, {
+      var resources = _objectSpread(_objectSpread({}, this.actionObjectDefault), {}, {
         callback: cb,
         endpoint: this.endpoint,
         handler: this.handler.list,
         callerInstance: callerInstance
       });
 
-      var resp = this.dispatch('list', resources, _objectSpread({}, this.httpHeaders, {
-        params: _objectSpread({}, data, {}, this.defaultParams)
+      var resp = this.dispatch('list', resources, _objectSpread(_objectSpread({}, this.httpHeaders), {}, {
+        params: _objectSpread(_objectSpread({}, data), this.defaultParams)
       })).catch(this.errorHandler);
       return resp;
     }
@@ -729,7 +887,7 @@ function () {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var cb = arguments.length > 2 ? arguments[2] : undefined;
 
-      var resources = _objectSpread({}, this.actionObjectDefault, {
+      var resources = _objectSpread(_objectSpread({}, this.actionObjectDefault), {}, {
         callback: cb,
         endpoint: this.endpoint,
         handler: this.handler.create,
@@ -744,7 +902,7 @@ function () {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var cb = arguments.length > 3 ? arguments[3] : undefined;
 
-      var resources = _objectSpread({}, this.actionObjectDefault, {
+      var resources = _objectSpread(_objectSpread({}, this.actionObjectDefault), {}, {
         callback: cb,
         endpoint: "".concat(this.endpoint + id, "/"),
         handler: this.handler.update,
@@ -758,13 +916,12 @@ function () {
     value: function _delete(callerInstance, id, cb) {
       var _this2 = this;
 
-      var resources = _objectSpread({}, this.actionObjectDefault, {
+      var resources = _objectSpread(_objectSpread({}, this.actionObjectDefault), {}, {
         callback: cb,
         deletedId: id,
         endpoint: "".concat(this.endpoint + id, "/"),
         handler: this.handler.delete || function () {
-          _newArrowCheck(this, _this2);
-
+          (0, _newArrowCheck2.default)(this, _this2);
           return id;
         }.bind(this),
         callerInstance: callerInstance
@@ -784,7 +941,7 @@ function () {
 
       options.callerInstance = callerInstance;
       return this.dispatch(this.resource.httpMethod, options, data, {
-        headers: _objectSpread({}, this.httpHeaders.headers, {
+        headers: _objectSpread(_objectSpread({}, this.httpHeaders.headers), {}, {
           'Content-Type': 'application/json'
         })
       }).catch(this.errorHandler);
@@ -802,7 +959,7 @@ function () {
        * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
        *     This class method is only for components that           *
        *     need to speak with server de-coupled from store.        *
-       *     Rule is: all Components should instantiate methods.js   *
+       *     Rule is: all Components should instantiate Rest.js   *
        * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
        */
       var actionType = action === 'list' ? 'get' : action; // axios has no 'list'
@@ -814,26 +971,27 @@ function () {
       var ajax = _axios.default[actionType].apply(_axios.default, [endpoint].concat(args));
 
       return ajax.then(function (res) {
-        _newArrowCheck(this, _this3);
-
+        (0, _newArrowCheck2.default)(this, _this3);
         return handler(res);
+      }.bind(this)).catch(function (error) {
+        (0, _newArrowCheck2.default)(this, _this3);
+        throw new Error(error);
       }.bind(this));
     }
   }]);
-
-  return _default;
+  return Http;
 }();
 
-exports.default = _default;
+exports.default = Http;
 
 /***/ }),
-/* 5 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(18);
+module.exports = __webpack_require__(31);
 
 /***/ }),
-/* 6 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -851,7 +1009,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 7 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -929,7 +1087,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 8 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -941,14 +1099,14 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 9 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(24);
+var normalizeHeaderName = __webpack_require__(37);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -964,10 +1122,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(10);
+    adapter = __webpack_require__(20);
   } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(10);
+    adapter = __webpack_require__(20);
   }
   return adapter;
 }
@@ -1043,22 +1201,22 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(36)))
 
 /***/ }),
-/* 10 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(25);
-var buildURL = __webpack_require__(7);
-var buildFullPath = __webpack_require__(27);
-var parseHeaders = __webpack_require__(30);
-var isURLSameOrigin = __webpack_require__(31);
-var createError = __webpack_require__(11);
+var settle = __webpack_require__(38);
+var buildURL = __webpack_require__(17);
+var buildFullPath = __webpack_require__(40);
+var parseHeaders = __webpack_require__(43);
+var isURLSameOrigin = __webpack_require__(44);
+var createError = __webpack_require__(21);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -1155,7 +1313,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(32);
+      var cookies = __webpack_require__(45);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
@@ -1233,13 +1391,13 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 11 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(26);
+var enhanceError = __webpack_require__(39);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -1258,7 +1416,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 12 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1338,7 +1496,7 @@ module.exports = function mergeConfig(config1, config2) {
 
 
 /***/ }),
-/* 13 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1364,7 +1522,40 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 14 */
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(25);
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+}
+
+module.exports = _unsupportedIterableToArray;
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+module.exports = _arrayLikeToArray;
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports) {
 
 /**
@@ -1391,7 +1582,7 @@ module.exports = identity;
 
 
 /***/ }),
-/* 15 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /**
@@ -1415,112 +1606,125 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 16 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(17);
+module.exports = __webpack_require__(29);
 
 
 /***/ }),
-/* 17 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _methods = _interopRequireDefault(__webpack_require__(4));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(4));
 
-var _http = _interopRequireDefault(__webpack_require__(35));
+var _inherits2 = _interopRequireDefault(__webpack_require__(9));
 
-var _helpers = _interopRequireDefault(__webpack_require__(37));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(10));
 
-var _requestsStore = _interopRequireDefault(__webpack_require__(47));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(13));
 
-var _storeBoilerplateGenerators = _interopRequireDefault(__webpack_require__(49));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
 
-var _moduleName = _interopRequireDefault(__webpack_require__(61));
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
+
+var _Http = _interopRequireDefault(__webpack_require__(14));
+
+var _Rest = _interopRequireDefault(__webpack_require__(48));
+
+var _helpers = _interopRequireDefault(__webpack_require__(50));
+
+var _requestsStore = _interopRequireDefault(__webpack_require__(64));
+
+var _storeBoilerplateGenerators = _interopRequireDefault(__webpack_require__(66));
+
+var _moduleName = _interopRequireDefault(__webpack_require__(82));
 
 var _this = void 0;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
-var mergeOptions = function mergeOptions(original) {
+var mergeConfigWithDefaults = function mergeConfigWithDefaults(config) {
   var _this2 = this;
 
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var defaults = {
     logEndpoints: true,
     logInstance: true,
-    vrrModuleName: _moduleName.default,
+    vrrModuleName: _moduleName.default || 'VRR',
     errorHandler: function errorHandler(err) {
-      _newArrowCheck(this, _this2);
-
+      (0, _newArrowCheck2.default)(this, _this2);
       return console.log('VRR error, logging to the console since no handler was provided.', err);
     }.bind(this)
   };
-  return Object.keys(original).reduce(function (obj, key) {
-    _newArrowCheck(this, _this2);
-
-    return _objectSpread({}, obj, _defineProperty({}, key, original[key]));
+  return Object.keys(config).reduce(function (obj, key) {
+    (0, _newArrowCheck2.default)(this, _this2);
+    return _objectSpread(_objectSpread({}, obj), {}, (0, _defineProperty2.default)({}, key, config[key]));
   }.bind(this), defaults);
 }.bind(void 0);
 
 var _default = {
-  createVueRestResource: function createVueRestResource(config) {
-    var options = mergeOptions(config);
-    var store = options.store,
-        vrrModuleName = options.vrrModuleName;
+  /**
+   * Returns an object with the root HTTP class, registerResource() and all the helper functions.
+   *
+   * @param {object} customConfig
+   */
+  createVueRestResource: function createVueRestResource(customConfig) {
+    var config = mergeConfigWithDefaults(customConfig);
+    var store = config.store,
+        vrrModuleName = config.vrrModuleName;
     store.registerModule(vrrModuleName, (0, _requestsStore.default)());
     return _objectSpread({
-      HTTP:
-      /*#__PURE__*/
-      function (_HTTP2) {
-        _inherits(HTTP, _HTTP2);
+      HTTP: /*#__PURE__*/function (_HTTP2) {
+        (0, _inherits2.default)(HTTP, _HTTP2);
+
+        var _super = _createSuper(HTTP);
 
         function HTTP(resource) {
-          _classCallCheck(this, HTTP);
-
-          return _possibleConstructorReturn(this, _getPrototypeOf(HTTP).call(this, resource, options));
+          (0, _classCallCheck2.default)(this, HTTP);
+          return _super.call(this, resource, config);
         }
 
         return HTTP;
-      }(_methods.default),
-      registerResource: function registerResource(resource, customStore) {
+      }(_Http.default),
+      //
+
+      /**
+       * Registers the Resource, returning a resource object.
+       * Will generate the store boilerplate, unless you provide your own store or null.
+       *
+       * @param {object} resource
+       * @param {object|undefined|null} customStore - Leaving this empty will generate the store boilerplate, unless you provide your own store then it will add the store as a module and if you pass null, it will do nothing.
+       * @returns An object with each model being a Rest Class.
+       */
+      registerResource: function registerResource(resource) {
         var _this3 = this;
 
-        // if null, we turn it off on purpose
+        var customStore = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+        // if null, we don't populate the store for you
+        // If you leave it empty (thus being undefined), we will add all the models as VRR endpoints namespaced under its module name, if the module name is empty, the module won't be namespaced.
+        // If you provide a store, we will add the store as a module under the global store.
         if (customStore !== null) {
           var moduleName = resource.__name;
 
-          var moduleStore = customStore || _objectSpread({}, (0, _storeBoilerplateGenerators.default)(resource), {
+          var moduleStore = customStore || _objectSpread(_objectSpread({}, (0, _storeBoilerplateGenerators.default)(resource)), {}, {
             namespaced: moduleName !== ''
           });
 
@@ -1528,33 +1732,46 @@ var _default = {
         }
 
         return Object.keys(resource).filter(function (k) {
-          _newArrowCheck(this, _this3);
-
+          (0, _newArrowCheck2.default)(this, _this3);
           return k[0] !== '_';
         }.bind(this)).reduce(function (Api, model) {
-          _newArrowCheck(this, _this3);
-
-          return _objectSpread({}, Api, _defineProperty({}, model, new _http.default(resource[model], options)));
+          (0, _newArrowCheck2.default)(this, _this3);
+          return _objectSpread(_objectSpread({}, Api), {}, (0, _defineProperty2.default)({}, model, new _Rest.default(resource[model], config)));
         }.bind(this), {});
       }
-    }, (0, _helpers.default)(options));
+    }, (0, _helpers.default)(config));
   },
   storeBoilerplateGenerators: _storeBoilerplateGenerators.default
 };
 exports.default = _default;
 
 /***/ }),
-/* 18 */
+/* 30 */
+/***/ (function(module, exports) {
+
+function _setPrototypeOf(o, p) {
+  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+module.exports = _setPrototypeOf;
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(6);
-var Axios = __webpack_require__(19);
-var mergeConfig = __webpack_require__(12);
-var defaults = __webpack_require__(9);
+var bind = __webpack_require__(16);
+var Axios = __webpack_require__(32);
+var mergeConfig = __webpack_require__(22);
+var defaults = __webpack_require__(19);
 
 /**
  * Create an instance of Axios
@@ -1587,15 +1804,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(13);
-axios.CancelToken = __webpack_require__(33);
-axios.isCancel = __webpack_require__(8);
+axios.Cancel = __webpack_require__(23);
+axios.CancelToken = __webpack_require__(46);
+axios.isCancel = __webpack_require__(18);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(34);
+axios.spread = __webpack_require__(47);
 
 module.exports = axios;
 
@@ -1604,17 +1821,17 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 19 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var buildURL = __webpack_require__(7);
-var InterceptorManager = __webpack_require__(20);
-var dispatchRequest = __webpack_require__(21);
-var mergeConfig = __webpack_require__(12);
+var buildURL = __webpack_require__(17);
+var InterceptorManager = __webpack_require__(33);
+var dispatchRequest = __webpack_require__(34);
+var mergeConfig = __webpack_require__(22);
 
 /**
  * Create a new instance of Axios
@@ -1705,7 +1922,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 20 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1764,16 +1981,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 21 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(22);
-var isCancel = __webpack_require__(8);
-var defaults = __webpack_require__(9);
+var transformData = __webpack_require__(35);
+var isCancel = __webpack_require__(18);
+var defaults = __webpack_require__(19);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -1850,7 +2067,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 22 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1877,7 +2094,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 23 */
+/* 36 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2067,7 +2284,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 24 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2086,13 +2303,13 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 25 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(11);
+var createError = __webpack_require__(21);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -2118,7 +2335,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 26 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2167,14 +2384,14 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 27 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var isAbsoluteURL = __webpack_require__(28);
-var combineURLs = __webpack_require__(29);
+var isAbsoluteURL = __webpack_require__(41);
+var combineURLs = __webpack_require__(42);
 
 /**
  * Creates a new URL by combining the baseURL with the requestedURL,
@@ -2194,7 +2411,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
 
 
 /***/ }),
-/* 28 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2215,7 +2432,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 29 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2236,7 +2453,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 30 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2296,7 +2513,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 31 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2371,7 +2588,7 @@ module.exports = (
 
 
 /***/ }),
-/* 32 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2431,13 +2648,13 @@ module.exports = (
 
 
 /***/ }),
-/* 33 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(13);
+var Cancel = __webpack_require__(23);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -2495,7 +2712,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 34 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2529,69 +2746,64 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 35 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _axios = _interopRequireDefault(__webpack_require__(5));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
 
-var _methods = _interopRequireDefault(__webpack_require__(4));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(4));
 
-var _subscriber = _interopRequireDefault(__webpack_require__(36));
+var _createClass2 = _interopRequireDefault(__webpack_require__(5));
 
-var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(12));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(9));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(10));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(13));
+
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
+
+var _axios = _interopRequireDefault(__webpack_require__(15));
+
+var _Http2 = _interopRequireDefault(__webpack_require__(14));
+
+var _subscriber = _interopRequireDefault(__webpack_require__(49));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(6));
 
 var _this = void 0;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 var capitalizeFirst = function capitalizeFirst(str) {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(void 0);
 
 var getRequestSignature = function getRequestSignature(req) {
   var _this2 = this;
 
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var params = Object.keys(req.params || []).filter(function (param) {
-    _newArrowCheck(this, _this2);
-
+    (0, _newArrowCheck2.default)(this, _this2);
     return param[0] !== '_';
   }.bind(this));
   return "".concat(req.endpoint, "_").concat((params || []).join('&'));
@@ -2622,8 +2834,7 @@ var globalQueue = {
 };
 
 var handleQueueOnBadRequest = function handleQueueOnBadRequest(req) {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var signature = getRequestSignature(req);
   delete globalQueue.activeRequests[signature];
   delete globalQueue.queuedRequests[signature];
@@ -2631,23 +2842,22 @@ var handleQueueOnBadRequest = function handleQueueOnBadRequest(req) {
 
 var requestCounter = 0;
 
-var Rest =
-/*#__PURE__*/
-function (_HTTP) {
-  _inherits(Rest, _HTTP);
+var Rest = /*#__PURE__*/function (_Http) {
+  (0, _inherits2.default)(Rest, _Http);
+
+  var _super = _createSuper(Rest);
 
   function Rest(resource, config) {
     var _this3;
 
-    _classCallCheck(this, Rest);
-
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(Rest).call(this, resource, config));
+    (0, _classCallCheck2.default)(this, Rest);
+    _this3 = _super.call(this, resource, config);
     _this3.store = config.store;
     _this3.logEndpoints = Boolean(config.logEndpoints);
     _this3.logInstance = Boolean(config.logInstance);
     _this3.vrrModuleName = config.vrrModuleName;
 
-    var _assertThisInitialize = _assertThisInitialized(_this3),
+    var _assertThisInitialize = (0, _assertThisInitialized2.default)(_this3),
         logEndpoints = _assertThisInitialize.logEndpoints,
         logInstance = _assertThisInitialize.logInstance,
         store = _assertThisInitialize.store;
@@ -2662,7 +2872,7 @@ function (_HTTP) {
   } // Dispatcher methods (overrides HTTP dispatch method)
 
 
-  _createClass(Rest, [{
+  (0, _createClass2.default)(Rest, [{
     key: "dispatch",
     value: function dispatch(action, _ref) {
       var _this4 = this;
@@ -2690,8 +2900,7 @@ function (_HTTP) {
 
         if (callerInstance && callerInstance.$once) {
           callerInstance.$once('hook:beforeDestroy', function () {
-            _newArrowCheck(this, _this4);
-
+            (0, _newArrowCheck2.default)(this, _this4);
             updateStore(DELETE_INSTANCE, instanceUUID);
           }.bind(this));
         }
@@ -2724,10 +2933,9 @@ function (_HTTP) {
       }].concat(args));
 
       request.cancel = function () {
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         discard = true;
-        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+        updateStore(UPDATE_REQUEST, _objectSpread(_objectSpread({}, request), {}, {
           status: 'canceled',
           completed: Date.now()
         }));
@@ -2736,17 +2944,15 @@ function (_HTTP) {
       updateStore(REGISTER_REQUEST, _objectSpread({}, request)); // prepare for slow request
 
       var slowRequest = setTimeout(function () {
-        _newArrowCheck(this, _this4);
-
-        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+        (0, _newArrowCheck2.default)(this, _this4);
+        updateStore(UPDATE_REQUEST, _objectSpread(_objectSpread({}, request), {}, {
           status: 'slow'
         }));
       }.bind(this), this.slowTimeout);
       var requestTimeout = setTimeout(function () {
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         timeout = true;
-        updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+        updateStore(UPDATE_REQUEST, _objectSpread(_objectSpread({}, request), {}, {
           completed: Date.now(),
           status: 'timeout'
         }));
@@ -2755,14 +2961,13 @@ function (_HTTP) {
       /* @todo: add a global warning component when requests fail */
       // tell the store a request was fired
 
-      updateStore(UPDATE_REQUEST, _objectSpread({}, request, {
+      updateStore(UPDATE_REQUEST, _objectSpread(_objectSpread({}, request), {}, {
         status: 'pending'
       }));
       ajax.then(function (res) {
         var _this5 = this;
 
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
 
@@ -2789,7 +2994,7 @@ function (_HTTP) {
           updateStore(mutation, data);
         }
 
-        var updated = _objectSpread({}, request, {
+        var updated = _objectSpread(_objectSpread({}, request), {}, {
           completed: Date.now(),
           response: data,
           status: 'success'
@@ -2798,8 +3003,7 @@ function (_HTTP) {
         updateStore(UPDATE_REQUEST, updated); // lets use setTimeout so we don't remove the request before the Subscriber promise resolves
 
         setTimeout(function () {
-          _newArrowCheck(this, _this5);
-
+          (0, _newArrowCheck2.default)(this, _this5);
           return this.unregister(request);
         }.bind(this), 1);
         var signature = getRequestSignature(request);
@@ -2809,15 +3013,13 @@ function (_HTTP) {
           globalQueue.queuedRequests[signature].forEach(function (queued) {
             var _this6 = this;
 
-            _newArrowCheck(this, _this5);
-
+            (0, _newArrowCheck2.default)(this, _this5);
             queued.request.status = updated.status;
             queued.request.completed = updated.completed;
             queued.request.Promise.resolve(response); // resolve pending requests with same response
 
             setTimeout(function () {
-              _newArrowCheck(this, _this6);
-
+              (0, _newArrowCheck2.default)(this, _this6);
               return this.unregister(queued.request);
             }.bind(this), 1);
           }.bind(this));
@@ -2828,16 +3030,16 @@ function (_HTTP) {
 
         return undefined;
       }.bind(this)).catch(function (err) {
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         clearTimeout(slowRequest);
         clearTimeout(requestTimeout);
         this.unregister(request);
 
-        var updated = _objectSpread({}, request, {
+        var updated = _objectSpread(_objectSpread({}, request), {}, {
           completed: Date.now(),
           response: err.response && err.response.data,
-          status: 'failed'
+          status: 'failed',
+          internalError: err
         });
 
         updateStore(UPDATE_REQUEST, updated);
@@ -2847,11 +3049,9 @@ function (_HTTP) {
       return new Promise(function (resolve, reject) {
         var _this7 = this;
 
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         new _subscriber.default(endpoint, request.id, store, UPDATE_REQUEST).onSuccess(resolve).onFail(function (data) {
-          _newArrowCheck(this, _this7);
-
+          (0, _newArrowCheck2.default)(this, _this7);
           handleQueueOnBadRequest(request);
           reject(data);
         }.bind(this));
@@ -2914,12 +3114,11 @@ function (_HTTP) {
       }
 
       var httpData = args.find(function (obj) {
-        _newArrowCheck(this, _this8);
-
+        (0, _newArrowCheck2.default)(this, _this8);
         return obj.params;
       }.bind(this));
       var params = httpData && httpData.params;
-      return _objectSpread({}, moduleInfo, {
+      return _objectSpread(_objectSpread({}, moduleInfo), {}, {
         action: action,
         created: Date.now(),
         id: id,
@@ -2934,31 +3133,30 @@ function (_HTTP) {
       this.updateStore(UNREGISTER, request);
     }
   }]);
-
   return Rest;
-}(_methods.default);
+}(_Http2.default);
 
 exports.default = Rest;
 
 /***/ }),
-/* 36 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(4));
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+var _createClass2 = _interopRequireDefault(__webpack_require__(5));
 
 var activeListeners = {
   mutation: {}
@@ -3015,12 +3213,9 @@ var subscriber = function subscriber(vrrStoreUpdatePath, mutation) {
   }
 };
 
-var Subscriber =
-/*#__PURE__*/
-function () {
+var Subscriber = /*#__PURE__*/function () {
   function Subscriber(endpoint, uuid, store, vrrStoreUpdatePath) {
-    _classCallCheck(this, Subscriber);
-
+    (0, _classCallCheck2.default)(this, Subscriber);
     this.endpoint = endpoint;
     this.uuid = uuid;
     this.callbacks = {};
@@ -3035,7 +3230,7 @@ function () {
     return this;
   }
 
-  _createClass(Subscriber, [{
+  (0, _createClass2.default)(Subscriber, [{
     key: "registerListener",
     value: function registerListener() {
       if (!activeListeners.mutation[this.endpoint]) {
@@ -3060,8 +3255,7 @@ function () {
       var _this = this;
 
       this.callbacks.onSuccess = function (id) {
-        _newArrowCheck(this, _this);
-
+        (0, _newArrowCheck2.default)(this, _this);
         fn(id);
         this.unregisterListener();
       }.bind(this);
@@ -3080,8 +3274,7 @@ function () {
       var _this2 = this;
 
       this.callbacks.onFail = function (requestData) {
-        _newArrowCheck(this, _this2);
-
+        (0, _newArrowCheck2.default)(this, _this2);
         fn(requestData);
         this.unregisterListener();
       }.bind(this);
@@ -3089,63 +3282,60 @@ function () {
       return this;
     }
   }]);
-
   return Subscriber;
 }();
 
 exports.default = Subscriber;
 
 /***/ }),
-/* 37 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _castArray = _interopRequireDefault(__webpack_require__(38));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
 
-var _get = _interopRequireDefault(__webpack_require__(39));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(51));
 
-var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
+var _typeof2 = _interopRequireDefault(__webpack_require__(11));
 
-var _constants = _interopRequireDefault(__webpack_require__(2));
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
+
+var _castArray = _interopRequireDefault(__webpack_require__(55));
+
+var _get = _interopRequireDefault(__webpack_require__(56));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(6));
+
+var _constants = _interopRequireDefault(__webpack_require__(7));
 
 var _this = void 0;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 var noValueFound = _constants.default.noValueFound;
 
 var getStorePath = function getStorePath(resource) {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var apiModule = resource.apiModule,
       apiModel = resource.apiModel;
   return [apiModule, apiModel].filter(Boolean).join('/');
 }.bind(void 0);
+/**
+ *
+ * @param {*} instance - Vue instance.
+ * @param {object} resource - A Resource Object.
+ */
+
 
 var getStateForResource = function getStateForResource(instance, resource) {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var storePath = getStorePath(resource);
   return instance.$store.getters[storePath] || [];
 }.bind(void 0);
@@ -3185,8 +3375,7 @@ var getStoreResourceValueByKeys = function getStoreResourceValueByKeys(instance,
 
       var keys = Object.keys(filter);
       return keys.every(function (key) {
-        _newArrowCheck(this, _this2);
-
+        (0, _newArrowCheck2.default)(this, _this2);
         return obj[key] === filter[key];
       }.bind(this));
     };
@@ -3217,8 +3406,7 @@ var getResourceValue = function getResourceValue(instance, restResources, asyncV
       // and so don't get registered as dependencies to react on
       var action = (0, _get.default)(restResources[i], 'resource.remoteAction') ? 'remoteAction' : 'get';
       setTimeout(function () {
-        _newArrowCheck(this, _this3);
-
+        (0, _newArrowCheck2.default)(this, _this3);
         return restResources[i][action](instance, resourceValue);
       }.bind(this), 1); // resource not loaded yet,
       // the computed function will be called again when store is updated
@@ -3236,7 +3424,7 @@ var getResourceValue = function getResourceValue(instance, restResources, asyncV
   for (var i = 0, l = restResources.length; i < l; i += 1) {
     var _ret = _loop(i, l);
 
-    if (_typeof(_ret) === "object") return _ret.v;
+    if ((0, _typeof2.default)(_ret) === "object") return _ret.v;
   }
 
   return resourceValue;
@@ -3251,8 +3439,7 @@ var pathIteratee = function pathIteratee(obj, key, i) {
 };
 
 var _default = function (options) {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   return {
     /**
      * Loads in the specific object in the store.
@@ -3273,16 +3460,15 @@ var _default = function (options) {
       var _this4 = this;
 
       var resolverFunctions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (data) {
-        _newArrowCheck(this, _this4);
-
+        (0, _newArrowCheck2.default)(this, _this4);
         return data;
       }.bind(this);
-      return _defineProperty({}, computedPropertyName, function () {
+      return (0, _defineProperty2.default)({}, computedPropertyName, function () {
         var _this5 = this;
 
         // get the needed values from object nested (or not) paths in `this`
         var _map = [resolverFunctions, initialId].map(function (value) {
-          _newArrowCheck(this, _this5);
+          (0, _newArrowCheck2.default)(this, _this5);
 
           if (typeof value !== 'string') {
             return value;
@@ -3290,7 +3476,7 @@ var _default = function (options) {
 
           return value.split('.').reduce(pathIteratee, this);
         }.bind(this)),
-            _map2 = _slicedToArray(_map, 2),
+            _map2 = (0, _slicedToArray2.default)(_map, 2),
             asyncValueResolvers = _map2[0],
             relatedAsyncID = _map2[1];
 
@@ -3298,6 +3484,7 @@ var _default = function (options) {
       });
     },
     // use as `...asyncResourceValue` in the components computed properties
+    // Deprecated -> Use asyncResourceGetter and pass in a custom computed property name
     asyncResourceValue: {
       asyncResourceValue: function asyncResourceValue() {
         var restResources = this.restResources,
@@ -3309,7 +3496,7 @@ var _default = function (options) {
     activeRequests: function activeRequests() {
       var computedPropertyName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'activeRequests';
       var emptyArray = [];
-      return _defineProperty({}, computedPropertyName, function () {
+      return (0, _defineProperty2.default)({}, computedPropertyName, function () {
         var instanceUUID = _componentRegisterMap.default.add(this);
 
         var vrrModuleName = options.vrrModuleName;
@@ -3321,7 +3508,7 @@ var _default = function (options) {
     updateResourceListWatcher: function updateResourceListWatcher(watcherPropertyName, immediate, resources) {
       var resourceRelatedKeys = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'id';
       var verificationKey = arguments.length > 4 ? arguments[4] : undefined;
-      return _defineProperty({}, watcherPropertyName, {
+      return (0, _defineProperty2.default)({}, watcherPropertyName, {
         immediate: immediate,
         handler: function handler(updatedValue, oldValue) {
           var _this7 = this;
@@ -3341,15 +3528,13 @@ var _default = function (options) {
 
               var resourceKey = Array.isArray(resourceRelatedKeys) ? resourceRelatedKeys[i] : resourceRelatedKeys;
               setTimeout(function () {
-                _newArrowCheck(this, _this6);
-
-                resource.list(callerInstance, _defineProperty({}, resourceKey, updated));
+                (0, _newArrowCheck2.default)(this, _this6);
+                resource.list(callerInstance, (0, _defineProperty2.default)({}, resourceKey, updated));
               }.bind(this), 1);
             };
 
             (0, _castArray.default)(resources).map(function (resource) {
-              _newArrowCheck(this, _this7);
-
+              (0, _newArrowCheck2.default)(this, _this7);
               return this[resource];
             }.bind(this)).forEach(resourceIteratee);
           }
@@ -3371,7 +3556,7 @@ var _default = function (options) {
      */
     resourceListGetter: function resourceListGetter(computedPropertyName, resource, pathToInitialValues) {
       var emptyArray = [];
-      return _defineProperty({}, computedPropertyName, function () {
+      return (0, _defineProperty2.default)({}, computedPropertyName, function () {
         var _this8 = this;
 
         var callerInstance = this;
@@ -3389,8 +3574,7 @@ var _default = function (options) {
         if (isObject) {
           resourceValues = getStoreResourceValueByKeys(this, computed, resource);
           allValuesInStore = resourceValues.some(function (value) {
-            _newArrowCheck(this, _this8);
-
+            (0, _newArrowCheck2.default)(this, _this8);
             return value !== noValueFound;
           }.bind(this));
         }
@@ -3398,13 +3582,11 @@ var _default = function (options) {
         if (isArray) {
           var ids = isArray ? computed || [] : (0, _castArray.default)(computed);
           resourceValues = ids.map(function (id) {
-            _newArrowCheck(this, _this8);
-
+            (0, _newArrowCheck2.default)(this, _this8);
             return getStoreResourceValue(this, id, resource);
           }.bind(this));
           allValuesInStore = resourceValues.every(function (value) {
-            _newArrowCheck(this, _this8);
-
+            (0, _newArrowCheck2.default)(this, _this8);
             return value !== noValueFound;
           }.bind(this));
         }
@@ -3419,8 +3601,7 @@ var _default = function (options) {
 
 
         setTimeout(function () {
-          _newArrowCheck(this, _this8);
-
+          (0, _newArrowCheck2.default)(this, _this8);
           resource.list(callerInstance, isArray ? {
             id: (0, _castArray.default)(computed).join(',')
           } : computed);
@@ -3434,10 +3615,81 @@ var _default = function (options) {
 exports.default = _default;
 
 /***/ }),
-/* 38 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(3);
+var arrayWithHoles = __webpack_require__(52);
+
+var iterableToArrayLimit = __webpack_require__(53);
+
+var unsupportedIterableToArray = __webpack_require__(24);
+
+var nonIterableRest = __webpack_require__(54);
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
+}
+
+module.exports = _slicedToArray;
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports) {
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+module.exports = _arrayWithHoles;
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports) {
+
+function _iterableToArrayLimit(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+module.exports = _iterableToArrayLimit;
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports) {
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+module.exports = _nonIterableRest;
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isArray = __webpack_require__(8);
 
 /**
  * Casts `value` as an array if it's not one.
@@ -3484,10 +3736,10 @@ module.exports = castArray;
 
 
 /***/ }),
-/* 39 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGet = __webpack_require__(40);
+var baseGet = __webpack_require__(57);
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -3523,11 +3775,11 @@ module.exports = get;
 
 
 /***/ }),
-/* 40 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var castPath = __webpack_require__(41),
-    toKey = __webpack_require__(46);
+var castPath = __webpack_require__(58),
+    toKey = __webpack_require__(63);
 
 /**
  * The base implementation of `_.get` without support for default values.
@@ -3553,13 +3805,13 @@ module.exports = baseGet;
 
 
 /***/ }),
-/* 41 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(3),
-    isKey = __webpack_require__(42),
-    stringToPath = __webpack_require__(44),
-    toString = __webpack_require__(14);
+var isArray = __webpack_require__(8),
+    isKey = __webpack_require__(59),
+    stringToPath = __webpack_require__(61),
+    toString = __webpack_require__(26);
 
 /**
  * Casts `value` to a path array if it's not one.
@@ -3580,11 +3832,11 @@ module.exports = castPath;
 
 
 /***/ }),
-/* 42 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(3),
-    isSymbol = __webpack_require__(43);
+var isArray = __webpack_require__(8),
+    isSymbol = __webpack_require__(60);
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -3615,7 +3867,7 @@ module.exports = isKey;
 
 
 /***/ }),
-/* 43 */
+/* 60 */
 /***/ (function(module, exports) {
 
 /**
@@ -3639,10 +3891,10 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 44 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoizeCapped = __webpack_require__(45);
+var memoizeCapped = __webpack_require__(62);
 
 /** Used to match property names within property paths. */
 var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -3672,7 +3924,7 @@ module.exports = stringToPath;
 
 
 /***/ }),
-/* 45 */
+/* 62 */
 /***/ (function(module, exports) {
 
 /**
@@ -3699,7 +3951,7 @@ module.exports = identity;
 
 
 /***/ }),
-/* 46 */
+/* 63 */
 /***/ (function(module, exports) {
 
 /**
@@ -3726,40 +3978,39 @@ module.exports = identity;
 
 
 /***/ }),
-/* 47 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _noop = _interopRequireDefault(__webpack_require__(48));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
 
-var _componentRegisterMap = _interopRequireDefault(__webpack_require__(1));
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
-var _constants = _interopRequireDefault(__webpack_require__(2));
+var _noop = _interopRequireDefault(__webpack_require__(65));
+
+var _componentRegisterMap = _interopRequireDefault(__webpack_require__(6));
+
+var _constants = _interopRequireDefault(__webpack_require__(7));
 
 var _this = void 0;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var initialInstanceId = _constants.default.initialInstanceId;
 
 var _default = function () {
-  _newArrowCheck(this, _this);
-
+  (0, _newArrowCheck2.default)(this, _this);
   var actions = {
     init: _noop.default,
     registerRequest: function registerRequest(store, req) {
@@ -3779,7 +4030,7 @@ var _default = function () {
     deleteInstance: function deleteInstance(state, instanceUUID) {
       _componentRegisterMap.default.delete(instanceUUID);
 
-      var tempState = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, instanceUUID, null));
+      var tempState = _objectSpread(_objectSpread({}, state.activeRequestsFromComponent), {}, (0, _defineProperty2.default)({}, instanceUUID, null));
 
       delete tempState[instanceUUID];
       state.activeRequestsFromComponent = tempState;
@@ -3800,7 +4051,7 @@ var _default = function () {
 
       if (logEndpoints) {
         var currentOpenRequestsToEndpoint = state.activeRequestsToEndpoint[endpoint] || [];
-        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, currentOpenRequestsToEndpoint.concat(_objectSpread({}, request))));
+        state.activeRequestsToEndpoint = _objectSpread(_objectSpread({}, state.activeRequestsToEndpoint), {}, (0, _defineProperty2.default)({}, endpoint, currentOpenRequestsToEndpoint.concat(_objectSpread({}, request))));
       }
     },
     unregisterRequest: function unregisterRequest(state, request) {
@@ -3811,18 +4062,16 @@ var _default = function () {
           callerInstance = request.callerInstance;
       var activeRequests = state.activeRequestsToEndpoint[endpoint] || [];
       var others = activeRequests.filter(function (req) {
-        _newArrowCheck(this, _this2);
-
+        (0, _newArrowCheck2.default)(this, _this2);
         return req.id !== id;
       }.bind(this));
-      state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, others)); // update component request list
+      state.activeRequestsToEndpoint = _objectSpread(_objectSpread({}, state.activeRequestsToEndpoint), {}, (0, _defineProperty2.default)({}, endpoint, others)); // update component request list
 
       var instanceRequests = state.activeRequestsFromComponent[callerInstance];
 
       if (instanceRequests) {
-        state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, instanceRequests.filter(function (req) {
-          _newArrowCheck(this, _this2);
-
+        state.activeRequestsFromComponent = _objectSpread(_objectSpread({}, state.activeRequestsFromComponent), {}, (0, _defineProperty2.default)({}, callerInstance, instanceRequests.filter(function (req) {
+          (0, _newArrowCheck2.default)(this, _this2);
           return req.id !== id;
         }.bind(this))));
       }
@@ -3851,9 +4100,9 @@ var _default = function () {
         if (instanceRequests) {
           // sometimes we have removed the component before the request is updated
           // in such cases we should not re-add the instance to the list
-          state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, (instanceRequests || []).map(requestUpdateIterator)));
+          state.activeRequestsFromComponent = _objectSpread(_objectSpread({}, state.activeRequestsFromComponent), {}, (0, _defineProperty2.default)({}, callerInstance, (instanceRequests || []).map(requestUpdateIterator)));
         } else {
-          state.activeRequestsFromComponent = _objectSpread({}, state.activeRequestsFromComponent, _defineProperty({}, callerInstance, (instanceRequests || []).concat(request)));
+          state.activeRequestsFromComponent = _objectSpread(_objectSpread({}, state.activeRequestsFromComponent), {}, (0, _defineProperty2.default)({}, callerInstance, (instanceRequests || []).concat(request)));
         }
       } // update the endpoint list
 
@@ -3867,7 +4116,7 @@ var _default = function () {
         }
 
         var requestList = current.map(requestUpdateIterator);
-        state.activeRequestsToEndpoint = _objectSpread({}, state.activeRequestsToEndpoint, _defineProperty({}, endpoint, requestList));
+        state.activeRequestsToEndpoint = _objectSpread(_objectSpread({}, state.activeRequestsToEndpoint), {}, (0, _defineProperty2.default)({}, endpoint, requestList));
       }
     }
   };
@@ -3899,7 +4148,7 @@ var _default = function () {
 exports.default = _default;
 
 /***/ }),
-/* 48 */
+/* 65 */
 /***/ (function(module, exports) {
 
 /**
@@ -3922,100 +4171,97 @@ module.exports = noop;
 
 
 /***/ }),
-/* 49 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+var _interopRequireDefault = __webpack_require__(1);
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.default = putModelsInStore;
 
-var _propertyAction = _interopRequireDefault(__webpack_require__(50));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(3));
 
-var _filterDuplicatesById = _interopRequireDefault(__webpack_require__(58));
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
-var _mergeById = _interopRequireDefault(__webpack_require__(60));
+var _propertyAction = _interopRequireDefault(__webpack_require__(67));
 
-var _this = void 0;
+var _filterDuplicatesById = _interopRequireDefault(__webpack_require__(75));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _mergeById = _interopRequireDefault(__webpack_require__(77));
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/**
+ * Loops over each model and adds the actions needed for VRR.
+ *
+ * @param {object} resource - A Module object.
+ * @returns {object} Actions, mutations, getters and setters to be used in a store.
+ */
+function putModelsInStore(resource) {
+  var _this = this;
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
-var _default = function (resource) {
-  var _this2 = this;
-
-  _newArrowCheck(this, _this);
-
-  var modules = Object.keys(resource).filter(function (k) {
-    _newArrowCheck(this, _this2);
-
+  // Puts all models in an Array (Endpoints)
+  var models = Object.keys(resource).filter(function (k) {
+    (0, _newArrowCheck2.default)(this, _this);
     return k[0] !== '_';
-  }.bind(this)).map(function (key) {
-    _newArrowCheck(this, _this2);
-
+  }.bind(this)) // Filters out the Module '__name' in this object
+  .map(function (key) {
+    (0, _newArrowCheck2.default)(this, _this);
     return resource[key].apiModel;
   }.bind(this));
-  var actions = modules.reduce(function (obj, name) {
+  var actions = models.reduce(function (obj, name) {
     var _objectSpread2;
 
-    _newArrowCheck(this, _this2);
-
-    return _objectSpread({}, obj, (_objectSpread2 = {}, _defineProperty(_objectSpread2, (0, _propertyAction.default)('list', name), function (_ref, list) {
+    (0, _newArrowCheck2.default)(this, _this);
+    return _objectSpread(_objectSpread({}, obj), {}, (_objectSpread2 = {}, (0, _defineProperty2.default)(_objectSpread2, (0, _propertyAction.default)('list', name), function (_ref, list) {
       var state = _ref.state,
           commit = _ref.commit;
       commit(name, list.concat(state[name]).filter(_filterDuplicatesById.default));
-    }), _defineProperty(_objectSpread2, (0, _propertyAction.default)('get', name), function (_ref2, data) {
+    }), (0, _defineProperty2.default)(_objectSpread2, (0, _propertyAction.default)('get', name), function (_ref2, data) {
       var state = _ref2.state,
           commit = _ref2.commit;
       commit(name, (0, _mergeById.default)(state[name], data));
-    }), _defineProperty(_objectSpread2, (0, _propertyAction.default)('put', name), function (_ref3, data) {
+    }), (0, _defineProperty2.default)(_objectSpread2, (0, _propertyAction.default)('put', name), function (_ref3, data) {
       var state = _ref3.state,
           commit = _ref3.commit;
       commit(name, (0, _mergeById.default)(state[name], data));
-    }), _defineProperty(_objectSpread2, (0, _propertyAction.default)('post', name), function (_ref4, data) {
+    }), (0, _defineProperty2.default)(_objectSpread2, (0, _propertyAction.default)('post', name), function (_ref4, data) {
       var state = _ref4.state,
           commit = _ref4.commit;
       commit(name, (0, _mergeById.default)(state[name], data));
-    }), _defineProperty(_objectSpread2, (0, _propertyAction.default)('delete', name), function (_ref5, id) {
-      var _this3 = this;
+    }), (0, _defineProperty2.default)(_objectSpread2, (0, _propertyAction.default)('delete', name), function (_ref5, id) {
+      var _this2 = this;
 
       var state = _ref5.state,
           commit = _ref5.commit;
       commit(name, state[name].filter(function (entry) {
-        _newArrowCheck(this, _this3);
-
+        (0, _newArrowCheck2.default)(this, _this2);
         return entry.id !== id;
       }.bind(this)));
     }), _objectSpread2));
   }.bind(this), {});
-  var mutations = modules.reduce(function (obj, name) {
-    _newArrowCheck(this, _this2);
-
-    return _objectSpread({}, obj, _defineProperty({}, name, function (state, arr) {
-      state[name] = arr;
+  var mutations = models.reduce(function (obj, name) {
+    (0, _newArrowCheck2.default)(this, _this);
+    return _objectSpread(_objectSpread({}, obj), {}, (0, _defineProperty2.default)({}, name, function (state, value) {
+      state[name] = value;
     }));
   }.bind(this), {});
-  var getters = modules.reduce(function (obj, name) {
-    _newArrowCheck(this, _this2);
-
-    return _objectSpread({}, obj, _defineProperty({}, name, function (state) {
+  var getters = models.reduce(function (obj, name) {
+    (0, _newArrowCheck2.default)(this, _this);
+    return _objectSpread(_objectSpread({}, obj), {}, (0, _defineProperty2.default)({}, name, function (state) {
       return state[name];
     }));
   }.bind(this), {});
-  var state = modules.reduce(function (obj, name) {
-    _newArrowCheck(this, _this2);
-
-    return _objectSpread({}, obj, _defineProperty({}, name, []));
+  var state = models.reduce(function (obj, name) {
+    (0, _newArrowCheck2.default)(this, _this);
+    return _objectSpread(_objectSpread({}, obj), {}, (0, _defineProperty2.default)({}, name, []));
   }.bind(this), {});
   return {
     actions: actions,
@@ -4023,35 +4269,40 @@ var _default = function (resource) {
     mutations: mutations,
     state: state
   };
-}.bind(void 0);
-
-exports.default = _default;
+}
 
 /***/ }),
-/* 50 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = propertyAction;
 
-var _upperFirst = _interopRequireDefault(__webpack_require__(51));
+var _upperFirst = _interopRequireDefault(__webpack_require__(68));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+/**
+ * Returns a concatenated string for the action name. E.g. 'listPatient'.
+ *
+ * @param {string} action - List, get, create, ...
+ * @param {string} property - The module name.
+ * @returns {string} A concatenated string for the action name. E.g. 'listPatient'.
+ */
 function propertyAction(action, property) {
   return "".concat(action).concat((0, _upperFirst.default)(property));
 }
 
 /***/ }),
-/* 51 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var createCaseFirst = __webpack_require__(52);
+var createCaseFirst = __webpack_require__(69);
 
 /**
  * Converts the first character of `string` to upper case.
@@ -4076,13 +4327,13 @@ module.exports = upperFirst;
 
 
 /***/ }),
-/* 52 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var castSlice = __webpack_require__(53),
-    hasUnicode = __webpack_require__(15),
-    stringToArray = __webpack_require__(55),
-    toString = __webpack_require__(14);
+var castSlice = __webpack_require__(70),
+    hasUnicode = __webpack_require__(27),
+    stringToArray = __webpack_require__(72),
+    toString = __webpack_require__(26);
 
 /**
  * Creates a function like `_.lowerFirst`.
@@ -4115,10 +4366,10 @@ module.exports = createCaseFirst;
 
 
 /***/ }),
-/* 53 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseSlice = __webpack_require__(54);
+var baseSlice = __webpack_require__(71);
 
 /**
  * Casts `array` to a slice if it's needed.
@@ -4139,7 +4390,7 @@ module.exports = castSlice;
 
 
 /***/ }),
-/* 54 */
+/* 71 */
 /***/ (function(module, exports) {
 
 /**
@@ -4176,12 +4427,12 @@ module.exports = baseSlice;
 
 
 /***/ }),
-/* 55 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var asciiToArray = __webpack_require__(56),
-    hasUnicode = __webpack_require__(15),
-    unicodeToArray = __webpack_require__(57);
+var asciiToArray = __webpack_require__(73),
+    hasUnicode = __webpack_require__(27),
+    unicodeToArray = __webpack_require__(74);
 
 /**
  * Converts `string` to an array.
@@ -4200,7 +4451,7 @@ module.exports = stringToArray;
 
 
 /***/ }),
-/* 56 */
+/* 73 */
 /***/ (function(module, exports) {
 
 /**
@@ -4218,7 +4469,7 @@ module.exports = asciiToArray;
 
 
 /***/ }),
-/* 57 */
+/* 74 */
 /***/ (function(module, exports) {
 
 /**
@@ -4236,38 +4487,40 @@ module.exports = asciiToArray;
 
 
 /***/ }),
-/* 58 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
 
-var _filterDuplicatesByProperty = _interopRequireDefault(__webpack_require__(59));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _filterDuplicatesByProperty = _interopRequireDefault(__webpack_require__(76));
 
 var _default = (0, _filterDuplicatesByProperty.default)('id');
 
 exports.default = _default;
 
 /***/ }),
-/* 59 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = filterDuplicatesByProperty;
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
 function filterDuplicatesByProperty(key) {
   return function boundFilterDuplicatesByProperty(el, i, arr) {
@@ -4275,8 +4528,7 @@ function filterDuplicatesByProperty(key) {
 
     var value = el[key];
     var firstEntry = arr.find(function (element) {
-      _newArrowCheck(this, _this);
-
+      (0, _newArrowCheck2.default)(this, _this);
       return element[key] === value;
     }.bind(this));
     return arr.indexOf(firstEntry) === i;
@@ -4284,35 +4536,29 @@ function filterDuplicatesByProperty(key) {
 }
 
 /***/ }),
-/* 60 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(1);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = mergeById;
 
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+var _newArrowCheck2 = _interopRequireDefault(__webpack_require__(2));
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(78));
 
 function mergeById(originalArray, newData) {
   var _this = this;
 
-  var shallowCopy = _toConsumableArray(originalArray);
-
+  var shallowCopy = (0, _toConsumableArray2.default)(originalArray);
   var index = shallowCopy.findIndex(function (data) {
-    _newArrowCheck(this, _this);
-
+    (0, _newArrowCheck2.default)(this, _this);
     return data.id === newData.id;
   }.bind(this));
 
@@ -4326,7 +4572,57 @@ function mergeById(originalArray, newData) {
 }
 
 /***/ }),
-/* 61 */
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(79);
+
+var iterableToArray = __webpack_require__(80);
+
+var unsupportedIterableToArray = __webpack_require__(24);
+
+var nonIterableSpread = __webpack_require__(81);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeToArray = __webpack_require__(25);
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return arrayLikeToArray(arr);
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
