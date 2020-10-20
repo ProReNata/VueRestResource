@@ -90,21 +90,63 @@ You should replace the default error handler so you can catch it in a try catch 
 
 ```js
 errorHandler: (error) => {
-  throw new Error(JSON.stringify(error));
+  throw error;
 };
 ```
 
-> We stringify the object, because else the Error constructor will stringify it into [object Object]
+Then whenever making a request, you can react to the `error`. This contains VRR info as well as the original Axios error in `error.internalError`. Handle this error as explained in the [Axios](https://github.com/axios/axios#handling-errors) documentation.
 
-Then whenever making a request, you can react to the `error.message`. This contains VRR info as well as the original Axios error in `error.message.internalError`. Handle this error as explained in the [Axios](https://github.com/axios/axios#handling-errors) documentation.
+Example error object:
+
+```js
+{
+  apiModel: 'hints',
+  apiModule: 'Hints',
+  endpoint: 'http://localhost:8984/hints/hints/1/',
+  logEndpoints: true,
+  logInstance: true,
+  action: 'get',
+  created: 1603192001672,
+  id: 'Hints_hints_1',
+  params: {},
+  status: 'failed',
+  cancel: [Function: bound ],
+  completed: 1603192001675,
+  response: undefined,
+  internalError:
+  {
+    isAxiosError: true,
+    config: {
+      url: 'http://localhost:8984/hints/hints/1/',
+      method: 'get',
+      params: {},
+      headers: [Object],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      validateStatus: [Function: validateStatus],
+      data: undefined
+    },
+    response: {
+      status: 403,
+      data: undefined,
+      headers: undefined,
+      config: [Object],
+      request: [Object]
+    }
+  }
+}
+```
 
 Example from VRR Test:
 
 ```js
 try {
   await seenHintsResource.get(null, id);
-} catch (err) {
-  const error = JSON.parse(err.message);
+} catch (error) {
   expect(error.internalError.response.status).toBe(403);
 }
 ```
