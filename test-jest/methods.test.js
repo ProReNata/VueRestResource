@@ -21,7 +21,6 @@ describe('axios Error', () => {
     try {
       await seenHintsResource.get(null, 1);
     } catch (error) {
-      console.info(error);
       expect(error.internalError.response.status).toBe(403);
     }
   });
