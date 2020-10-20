@@ -46,7 +46,7 @@ module.exports = {
       },
     },
     {
-      files: ['http.js', 'methods.js'],
+      files: ['Http.js', 'Rest.js'],
       rules: {
         'class-methods-use-this': 'off',
       },

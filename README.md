@@ -22,12 +22,11 @@
 
 # VueRestResource
 
-VueRestResource is a Rest HTTP resource management for Vue.js and Vuex projects. This library integrates 
-Vuex and the server data in a powerful way. 
+VueRestResource is a Rest HTTP resource management for Vue.js and Vuex projects. This library integrates
+Vuex and the server data in a powerful way.
 
 The goal of this library is to reduce boilerplate, simplify the synchronisation between server and client data (in Vuex),
 take some decisions so the workflow is more predictable.
-
 
 ## Example:
 
@@ -35,7 +34,7 @@ take some decisions so the workflow is more predictable.
 
 ```javascript
 computed: {
-  ...asyncResourceGetter('currentUser', UserResource, 'this.myUserIdProp')                             
+  ...asyncResourceGetter('currentUser', UserResource, 'this.myUserIdProp')
 },
 
 ```
@@ -44,10 +43,10 @@ This line is like a Vuex `mapGetter`, only it does some async magic and gets the
 
 The `UserResource` argument is the VRR configuration for that resource. Check the [demo here](https://codesandbox.io/s/vue-rest-resource-demo-d6c1k) to see it working and how things integrates together.
 
-
 ## Configuration
 
 ### Setup The Store
+
 VRR requires a set of Vuex actions, methods, getters and state to work. These will be automatically generated in the store that you provide, using namespaced modules.
 
 ### Setup VRR
@@ -61,7 +60,7 @@ import store from 'your/vuex/store/instance';
 const RestConfig = {
   baseUrl: '/api/path', // optional, depends on server configuration
   httpHeaders: {'X-CSRFToken': window.myPrivateToken}, // optional
-  store: store // Vuex store
+  store: store, // Vuex store
 };
 
 const vrrAPI = vrr.createVueRestResource(RestConfig);
@@ -69,7 +68,7 @@ const vrrAPI = vrr.createVueRestResource(RestConfig);
 export default vrrAPI;
 ```
 
-Extra options with their defaults: 
+Extra options with their defaults:
 
 ```js
 logEndpoints: true,
@@ -79,19 +78,87 @@ errorHandler: (err) => console.log('VRR error, logging to the console since no h
 ```
 
 This will return an object from which you can use:
- - the `HTTP` class to do direct Axios/Ajax requests with _Promises_ 
- - the `registerResource` factory function taking the resource object as argument
+
+- the `HTTP` class to do direct Axios/Ajax requests with _Promises_
+- the `registerResource` factory function taking the resource object as argument
 
 VueRestResource will register a module _"VRR"_ in the store (configurable) so we can keep track of open requests.
 
+### Setup Error logging
+
+You should replace the default error handler so you can catch it in a try catch when using VRR.
+
+```js
+errorHandler: (error) => {
+  throw error;
+};
+```
+
+Then whenever making a request, you can react to the `error`. This contains VRR info as well as the original Axios error in `error.internalError`. Handle this error as explained in the [Axios](https://github.com/axios/axios#handling-errors) documentation.
+
+Example error object:
+
+```js
+{
+  apiModel: 'hints',
+  apiModule: 'Hints',
+  endpoint: 'http://localhost:8984/hints/hints/1/',
+  logEndpoints: true,
+  logInstance: true,
+  action: 'get',
+  created: 1603192001672,
+  id: 'Hints_hints_1',
+  params: {},
+  status: 'failed',
+  cancel: [Function: bound ],
+  completed: 1603192001675,
+  response: undefined,
+  internalError:
+  {
+    isAxiosError: true,
+    config: {
+      url: 'http://localhost:8984/hints/hints/1/',
+      method: 'get',
+      params: {},
+      headers: [Object],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      validateStatus: [Function: validateStatus],
+      data: undefined
+    },
+    response: {
+      status: 403,
+      data: undefined,
+      headers: undefined,
+      config: [Object],
+      request: [Object]
+    }
+  }
+}
+```
+
+Example from VRR Test:
+
+```js
+try {
+  await seenHintsResource.get(null, id);
+} catch (error) {
+  expect(error.internalError.response.status).toBe(403);
+}
+```
+
 ### Setup a Resource Object
 
-You need to supply to VRR information on how to mount the endpoints and get data from the server. 
+You need to supply to VRR information on how to mount the endpoints and get data from the server.
 For that we need `apiModule` and `apiModel`. That information is used to organise the Vuex module store and keep track of things.
 
 **The resource object**:
 
-A resource object looks like 
+A resource object looks like
 
 ```js
 // Patients/resourceObject.js
@@ -116,8 +183,8 @@ Read more about [handlers](#the-resource-object)
 import vrrApi from 'plugins/vrr'; // The VRR object in the file you used to set up the VRR config
 import resource from './resourceObject'; // Your module resource, do this for every model
 
-// Use this method to create a Resource.  It takes in 1 parameter, resource which needs to be a Resource object in the above format. 
-const moduleResource = vrrApi.registerResource(resource); 
+// Use this method to create a Resource.  It takes in 1 parameter, resource which needs to be a Resource object in the above format.
+const moduleResource = vrrApi.registerResource(resource);
 
 export default moduleResource;
 ```
@@ -134,10 +201,9 @@ import PatientsResource from 'Patients/resource';
 const {Patient: PatientModel} = PatientsResource;
 ```
 
-Now we can use the PatientModel to make `get`, `list`, ... or use any of the helper methods, to manipulate data in the store and the server. 
+Now we can use the PatientModel to make `get`, `list`, ... or use any of the helper methods, to manipulate data in the store and the server.
 
 ## Glossary
-
 
 ### apiModule
 
@@ -173,6 +239,7 @@ Param 2: _Object_, the object/model you want to save (without id).
 The `.create` method updates the server with new data and puts the resource data with id in the store.
 
 #### Update
+
 `Resource.update(vueComponentInstance, id, obj)`
 
 Param 1: _Object instance_, the pointer to the Vue instance consuming the API
@@ -181,22 +248,24 @@ Param 3: _Object_, the object/model you want to update.
 
 The `.update` method updates the server with new data and puts the resource data with id in the store.
 
-
 #### List
+
 `Resource.List(vueComponentInstance)`
 
 Param 1: _Object instance_, the pointer to the Vue instance consuming the API
 
 The `.list` method fetches a collection of data from the server and puts the resource data with id in the store.
 
+You can send query parameters as a second argument.  
+`Resource.list(this, {ordering: '-name'});`
 
 ### asyncResourceGetter (computed property)
 
-This method is similar to Vuex's `mapGetters`.   
+This method is similar to Vuex's `mapGetters`.
 
-The idea is to get resources from the server whose you have the `id` for, reactively. 
-If you have a `id` of a model/object and that id changes, the VRR will first check the store for it and 
-if it doesn't find it it will get it from the server for you and update the store. 
+The idea is to get resources from the server whose you have the `id` for, reactively.
+If you have a `id` of a model/object and that id changes, the VRR will first check the store for it and
+if it doesn't find it it will get it from the server for you and update the store.
 So you can use the computed property this function returns as the pointer to the value you want.
 
 In other words:
@@ -208,7 +277,7 @@ If the Object is not found in the store, it fills the store with data from the s
 Param 1: _String_, name of the computed property the Vue instance will receive  
 Param 2: _Object_, the resource Object  
 Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the object you want or the name of the instance value/property to observe.
-Param 4: _Function_ (optional), callback to transform the data from the store before providing it as the value of the computed property. 
+Param 4: _Function_ (optional), callback to transform the data from the store before providing it as the value of the computed property.
 If you don't need it just pass `(data) => data`.  
 e.g.
 
@@ -219,10 +288,11 @@ computed: {
 ```
 
 #### Get a nested object
+
 Param 1: _String_, name of the computed property the Vue instance will receive  
 Param 2: _Array_, Array of the resource Objects, executed in order  
 Param 3: _String|Number_, the computed property, or prop, with/or the `id` of the first object.  
-Param 4: _Array:Function_, Array of functions, executed in order and with the data received from the previous function. 
+Param 4: _Array:Function_, Array of functions, executed in order and with the data received from the previous function.
 If you don't need it just pass `(data) => data`.  
 e.g.
 
@@ -236,7 +306,7 @@ computed: {
 
 Use this to bind a state to a computed property, but only get the data that matches the array passed in.
 
-Will always fill in the store with server data when the object is not found.  
+Will always fill in the store with server data when the object is not found.
 
 Param 1: _String_, name of the local state  
 Param 2: _Resource_, pass in the resource Object  
@@ -251,6 +321,7 @@ computed: {
 ```
 
 ### activeRequests
+
 Every time a request is made, we track this and also register the Vue component that asked for it.
 
 Now we can group requests to the same endpoint and only fire one, while firing a done response for each of them.
@@ -258,7 +329,7 @@ Now we can group requests to the same endpoint and only fire one, while firing a
 We can also use the activeRequests as a computed property to check if VRR is done fetching everything, and to show a loading status.
 
 ```js
-const {activeRequests} = vrr;  
+const {activeRequests} = vrr;
 
 computed: {
     ...activeRequests('activeRequests'),
@@ -269,12 +340,12 @@ computed: {
 
 ### The Resource Object
 
-With that information VRR will create the store mutations method names, that follow the pattern:  
+With that information VRR will create the store mutations method names, that follow the pattern:
 
      const mutation = [apiModule, `${action}${capitalizeFirst(apiModel)}`]
         .filter(Boolean)
         .join('/');
-        
+
 so, the module name can be an empty string for simple endpoints with only one level depth.
 
 The whole resource object could be:
@@ -293,16 +364,17 @@ export default {
     apiModel: 'patientfinderbyid',
     apiModule: MODULE,
     handler: {
-      list: response => response.data, // optional, in case you need custom handlers
+      list: (response) => response.data, // optional, in case you need custom handlers
     },
   },
 };
 ```
+
 As named before:
 
- - the apiModule is the name of the store module.  
- - the apiModel is the name of the object in this module.  
- - the handler object is where you can pass functions to change the data just before it is added to the store. 
+- the apiModule is the name of the store module.
+- the apiModel is the name of the object in this module.
+- the handler object is where you can pass functions to change the data just before it is added to the store.
 
 The `apiModule` and `apiModel` will be used to form the server endpoint, together with the `baseUrl` from the options (if given)
 and with the `id` (if given). The endpoint where VRR will look for data is:

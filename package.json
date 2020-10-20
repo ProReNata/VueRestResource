@@ -20,6 +20,10 @@
     {
       "name": "Graham Fairweather",
       "email": "graham.fairweather@prorenata.se"
+    },
+    {
+      "name": "Jordy Pereira",
+      "email": "jordy.pereira@prorenata.se"
     }
   ],
   "browser": "dist/vue-rest-resource.min.js",
@@ -30,7 +34,8 @@
     "test-server": "node __tests__/DevServer/server.js",
     "test-watch": "nodemon node_modules/jasmine/bin/jasmine.js",
     "test-once": "node_modules/jasmine/bin/jasmine.js",
-    "build": "NODE_ENV=production npm run test && cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
+    "test-jest": "jest",
+    "build": "cross-env NODE_ENV=production webpack --env.cli --bail --env.lint --env.lintFail",
     "lint": "eslint -f 'node_modules/eslint-friendly-formatter' --ext .js .",
     "lint-fix": "npm run lint -- --fix",
     "security": "npm audit",
@@ -60,6 +65,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "@prorenata/eslint-config-vue": "^1.15.1",
+    "axios-mock-adapter": "^1.18.2",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -94,6 +100,7 @@
     "express": "^4.17.1",
     "jasmine": "^3.4.0",
     "jasmine-spec-reporter": "^4.2.1",
+    "jest": "^26.5.3",
     "jscodeshift": "^0.6.4",
     "lodash-webpack-plugin": "^0.11.5",
     "nodemon": "^1.19.1",
@@ -110,7 +117,7 @@
   },
   "engines": {
     "node": ">=8.11.4",
-    "npm": "6.10.1"
+    "npm": ">=6.10.1"
   },
   "browserslist": [
     "last 3 Chrome versions",

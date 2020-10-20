@@ -1,10 +1,11 @@
 import envFactory from './Store/envFactory';
 import Hints from './Modules/Hints/Resource/resource';
 const SERVER_DATA = Object.freeze(require('./DevServer/Endpoints/hints/hints.json'));
+const createHintsWithId = 34;
 
 describe('Methods', () => {
   it('All methods are present', () => {
-    const Methods = require('../src/methods').default;
+    const Methods = require('../src/Rest').default;
     const instance = new Methods({}, {});
     const methods = ['get', 'list', 'create', 'update', 'delete', 'remoteAction'].filter(
       (meth) => typeof instance[meth] === 'function',
@@ -64,7 +65,7 @@ describe('Methods', () => {
 
         const [newHint] = fetchedHints;
         expect(newHint.name).toBe(NAME);
-        expect(newHint.id).toBe(34);
+        expect(newHint.id).toBe(createHintsWithId);
         done();
       });
     });
@@ -79,7 +80,7 @@ describe('Methods', () => {
       expect(initialHints.length).toBe(0);
 
       const NAME = 'updated Hint!';
-      const ID_CREATED_IN_PREVIOUS_TEST = 34;
+      const ID_CREATED_IN_PREVIOUS_TEST = createHintsWithId;
 
       seenHintsResource.update(null, ID_CREATED_IN_PREVIOUS_TEST, {id: ID_CREATED_IN_PREVIOUS_TEST, name: NAME}).then(() => {
         const fetchedHints = store.getters['Hints/hints'];
@@ -98,7 +99,7 @@ describe('Methods', () => {
       const {registerResource, store} = envFactory();
       const seenHintsResource = registerResource(Hints).Hints;
 
-      const ID_CREATED_IN_PREVIOUS_TEST = 34;
+      const ID_CREATED_IN_PREVIOUS_TEST = createHintsWithId;
 
       const initialHints = store.getters['Hints/hints'];
       expect(initialHints.length).toBe(0);
