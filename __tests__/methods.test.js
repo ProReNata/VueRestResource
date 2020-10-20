@@ -5,7 +5,7 @@ const createHintsWithId = 34;
 
 describe('Methods', () => {
   it('All methods are present', () => {
-    const Methods = require('../src/methods').default;
+    const Methods = require('../src/Rest').default;
     const instance = new Methods({}, {});
     const methods = ['get', 'list', 'create', 'update', 'delete', 'remoteAction'].filter(
       (meth) => typeof instance[meth] === 'function',
