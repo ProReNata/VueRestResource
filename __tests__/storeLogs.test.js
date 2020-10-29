@@ -2,7 +2,7 @@ import Vue from 'vue';
 import envFactory from './Store/envFactory';
 import Hints from './Modules/Hints/Resource/resource';
 
-describe('Methods', () => {
+describe('Logging Methods', () => {
   it('Initial getters config should be correct', () => {
     const {store} = envFactory();
     const getters = Object.keys(store.getters);
@@ -73,7 +73,7 @@ describe('Methods', () => {
               expect(instanceRequests.length).toBe(0);
               done();
             }, 100);
-          }, 50);
+          }, 20);
         },
       });
     });
@@ -165,7 +165,6 @@ describe('Methods', () => {
       new Vue({
         store,
         created() {
-
           const registeredEndpointsBefore = store.getters['VRR_Tests/activeRequestsToEndpoint'];
 
           expect(Object.keys(registeredEndpointsBefore).length).toBe(0);
