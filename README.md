@@ -226,6 +226,7 @@ Once you have created a Resource, you can use it with the following methods
 
 Param 1: _Object instance_, the pointer to the Vue instance consuming the API  
 Param 2: _Number_, the id of the model you want to get
+Param 3: _Function_, A callback passing you (data, store). When using this the Store is not getting updated automatically anymore.
 
 The `.get` method fetches a specific object from the server and puts the resource data with id in the store.
 
@@ -235,6 +236,7 @@ The `.get` method fetches a specific object from the server and puts the resourc
 
 Param 1: _Object instance_, the pointer to the Vue instance consuming the API
 Param 2: _Object_, the object/model you want to save (without id).
+Param 3: _Function_, A callback passing you (data, store). When using this the Store is not getting updated automatically anymore.
 
 The `.create` method updates the server with new data and puts the resource data with id in the store.
 
@@ -245,6 +247,7 @@ The `.create` method updates the server with new data and puts the resource data
 Param 1: _Object instance_, the pointer to the Vue instance consuming the API
 Param 2: _Number_, the id of the model you want to update.
 Param 3: _Object_, the object/model you want to update.
+Param 4: _Function_, A callback passing you (data, store). When using this the Store is not getting updated automatically anymore.
 
 The `.update` method updates the server with new data and puts the resource data with id in the store.
 
